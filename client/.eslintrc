@@ -1,0 +1,20 @@
+{
+    "extends": [
+        "@imaginary-cloud/react",
+        "prettier"
+    ],
+    "rules": {
+        "react/prop-types": 0,
+        "no-underscore-dangle": 0,
+        "no-return-assign": 0,
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
+        "jsx-a11y/label-has-associated-control": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off"
+    }
+}

@@ -1,0 +1,44 @@
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+import MainLayout from './components/MainLayout'
+import DashboardLayout from './components/DashboardLayout'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import NotFound from './pages/NotFound'
+import ProductList from './pages/ProductList'
+import ProjectList from './pages/ProjectList'
+import Settings from './pages/Settings'
+import Account from './pages/Account'
+import CustomerList from './pages/CustomerList'
+import Dashboard from './pages/Dashboard'
+
+import CreateProject from './components/project/CreateProject'
+const routes = [
+  {
+    path: 'app',
+    element: <DashboardLayout />,
+    children: [
+      { path: 'account', element: <Account /> },
+      { path: 'customers', element: <CustomerList /> },
+      { path: 'dashboard', element: <Dashboard /> },
+      { path: 'products', element: <ProductList /> },
+      { path: 'projects', element: <ProjectList /> },
+      { path: 'projects/new', element: <CreateProject /> },
+      { path: 'settings', element: <Settings /> },
+      { path: '*', element: <Navigate to="/404" /> },
+    ],
+  },
+  {
+    path: '/',
+    element: <MainLayout />,
+    children: [
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+      { path: '404', element: <NotFound /> },
+      { path: '/', element: <Navigate to="/app/dashboard" /> },
+      { path: '*', element: <Navigate to="/404" /> },
+    ],
+  },
+]
+
+export default routes
