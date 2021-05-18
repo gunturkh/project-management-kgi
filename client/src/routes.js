@@ -13,6 +13,7 @@ import CustomerList from './pages/CustomerList'
 import Dashboard from './pages/Dashboard'
 
 import CreateProject from './components/project/CreateProject'
+import EditProject from './components/project/EditProject'
 const routes = [
   {
     path: 'app',
@@ -24,6 +25,7 @@ const routes = [
       { path: 'products', element: <ProductList /> },
       { path: 'projects', element: <ProjectList /> },
       { path: 'projects/new', element: <CreateProject /> },
+      { path: 'projects/edit/:id', element: <EditProject /> },
       { path: 'settings', element: <Settings /> },
       { path: '*', element: <Navigate to="/404" /> },
     ],

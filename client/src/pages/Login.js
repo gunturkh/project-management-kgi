@@ -265,8 +265,8 @@ const Login = () => {
 
   useEffect(() => {
     if (user.username !== undefined)
-      // navigate(`/${user.username}/boards`, { replace: true })
-      navigate(`/register`, { replace: true })
+      navigate(`/app/projects`, { replace: true })
+    // navigate(`/register`, { replace: true })
   }, [user])
 
   useEffect(() => {
@@ -280,7 +280,7 @@ const Login = () => {
         // setError('Logged In successfully ✔')
         // setSuccess(true)
         localStorage.setItem('auth-token', token)
-        navigate(`/register`, { replace: true })
+        navigate(`/app/projects`, { replace: true })
         // history.push(`/${user.username}/boards`)
       } else if (!successLogin && !token) {
         // setError(loginError)

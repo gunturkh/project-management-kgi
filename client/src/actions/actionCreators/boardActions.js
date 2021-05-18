@@ -49,6 +49,7 @@ export const createNewBoard = (params, token) => (dispatch) => {
       else if (e.response.status === 422)
         dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD })
     })
+  return Promise.resolve()
 }
 
 export const updateBoardById = (id, params, token) => (dispatch) => {
@@ -76,6 +77,7 @@ export const deleteBoardById = (id, token) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_BOARD, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }
 
 export const fetchListsFromBoard = (id, token) => (dispatch) => {

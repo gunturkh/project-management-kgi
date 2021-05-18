@@ -1,5 +1,10 @@
-import React, { useState } from 'react'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import {
+  Link as RouterLink,
+  useNavigate,
+  useParams,
+  Redirect,
+} from 'react-router-dom'
 import moment from 'moment'
 
 import {
@@ -24,7 +29,10 @@ import DatePicker from '@material-ui/lab/DatePicker'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNewBoard } from '../../actions/actionCreators/boardActions'
+import {
+  fetchBoardById,
+  createNewBoard,
+} from '../../actions/actionCreators/boardActions'
 // import { createNewActivity } from '../../actions/actionCreators/activityActions'
 
 const states = [
@@ -61,13 +69,38 @@ const MenuProps = {
   },
 }
 
-const CreateProject = (props) => {
+const EditProject = (props) => {
   const classes = useStyles()
   const theme = useTheme()
-  const { token, isValid, user, tokenRequest } = useSelector(
+  const dispatch = useDispatch()
+  const { id, name } = useParams()
+  const { board, loading, currBoard, error } = useSelector(
+    (state) => state.boards,
+  )
+  const { listLoading, lists } = useSelector((state) => state.lists)
+  const { cardLoading, cards } = useSelector((state) => state.cards)
+  const { activities } = useSelector((state) => state.activities)
+  const { isValid, user, token, tokenRequest } = useSelector(
     (state) => state.user,
   )
-  const dispatch = useDispatch()
+  useEffect(() => {
+    console.log('token: ', token)
+    console.log('tokenRequest: ', tokenRequest)
+    console.log('id: ', id)
+    console.log('isValid: ', isValid)
+    console.log('!error: ', !error)
+    console.log('error: ', error)
+    if (isValid && !error) {
+      if (id.length === 24) {
+        dispatch(fetchBoardById(id, token))
+        console.log('board: ', board)
+        console.log('currBoard: ', currBoard)
+        // dispatch(fetchListsFromBoard(id, token))
+        // dispatch(fetchsCardsFromBoard(id, token))
+        // dispatch(fetchActivitiesFromBoard(id, token))
+      }
+    }
+  }, [dispatch, id, isValid, token, error])
   console.log('classes: ', classes)
   console.log('user: ', user)
   const [values, setValues] = useState({
@@ -104,12 +137,12 @@ const CreateProject = (props) => {
   return (
     <Formik
       initialValues={{
-        projectName: '',
-        projectDescription: '',
-        startDate: moment(),
-        endDate: moment().add(1, 'months'),
-        company: '',
-        pic: [],
+        projectName: currBoard?.projectName,
+        projectDescription: currBoard?.projectDescription,
+        startDate: currBoard?.startDate ? moment(currBoard.startDate) : '',
+        endDate: currBoard?.endDate ? moment(currBoard.endDate) : '',
+        company: currBoard?.company,
+        pic: currBoard?.pic || [],
       }}
       validationSchema={Yup.object().shape({
         projectName: Yup.string().max(255).required('Project name is required'),
@@ -160,8 +193,8 @@ const CreateProject = (props) => {
         <form onSubmit={handleSubmit} autoComplete="off" noValidate {...props}>
           <Card>
             <CardHeader
-              subheader="Enter information about your project"
-              title="Create Project"
+              subheader="Project information can be edited"
+              title="Edit Project"
             />
             <Divider />
             <CardContent>
@@ -295,7 +328,7 @@ const CreateProject = (props) => {
                 disabled={isSubmitting}
                 type="submit"
               >
-                Create Project
+                Edit Project
               </Button>
             </Box>
           </Card>
@@ -305,4 +338,4 @@ const CreateProject = (props) => {
   )
 }
 
-export default CreateProject
+export default EditProject

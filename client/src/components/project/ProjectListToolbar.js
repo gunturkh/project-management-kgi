@@ -29,28 +29,30 @@ const ProductListToolbar = (props) => {
           Add project
         </Button>
       </Box>
+      {/*
       <Box sx={{ mt: 3 }}>
-        <Card>
-          <CardContent>
-            <Box sx={{ maxWidth: 500 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon fontSize="small" color="action">
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Search product"
-                variant="outlined"
-              />
-            </Box>
-          </CardContent>
-        </Card>
+      <Card>
+      <CardContent>
+      <Box sx={{ maxWidth: 500 }}>
+      <TextField
+      fullWidth
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+          <SvgIcon fontSize="small" color="action">
+          <SearchIcon />
+          </SvgIcon>
+          </InputAdornment>
+        ),
+      }}
+      placeholder="Search product"
+      variant="outlined"
+      />
       </Box>
+      </CardContent>
+      </Card>
+      </Box>
+      */}
     </Box>
   )
 }
