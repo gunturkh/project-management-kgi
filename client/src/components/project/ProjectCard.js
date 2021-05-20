@@ -80,16 +80,40 @@ const ProjectCard = ({ board, ...rest }) => {
             pb: 3,
           }}
         >
-          <Trash2
-            size="20"
+          <Button
+            component={RouterLink}
+            sx={{
+              color: 'text.secondary',
+              fontWeight: 'medium',
+              justifyContent: 'flex-start',
+              letterSpacing: 0,
+              // py: 1.25,
+              textTransform: 'none',
+              width: '100%',
+              color: 'primary.main',
+            }}
+            to={`/app/projects/edit/${board._id}`}
+          >
+            <Edit size="20" />
+          </Button>
+          <Button
+            component="div"
             onClick={() => {
               setOpenModal(true)
             }}
-            style={{
-              cursor: 'pointer',
-              marginRight: 6,
+            sx={{
+              color: 'text.secondary',
+              fontWeight: 'medium',
+              justifyContent: 'flex-end',
+              letterSpacing: 0,
+              // py: 1.25,
+              textTransform: 'none',
+              width: '100%',
+              color: 'primary.main',
             }}
-          />
+          >
+            <Trash2 size="20" />
+          </Button>
         </Box>
         <Typography align="left" color="textPrimary" gutterBottom variant="h4">
           {board?.projectName || ''}
@@ -110,29 +134,22 @@ const ProjectCard = ({ board, ...rest }) => {
         >
           {board?.projectDescription || ''}
         </Typography>
-        <Box
+        <Button
+          component={RouterLink}
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
+            color: 'text.secondary',
+            fontWeight: 'bold',
+            justifyContent: 'center',
+            letterSpacing: 0,
+            // py: 1.25,
+            textTransform: 'none',
+            width: '100%',
+            color: 'primary.main',
           }}
+          to={`/app/projects/details/${board._id}`}
         >
-          <Button
-            component={RouterLink}
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 'medium',
-              justifyContent: 'flex-end',
-              letterSpacing: 0,
-              // py: 1.25,
-              textTransform: 'none',
-              width: '100%',
-              color: 'primary.main',
-            }}
-            to={`/app/projects/edit/${board._id}`}
-          >
-            <Edit size="20" />
-          </Button>
-        </Box>
+          See Details
+        </Button>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
