@@ -15,12 +15,7 @@ import {
   CardHeader,
   Divider,
   Grid,
-  TextField,
-  Select,
-  MenuItem,
-  OutlinedInput,
-  InputLabel,
-  FormControl,
+  Typography,
 } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns'
@@ -136,209 +131,83 @@ const ProjectDetails = (props) => {
   ]
 
   return (
-    <Formik
-      initialValues={{
-        projectName: currBoard?.projectName,
-        projectDescription: currBoard?.projectDescription,
-        startDate: currBoard?.startDate ? moment(currBoard.startDate) : '',
-        endDate: currBoard?.endDate ? moment(currBoard.endDate) : '',
-        company: currBoard?.company,
-        pic: currBoard?.pic || [],
-      }}
-      validationSchema={Yup.object().shape({
-        projectName: Yup.string().max(255).required('Project name is required'),
-        projectDescription: Yup.string()
-          .max(255)
-          .required('Project description is required'),
-        startDate: Yup.date().required('Project start date is required'),
-        endDate: Yup.string().required('Project end date is required'),
-        pic: Yup.array().required('Project PIC is required'),
-        company: Yup.string().max(255).required('Project company is required'),
-      })}
-      onSubmit={(e) => {
-        // e.preventDefault()
-        console.log('form submit: ', e)
-        const postBoardReq = {
-          userId: user.id,
-          projectName: e.projectName,
-          projectDescription: e.projectDescription,
-          startDate: e.startDate,
-          endDate: e.endDate,
-          company: e.company,
-          pic: e.pic,
-        }
-        console.log('postBoardReq submit: ', postBoardReq)
-        dispatch(createNewBoard(postBoardReq)).then(() => {
-          console.log('done create project')
-          navigate('/app/projects')
-        })
-        // navigate(`/app/projects`, { replace: true })
-        // const { username, password } = e
-        // const loginReq = { username, password }
-        // dispatch(loginUser(loginReq))
-        // setUsername('')
-        // setPassword('')
-        // navigate('/', { replace: true })
-      }}
-    >
-      {({
-        errors,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        isSubmitting,
-        touched,
-        values,
-        setFieldValue,
-      }) => (
-        <form onSubmit={handleSubmit} autoComplete="off" noValidate {...props}>
-          <Card>
-            <CardHeader
-              subheader="Details about the project"
-              title="Project Details"
-            />
-            <Divider />
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item lg={12} md={12} xl={12} xs={12}>
-                  <Timeline />
-                </Grid>
-                <Grid item md={12} xs={12}>
-                  <TextField
-                    error={Boolean(touched.projectName && errors.projectName)}
-                    fullWidth
-                    helperText="Please fill project name"
-                    label="Project name"
-                    name="projectName"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    required
-                    value={values.projectName}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={12} xs={12}>
-                  <TextField
-                    error={Boolean(
-                      touched.projectDescription && errors.projectDescription,
-                    )}
-                    fullWidth
-                    helperText="Please fill project description"
-                    label="Project Description"
-                    name="projectDescription"
-                    rows={4}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    required
-                    value={values.projectDescription}
-                    variant="outlined"
-                    multiline
-                  />
-                </Grid>
-                <Grid item md={6} xs={6}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      views={['day', 'month', 'year']}
-                      label="Project start date"
-                      value={values.startDate}
-                      onChange={(e) => {
-                        setFieldValue('startDate', e)
-                        console.log('values: ', e)
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          required
-                          helperText="Please fill project start date"
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item md={6} xs={6}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      views={['day', 'month', 'year']}
-                      label="Project end date"
-                      value={values.endDate}
-                      onChange={(e) => {
-                        setFieldValue('endDate', e)
-                        console.log('values: ', e)
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          fullWidth
-                          required
-                          helperText="Please fill project end date"
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <div>
-                    <FormControl style={{ width: '100%' }}>
-                      <InputLabel id="demo-mutiple-name-label">
-                        Project PIC
-                      </InputLabel>
-                      <Select
-                        // labelId="demo-mutiple-name-label"
-                        // id="demo-mutiple-name"
-                        multiple
-                        value={values.pic}
-                        onChange={(e) => setFieldValue('pic', e.target.value)}
-                        input={<OutlinedInput label="PIC" />}
-                        MenuProps={MenuProps}
-                        style={{ maxWidth: '100%' }}
-                        required
-                      >
-                        {names.map((name) => (
-                          <MenuItem key={name} value={name} style={getStyles()}>
-                            {name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Company"
-                    name="company"
-                    onChange={handleChange}
-                    required
-                    value={values.company}
-                    variant="outlined"
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-            <Divider />
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                p: 2,
-              }}
+    <Card>
+      <CardHeader
+        subheader="Details about the project"
+        title="Project Details"
+      />
+      <Divider />
+      <CardContent>
+        <Grid container spacing={3}>
+          <Grid item md={6} xs={12}>
+            <Typography
+              align="left"
+              color="textPrimary"
+              gutterBottom
+              variant="h5"
             >
-              <Button
-                color="primary"
-                variant="contained"
-                disabled={isSubmitting}
-                type="submit"
-              >
-                Edit Project
-              </Button>
-            </Box>
-          </Card>
-        </form>
-      )}
-    </Formik>
+              Company: {currBoard?.company || ''}
+            </Typography>
+          </Grid>
+          <Grid item md={12} xs={12}>
+            <Typography
+              align="left"
+              color="textPrimary"
+              gutterBottom
+              variant="h5"
+            >
+              Name: {currBoard?.projectName}
+            </Typography>
+          </Grid>
+          <Grid item md={12} xs={12}>
+            <Typography
+              align="left"
+              color="textPrimary"
+              gutterBottom
+              variant="h6"
+            >
+              Description: {currBoard?.projectDescription}
+            </Typography>
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <Typography
+              align="left"
+              color="textPrimary"
+              gutterBottom
+              variant="h6"
+            >
+              Timeline:{' '}
+              {currBoard?.startDate && currBoard?.endDate
+                ? `${moment(currBoard.startDate).format(
+                    'DD MMMM YYYY',
+                  )} - ${moment(currBoard.endDate).format('DD MMMM YYYY')}`
+                : ''}
+            </Typography>
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <Typography
+              align="left"
+              color="textPrimary"
+              gutterBottom
+              variant="h6"
+            >
+              PIC: {currBoard?.pic.join(', ') || ''}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid item lg={12} md={12} xl={12} xs={12}>
+          <Timeline />
+        </Grid>
+      </CardContent>
+      <Divider />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          p: 2,
+        }}
+      ></Box>
+    </Card>
   )
 }
 
