@@ -129,9 +129,9 @@ const eventsData = [
   { title: 'Birthday Party', start: '2021-05-08T07:00:00+00:00' },
   { url: 'http://google.com/', title: 'Click for Google', start: '2021-05-28' },
 ]
-const LatestOrders = (props) => (
+const Timeline = (props) => (
   <Card {...props}>
-    <CardHeader title="Latest Orders" />
+    <CardHeader title={props.title || ''} />
     <Divider />
     <PerfectScrollbar>
       {/*
@@ -214,16 +214,18 @@ const LatestOrders = (props) => (
         p: 2,
       }}
     >
-      <Button
-        color="primary"
-        endIcon={<ArrowRightIcon />}
-        size="small"
-        variant="text"
-      >
-        View all
-      </Button>
+      {/*
+    <Button
+    color="primary"
+    endIcon={<ArrowRightIcon />}
+    size="small"
+    variant="text"
+    >
+    View all
+    </Button>
+    */}
     </Box>
   </Card>
 )
 
-export default LatestOrders
+export default Timeline

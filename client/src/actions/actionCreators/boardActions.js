@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/boards/'
+// const BASE_TIMELINES_URL = '/api/timelines/'
 
 export const fetchAllBoards = (token) => (dispatch) => {
   dispatch({ type: ACTIONS.MAKE_REQUEST_BOARD })

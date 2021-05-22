@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard'
 import CreateProject from './components/project/CreateProject'
 import EditProject from './components/project/EditProject'
 import ProjectDetails from './components/project/ProjectDetails'
+import ProjectDetailsNew from './components/project/ProjectDetailsNew'
 const routes = [
   {
     path: 'app',
@@ -27,7 +28,7 @@ const routes = [
       { path: 'projects', element: <ProjectList /> },
       { path: 'projects/new', element: <CreateProject /> },
       { path: 'projects/edit/:id', element: <EditProject /> },
-      { path: 'projects/details/:id', element: <ProjectDetails /> },
+      { path: 'projects/details/:id', element: <ProjectDetailsNew /> },
       { path: 'settings', element: <Settings /> },
       { path: '*', element: <Navigate to="/404" /> },
     ],
