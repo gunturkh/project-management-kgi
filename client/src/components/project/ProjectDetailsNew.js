@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 // import { Redirect, useParams } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import _ from 'lodash'
 import {
@@ -17,6 +18,8 @@ import {
   Typography,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import AccessTimeIcon from '@material-ui/icons/AccessTime'
+import { User, Edit, Trash2 } from 'react-feather'
 import moment from 'moment'
 import {
   fetchBoardById,
@@ -59,9 +62,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
     width: '100%',
     marginTop: theme.spacing(0.5),
+    padding: 20,
+    boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
+    // border: 'red solid 1px',
   },
   wrapper: {
     marginTop: theme.spacing(10.3),
+    boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
+    border: 'blue solid 1px',
   },
   editable: {
     marginLeft: theme.spacing(1),
@@ -73,11 +81,13 @@ const useStyles = makeStyles((theme) => ({
     width: '290px',
     position: 'fixed',
     marginTop: theme.spacing(4.5),
+    boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
   },
 }))
 
 export default function ProjectDetailsNew() {
   const classes = useStyles()
+  const navigate = useNavigate()
   /* eslint-disable-next-line */
   // var { id, name } = useParams()
   const { id } = useParams()
@@ -442,14 +452,25 @@ export default function ProjectDetailsNew() {
                 Description: {currBoard?.projectDescription}
               </Typography>
             </Grid>
-            <Grid item md={6} xs={12}>
+            <Grid
+              item
+              md={6}
+              xs={12}
+              sx={{
+                alignItems: 'center',
+                display: 'flex',
+              }}
+            >
+              <AccessTimeIcon color="action" />
               <Typography
                 align="left"
-                color="textPrimary"
-                gutterBottom
-                variant="h6"
+                color="textSecondary"
+                display="inline"
+                sx={{
+                  pl: 1,
+                }}
+                variant="body2"
               >
-                Timeline:{' '}
                 {currBoard?.startDate && currBoard?.endDate
                   ? `${moment(currBoard.startDate).format(
                       'DD MMMM YYYY',
@@ -457,14 +478,25 @@ export default function ProjectDetailsNew() {
                   : ''}
               </Typography>
             </Grid>
-            <Grid item md={6} xs={12}>
+            <Grid
+              item
+              md={6}
+              xs={12}
+              md={6}
+              xs={12}
+              sx={{
+                alignItems: 'center',
+                display: 'flex',
+              }}
+            >
+              <User size="20" />
               <Typography
-                align="left"
-                color="textPrimary"
-                gutterBottom
-                variant="h6"
+                color="textSecondary"
+                display="inline"
+                sx={{ pl: 1 }}
+                variant="body2"
               >
-                PIC: {currBoard?.pic.join(', ') || ''}
+                PIC: {currBoard?.pic?.join(', ') || ''}
               </Typography>
             </Grid>
           </Grid>
@@ -528,65 +560,69 @@ export default function ProjectDetailsNew() {
           ) : (
             <div></div>
           )}
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable
-              droppableId="all-columns"
-              direction="horizontal"
-              type="list"
-            >
-              {(provided) => (
-                <div
-                  className={classes.listContainer}
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {initDone &&
-                    initialData.columnOrder.map((columnId, index) => {
-                      const column = initialData.columns[columnId]
-                      const tasks = column.taskIds.map(
-                        (taskId) => initialData.tasks[taskId],
-                      )
-                      return (
-                        <List
-                          key={column._id}
-                          column={column}
-                          tasks={tasks}
-                          index={index}
+          <>
+            <Divider />
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable
+                droppableId="all-columns"
+                direction="horizontal"
+                type="list"
+              >
+                {(provided) => (
+                  <div
+                    className={classes.listContainer}
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {initDone &&
+                      initialData.columnOrder.map((columnId, index) => {
+                        const column = initialData.columns[columnId]
+                        const tasks = column.taskIds.map(
+                          (taskId) => initialData.tasks[taskId],
+                        )
+                        return (
+                          <List
+                            key={column._id}
+                            column={column}
+                            tasks={tasks}
+                            index={index}
+                            style={classes.wrapper}
+                          />
+                        )
+                      })}
+                    <div className={classes.wrapper}>
+                      {addFlag.current && (
+                        <AddItem
+                          handleClick={handleAddition}
+                          btnText="Add another list"
+                          type="list"
+                          icon={<AddIcon />}
+                          width="256px"
+                          color="white"
+                          noshadow
                         />
-                      )
-                    })}
-                  <div className={classes.wrapper}>
-                    {addFlag.current && (
-                      <AddItem
-                        handleClick={handleAddition}
-                        btnText="Add another list"
-                        type="list"
-                        icon={<AddIcon />}
-                        width="256px"
-                        color="white"
-                        noshadow
-                      />
-                    )}
-                    {addListFlag && (
-                      <InputCard
-                        value={listTitle}
-                        changedHandler={handleChange}
-                        itemAdded={submitHandler}
-                        closeHandler={closeButtonHandler}
-                        keyDownHandler={handleKeyDown}
-                        type="list"
-                        btnText="Add List"
-                        placeholder="Enter list title..."
-                        width="230px"
-                        marginLeft="1"
-                      />
-                    )}
+                      )}
+                      {addListFlag && (
+                        <InputCard
+                          value={listTitle}
+                          changedHandler={handleChange}
+                          itemAdded={submitHandler}
+                          closeHandler={closeButtonHandler}
+                          keyDownHandler={handleKeyDown}
+                          type="list"
+                          btnText="Add List"
+                          placeholder="Enter list title..."
+                          width="230px"
+                          marginLeft="1"
+                        />
+                      )}
+                    </div>
+                    {provided.placeholder}
                   </div>
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </>
           {/*
           <SideMenu
           setBackground={setBackground}

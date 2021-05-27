@@ -57,7 +57,7 @@ router.get('/:boardId/:id', async (req, res, next) => {
 
 // update timeline content based on board id and id
 router.patch('/:boardId/:id', async (req, res, next) => {
-    // const _id = req.params.id
+    const _id = req.params.id
     const boardId = req.params.boardId
     const updates = Object.keys(req.body)
     const allowedUpdates = ['title', 'groupId', 'url', 'start', 'end', 'order']
@@ -69,10 +69,14 @@ router.patch('/:boardId/:id', async (req, res, next) => {
         return res.status(400).send({ error: 'Invalid updates!' })
     try {
         console.log('timeline: ', Timeline)
-        const timeline = await Timeline.find(boardId, req.body, {
-            new: true,
-            runValidators: true,
-        })
+        const timeline = await Timeline.findOneAndUpdate(
+            { boardId, _id },
+            req.body,
+            {
+                new: true,
+                runValidators: true,
+            }
+        )
         if (!timeline)
             return res.status(404).send({ error: 'Timeline not found!' })
         res.send(timeline)

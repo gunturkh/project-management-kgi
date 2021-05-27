@@ -39,6 +39,7 @@ export const fetchTimelineByTimelineId = (timelineId, token) => (dispatch) => {
 
 export const createNewTimelines = (params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.POST_REQUEST_TIMELINE })
+  console.log('create timeline token', token)
   axios
     .post(BASE_URL, params, {
       headers: { 'x-auth-token': token },
@@ -55,6 +56,7 @@ export const createNewTimelines = (params, token) => (dispatch) => {
       else if (e.response.status === 422)
         dispatch({ type: ACTIONS.VALIDATION_ERROR_TIMELINE })
     })
+  return Promise.resolve()
 }
 
 export const updateTimelineById = (id, params) => (dispatch) => {
@@ -69,6 +71,7 @@ export const updateTimelineById = (id, params) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_TIMELINE, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }
 
 export const updateTimelineByBoardId = (id, params) => (dispatch) => {
@@ -84,6 +87,7 @@ export const updateTimelineByBoardId = (id, params) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_TIMELINE, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }
 
 export const deleteTimelineById = (id) => (dispatch) => {
@@ -98,4 +102,5 @@ export const deleteTimelineById = (id) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_TIMELINE, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }

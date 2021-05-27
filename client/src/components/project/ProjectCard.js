@@ -89,7 +89,7 @@ const ProjectCard = ({ board, ...rest }) => {
               letterSpacing: 0,
               // py: 1.25,
               textTransform: 'none',
-              width: '100%',
+              width: '50%',
               color: 'primary.main',
             }}
             to={`/app/projects/edit/${board._id}`}
@@ -108,7 +108,7 @@ const ProjectCard = ({ board, ...rest }) => {
               letterSpacing: 0,
               // py: 1.25,
               textTransform: 'none',
-              width: '100%',
+              width: '50%',
               color: 'primary.main',
             }}
           >
