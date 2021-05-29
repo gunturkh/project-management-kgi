@@ -7,29 +7,40 @@ const router = Router()
 
 // register a new user
 router.post('/register', async (req, res, next) => {
-    const { password, passwordCheck, username } = req.body
+    const { password, passwordCheck, username, userRole, role } = req.body
     try {
-        if (!password || !passwordCheck || !username)
-            return res.status(400).json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
+        if (!password || !passwordCheck || !username || !userRole || !role)
+            return res
+                .status(400)
+                .json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
 
         if (password.length < 5) {
-            return res.status(400).json({ msg: 'Password is too small, try harder 🤪' })
+            return res
+                .status(400)
+                .json({ msg: 'Password is too small, try harder 🤪' })
         }
         if (password != passwordCheck)
             return res.status(400).json({ msg: 'Password don\'t match 👿' })
+        if (userRole !== 'ADMIN')
+            return res.status(400).json({ msg: 'You\'re not authorized' })
 
         const existingUser = await User.findOne({ username })
         if (existingUser)
-            return res.status(400).json({ msg: 'Username exists, think of something unique 🦄' })
+            return res
+                .status(400)
+                .json({ msg: 'Username exists, think of something unique 🦄' })
 
         const salt = await bcrypt.genSalt()
         const passwordHash = await bcrypt.hash(password, salt)
-        const newUser = new User({ username, password: passwordHash })
+        const newUser = new User({ username, password: passwordHash, role })
         const response = await newUser.save()
-        res.send({ username: response.username, _id: response._id })
+        res.send({
+            username: response.username,
+            _id: response._id,
+            role: response.role,
+        })
     } catch (error) {
-        if (error.name === 'ValidationError')
-            return res.status(422)
+        if (error.name === 'ValidationError') return res.status(422)
         next(error)
     }
 })
@@ -38,11 +49,12 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body
     try {
         if (!username || !password)
-            return res.status(400).json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
+            return res
+                .status(400)
+                .json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
 
         const user = await User.findOne({ username })
-        if (!user)
-            return res.status(400).json({ msg: 'User doesn\'t exist 🙈' })
+        if (!user) return res.status(400).json({ msg: 'User doesn\'t exist 🙈' })
 
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch)
@@ -53,14 +65,14 @@ router.post('/login', async (req, res, next) => {
             token,
             user: {
                 id: user._id,
-                username: user.username
-            }
+                username: user.username,
+                role: user.role,
+            },
         })
     } catch (error) {
         next(error)
     }
 })
-
 
 router.post('/tokenIsValid', async (req, res, next) => {
     try {
@@ -82,12 +94,54 @@ router.post('/tokenIsValid', async (req, res, next) => {
 router.get('/', auth, async (req, res, next) => {
     try {
         const user = await User.findById(req.user)
-        if (!user)
-            return res.status(404).send()
+        if (!user) return res.status(404).send()
         res.json({
             username: user.username,
             id: user._id,
         })
+    } catch (error) {
+        next(error)
+    }
+})
+
+//get all users
+router.get('/list', auth, async (req, res, next) => {
+    try {
+        const { role } = req.body
+        const token = req.header('x-auth-token')
+        if (!token) return res.json(false)
+
+        if (role !== 'ADMIN')
+            return res
+                .status(400)
+                .json({ msg: 'You are not authorized to view this info' })
+
+        const user = await User.find({})
+        res.json(user)
+    } catch (error) {
+        next(error)
+    }
+})
+
+router.patch('/update', async (req, res, next) => {
+    const { username, newPassword, newPasswordCheck, role } = req.body
+    try {
+        if (!username || !newPassword || !newPasswordCheck)
+            return res
+                .status(400)
+                .json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
+
+        if (newPassword != newPasswordCheck)
+            return res.status(400).json({ msg: 'New Password don\'t match 👿' })
+        const salt = await bcrypt.genSalt()
+        const passwordHash = await bcrypt.hash(newPassword, salt)
+        const updatedUser = await User.findOneAndUpdate(
+            { username },
+            { password: passwordHash, role },
+            { new: true, runValidators: true }
+        )
+
+        res.send(updatedUser)
     } catch (error) {
         next(error)
     }

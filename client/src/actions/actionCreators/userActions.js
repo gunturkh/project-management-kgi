@@ -3,6 +3,23 @@ import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/user/'
 
+export const fetchAllUsersInfo = (role, token) => (dispatch) => {
+  dispatch({ type: ACTIONS.USER_REQUEST })
+  axios
+    .get(BASE_URL, {
+      headers: { 'x-auth-token': token },
+    })
+    .then((res) => {
+      dispatch({
+        type: ACTIONS.GET_USER,
+        payload: { user: res.data, role, token },
+      })
+    })
+    .catch((e) => {
+      dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
+    })
+}
+
 export const fetchUserInfo = (token) => (dispatch) => {
   dispatch({ type: ACTIONS.USER_REQUEST })
   axios
@@ -45,6 +62,7 @@ export const loginUser = (params) => (dispatch) => {
   axios
     .post(`${BASE_URL}login`, params)
     .then((res) => {
+      console.log('res:', res)
       dispatch({ type: ACTIONS.LOGIN_SUCCESS, payload: { user: res.data } })
     })
     .catch((e) => {
@@ -71,6 +89,27 @@ export const registerUser = (params) => (dispatch) => {
         payload: { error: e.response.data.msg },
       })
     })
+}
+
+export const updateUser = (params) => (dispatch) => {
+  // dispatch({ type: ACTIONS.UPDATE_REQUEST })
+  axios
+    .patch(`${BASE_URL}update`, params)
+    .then((res) => {
+      console.log('res update: ', res)
+      dispatch({
+        type: ACTIONS.UPDATE_SUCCESS,
+        payload: { user: res.data },
+      })
+    })
+    .catch((e) => {
+      console.log('error update: ', e)
+      dispatch({
+        type: ACTIONS.UPDATE_FAILED,
+        payload: { error: e.response.data.msg },
+      })
+    })
+  return Promise.resolve()
 }
 
 export const logoutUser = () => (dispatch) => {

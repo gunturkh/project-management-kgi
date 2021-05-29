@@ -17,7 +17,7 @@ const SettingsView = () => (
       }}
     >
       <Container maxWidth="lg">
-        <SettingsNotifications />
+        {/* <SettingsNotifications /> */}
         <Box sx={{ pt: 3 }}>
           <SettingsPassword />
         </Box>

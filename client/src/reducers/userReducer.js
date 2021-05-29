@@ -5,6 +5,7 @@ const initialState = {
   user: {
     id: undefined,
     username: undefined,
+    role: undefined,
   },
   isValid: false,
   successLogin: false,
@@ -53,6 +54,11 @@ export const userReducer = (state = initialState, action) => {
         requestRegister: false,
         registerError: action.payload.error,
       }
+    case ACTIONS.UPDATE_FAILED:
+      return {
+        ...state,
+        updateError: action.payload.error,
+      }
     case ACTIONS.LOGIN_SUCCESS:
       return {
         ...state,
@@ -60,6 +66,7 @@ export const userReducer = (state = initialState, action) => {
         user: {
           id: action.payload.user.user.id,
           username: action.payload.user.user.username,
+          role: action.payload.user.user.role,
         },
         requestLogin: false,
         successLogin: true,
@@ -74,6 +81,15 @@ export const userReducer = (state = initialState, action) => {
         },
         requestRegister: false,
         successRegister: true,
+      }
+    case ACTIONS.UPDATE_SUCCESS:
+      return {
+        ...state,
+        user: {
+          id: action.payload.user._id,
+          username: action.payload.user.username,
+          role: action.payload.user.role,
+        },
       }
     case ACTIONS.ERROR_USER:
       return { ...state, error: action.payload.error }
