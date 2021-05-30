@@ -131,7 +131,6 @@ const eventsData = [
 ]
 const LatestOrders = (props) => (
   <Card {...props}>
-    <CardHeader title="Latest Orders" />
     <Divider />
     <PerfectScrollbar>
       {/*

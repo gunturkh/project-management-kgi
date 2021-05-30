@@ -21,6 +21,7 @@ import {
   UserPlus as UserPlusIcon,
   Users as UsersIcon,
   Calendar as CalendarIcon,
+  LogOut as LogOutIcon,
 } from 'react-feather'
 import NavItem from './NavItem'
 
@@ -36,26 +37,26 @@ const items = [
     icon: BarChartIcon,
     title: 'Dashboard',
   },
-  {
-    href: '/app/customers',
-    icon: UsersIcon,
-    title: 'Customers',
-  },
+  // {
+  //   href: '/app/customers',
+  //   icon: UsersIcon,
+  //   title: 'Customers',
+  // },
   {
     href: '/app/projects',
     icon: CalendarIcon,
     title: 'Projects',
   },
-  {
-    href: '/app/products',
-    icon: ShoppingBagIcon,
-    title: 'Products',
-  },
-  {
-    href: '/app/account',
-    icon: UserIcon,
-    title: 'Account',
-  },
+  // {
+  //   href: '/app/products',
+  //   icon: ShoppingBagIcon,
+  //   title: 'Products',
+  // },
+  // {
+  //   href: '/app/account',
+  //   icon: UserIcon,
+  //   title: 'Account',
+  // },
   {
     href: '/app/settings',
     icon: SettingsIcon,
@@ -66,16 +67,16 @@ const items = [
     icon: LockIcon,
     title: 'Login',
   },
-  {
-    href: '/register',
-    icon: UserPlusIcon,
-    title: 'Register',
-  },
-  {
-    href: '/404',
-    icon: AlertCircleIcon,
-    title: 'Error',
-  },
+  // {
+  //   href: '/register',
+  //   icon: UserPlusIcon,
+  //   title: 'Register',
+  // },
+  // {
+  //   href: '/404',
+  //   icon: AlertCircleIcon,
+  //   title: 'Error',
+  // },
 ]
 
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {

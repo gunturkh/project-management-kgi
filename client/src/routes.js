@@ -8,20 +8,20 @@ import NotFound from './pages/NotFound'
 import ProductList from './pages/ProductList'
 import ProjectList from './pages/ProjectList'
 import Settings from './pages/Settings'
-import Account from './pages/Account'
+import CreateAccount from './pages/CreateAccount'
 import CustomerList from './pages/CustomerList'
 import Dashboard from './pages/Dashboard'
 
 import CreateProject from './components/project/CreateProject'
 import EditProject from './components/project/EditProject'
-import ProjectDetails from './components/project/ProjectDetails'
+// import ProjectDetails from './components/project/ProjectDetails'
 import ProjectDetailsNew from './components/project/ProjectDetailsNew'
 const routes = [
   {
     path: 'app',
     element: <DashboardLayout />,
     children: [
-      { path: 'account', element: <Account /> },
+      { path: 'account', element: <CreateAccount /> },
       { path: 'customers', element: <CustomerList /> },
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
@@ -38,7 +38,7 @@ const routes = [
     element: <MainLayout />,
     children: [
       { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
+      // { path: 'register', element: <Register /> },
       { path: '404', element: <NotFound /> },
       { path: '/', element: <Navigate to="/app/dashboard" /> },
       { path: '*', element: <Navigate to="/404" /> },
