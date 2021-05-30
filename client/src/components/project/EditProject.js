@@ -31,7 +31,7 @@ import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   fetchBoardById,
-  createNewBoard,
+  updateBoardById,
 } from '../../actions/actionCreators/boardActions'
 // import { createNewActivity } from '../../actions/actionCreators/activityActions'
 
@@ -167,8 +167,10 @@ const EditProject = (props) => {
           pic: e.pic,
         }
         console.log('postBoardReq submit: ', postBoardReq)
-        dispatch(createNewBoard(postBoardReq)).then(() => {
-          console.log('done create project')
+        console.log('update id: ', id)
+        console.log('update token: ', token)
+        dispatch(updateBoardById(id, postBoardReq, token)).then(() => {
+          console.log('done update project')
           navigate('/app/projects')
         })
         // navigate(`/app/projects`, { replace: true })

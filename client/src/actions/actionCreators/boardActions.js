@@ -65,6 +65,7 @@ export const updateBoardById = (id, params, token) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_BOARD, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }
 
 export const deleteBoardById = (id, token) => (dispatch) => {

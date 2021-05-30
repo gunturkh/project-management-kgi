@@ -115,16 +115,19 @@ export default function ProjectDetailsNew() {
   // else if (name === undefined) name = ''
 
   useEffect(() => {
-    if (isValid && !error) {
-      if (id.length === 24) {
-        console.log('id:', id)
-        dispatch(fetchListsFromBoard(id, token))
-        dispatch(fetchBoardById(id, token))
-        dispatch(fetchsCardsFromBoard(id, token))
-        dispatch(fetchActivitiesFromBoard(id, token))
-        dispatch(fetchTimelineByBoardId(id, token))
-      }
+    console.log('initialData', initialData)
+    console.log('isValid', isValid)
+    console.log('error', error)
+    // if (isValid && !error) {
+    if (id.length === 24) {
+      console.log('id:', id)
+      dispatch(fetchListsFromBoard(id, token))
+      dispatch(fetchBoardById(id, token))
+      dispatch(fetchsCardsFromBoard(id, token))
+      dispatch(fetchActivitiesFromBoard(id, token))
+      dispatch(fetchTimelineByBoardId(id, token))
     }
+    // }
   }, [dispatch, id, isValid, token, error])
 
   useEffect(() => {

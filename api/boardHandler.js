@@ -24,8 +24,7 @@ router.post('/', async (req, res, next) => {
         const respData = await board.save()
         res.send(respData)
     } catch (error) {
-        if (error.name === 'ValidationError')
-            res.status(422)
+        if (error.name === 'ValidationError') res.status(422)
         next(error)
     }
 })
@@ -35,8 +34,7 @@ router.get('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
         const board = await Board.findOne({ _id, userId: req.user })
-        if (!board)
-            return res.status(404).send()
+        if (!board) return res.status(404).send()
         res.send(board)
     } catch (error) {
         next(error)
@@ -48,8 +46,7 @@ router.get('/:id/lists', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
         const board = await Board.findOne({ _id, userId: req.user })
-        if (!board)
-            return res.status(404).send()
+        if (!board) return res.status(404).send()
         const lists = await List.find({ boardId: _id })
         res.send(lists)
     } catch (error) {
@@ -62,8 +59,7 @@ router.get('/:id/cards', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
         const board = await Board.findOne({ _id, userId: req.user })
-        if (!board)
-            return res.status(404).send()
+        if (!board) return res.status(404).send()
         const cards = await Card.find({ boardId: _id })
         res.send(cards)
     } catch (error) {
@@ -78,13 +74,17 @@ router.get('/:id/activities', auth, async (req, res, next) => {
     const _limit = Number.parseInt(req.query.limit, 10) || 10
     try {
         const board = await Board.findOne({ _id, userId: req.user })
-        if (!board)
-            return res.status(404).send()
+        if (!board) return res.status(404).send()
         const query = { boardId: _id }
-        if (_last)
-            query._id = {'$lt': _last}
-        const activities = await Activity.find(query, null, { limit: _limit + 1, sort: { _id: 'desc' } })
-        res.append('X-Has-More', activities.length === _limit + 1 ? 'true' : 'false')
+        if (_last) query._id = { $lt: _last }
+        const activities = await Activity.find(query, null, {
+            limit: _limit + 1,
+            sort: { _id: 'desc' },
+        })
+        res.append(
+            'X-Has-More',
+            activities.length === _limit + 1 ? 'true' : 'false'
+        )
         res.send(activities.slice(0, _limit))
     } catch (error) {
         next(error)
@@ -95,37 +95,51 @@ router.get('/:id/activities', auth, async (req, res, next) => {
 router.patch('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'image']
-    const isValidOperation = updates.every(
-        (update) => allowedUpdates.includes(update))
+    const allowedUpdates = [
+        'userId',
+        'projectName',
+        'projectDescription',
+        'startDate',
+        'endDate',
+        'company',
+        'pic',
+    ]
+    console.log('updates:', updates)
+    const isValidOperation = updates.every((update) => {
+        // console.log('allowedUpdates? ', allowedUpdates.includes(update))
+        console.log('update? ', update)
+        return allowedUpdates.includes(update)
+    })
+    console.log('isValidOperation?', isValidOperation)
     if (!isValidOperation)
         return res.status(400).send({ error: 'Invalid updates!' })
     try {
-        const board = await Board.
-            findOneAndUpdate({ _id, userId: req.user }, req.body, { new: true, runValidators: true })
-        if (!board)
-            return res.status(404).send({ error: 'Board not found!' })
+        const board = await Board.findOneAndUpdate(
+            { _id, userId: req.user },
+            req.body,
+            { new: true, runValidators: true }
+        )
+        if (!board) return res.status(404).send({ error: 'Board not found!' })
         res.send(board)
     } catch (error) {
         next(error)
     }
 })
 
-
 // delete board based on id
 router.delete('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
         const board = await Board.findOneAndDelete({ _id, userId: req.user })
-        if (!board)
-            return res.status(404).send()
+        if (!board) return res.status(404).send()
         // find all lists within board and delete them as well
         const lists = await List.find({ boardId: _id })
         lists.forEach(async (list) => {
             // find all cards within each lists and delete them as well
             const cards = await Card.find({ listid: list._id })
-            cards.forEach(async (card) => (
-                await Card.deleteOne({ _id: card._id })))
+            cards.forEach(
+                async (card) => await Card.deleteOne({ _id: card._id })
+            )
             await List.deleteOne({ _id: list._id })
         })
         // find all activities within board and delete them as well
@@ -138,6 +152,5 @@ router.delete('/:id', auth, async (req, res, next) => {
         next(error)
     }
 })
-
 
 module.exports = router
