@@ -18,6 +18,7 @@ import {
   registerUser,
   fetchAllUsersInfo,
 } from '../../actions/actionCreators/userActions'
+import { fetchAllBoards } from '../../actions/actionCreators/boardActions'
 
 const role = [
   {
@@ -31,13 +32,15 @@ const role = [
 ]
 
 const CreateNewAccount = (props) => {
-  const { user, token } = useSelector((state) => state.user)
+  const { user, users, token } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   useEffect(() => {
-    dispatch(fetchAllUsersInfo(user.role, token))
-  }, [])
-  console.log('users:', user)
+    const role = { role: 'ADMIN' }
+    dispatch(fetchAllUsersInfo(role, token))
+    // dispatch(fetchAllBoards(token))
+  }, [user])
+  console.log('users:', users)
   return (
     <>
       <Helmet>
@@ -46,19 +49,33 @@ const CreateNewAccount = (props) => {
       <Formik
         initialValues={{
           username: '',
-          role: '',
+          role: 'ADMIN',
           userRole: '',
           password: '',
           passwordCheck: '',
         }}
         validationSchema={Yup.object().shape({
-          firstName: Yup.string().max(255).required('First name is required'),
+          username: Yup.string().max(255).required('First name is required'),
           role: Yup.string().max(255).required('Last name is required'),
           password: Yup.string().max(255).required('password is required'),
           passwordCheck: Yup.string().max(255).required('password is required'),
         })}
-        onSubmit={() => {
-          navigate('/app/dashboard', { replace: true })
+        onSubmit={(e) => {
+          console.log('register')
+          const registerReq = {
+            username: e.username,
+            password: e.password,
+            passwordCheck: e.passwordCheck,
+            role: e.role,
+            userRole: 'ADMIN',
+          }
+          dispatch(registerUser(registerReq))
+            .then(() => {
+              console.log('done create account')
+              navigate('/app/account')
+            })
+            .catch((e) => window.alert('error:', e))
+          // navigate('/app/dashboard', { replace: true })
         }}
       >
         {({
@@ -73,8 +90,8 @@ const CreateNewAccount = (props) => {
           <form onSubmit={handleSubmit} autoComplete="off" {...props}>
             <Card>
               <CardHeader
-                subheader="The information can be edited"
-                title="Profile"
+                subheader="Please fill the account details "
+                title="Create Accout"
               />
               <Divider />
               <CardContent>

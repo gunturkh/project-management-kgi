@@ -7,6 +7,7 @@ const initialState = {
     username: undefined,
     role: undefined,
   },
+  users: [],
   isValid: false,
   successLogin: false,
   requestLogin: true,
@@ -29,10 +30,19 @@ export const userReducer = (state = initialState, action) => {
       }
     case ACTIONS.USER_REQUEST:
       return { ...state, userRequest: true }
+    case ACTIONS.USERS_REQUEST:
+      return { ...state, userRequest: true }
     case ACTIONS.GET_USER:
       return {
         ...state,
         user: action.payload.user,
+        token: action.payload.token,
+        userRequest: false,
+      }
+    case ACTIONS.GET_USERS:
+      return {
+        ...state,
+        users: action.payload.users,
         token: action.payload.token,
         userRequest: false,
       }

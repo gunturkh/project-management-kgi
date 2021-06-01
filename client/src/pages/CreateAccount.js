@@ -1,7 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Box, Container, Grid } from '@material-ui/core'
-// import AccountProfile from '../components/account/AccountProfile'
+import UsersList from '../components/dashboard/UsersList'
 import CreateNewAccount from '../components/account/CreateNewAccount'
 
 const Account = () => (
@@ -18,8 +18,8 @@ const Account = () => (
     >
       <Container maxWidth="lg">
         <Grid container spacing={3}>
-          <Grid item lg={4} md={6} xs={12}>
-            {/* <AccountProfile /> */}
+          <Grid item xs={12}>
+            <UsersList />
           </Grid>
           <Grid item xs={12}>
             <CreateNewAccount />
