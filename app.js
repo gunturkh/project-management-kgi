@@ -10,6 +10,7 @@ const cardHandler = require('./api/cardHandler')
 const timelineHandler = require('./api/timelineHandler')
 const userHandler = require('./api/userHandler')
 const activityHandler = require('./api/activityHandler')
+const companyHandler = require('./api/companyHandler')
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use('/api/lists/', listHandler)
 app.use('/api/cards/', cardHandler)
 app.use('/api/timelines/', timelineHandler)
 app.use('/api/activities/', activityHandler)
+app.use('/api/company/', companyHandler)
 app.use(errorHandler)
 
 if (process.env.NODE_ENV === 'production') {
