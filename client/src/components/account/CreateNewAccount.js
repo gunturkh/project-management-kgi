@@ -3,7 +3,6 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { Helmet } from 'react-helmet'
 import {
   Box,
   Button,
@@ -14,11 +13,11 @@ import {
   Grid,
   TextField,
 } from '@material-ui/core'
+// import { DataGrid } from '@material-ui/data-grid'
 import {
   registerUser,
   fetchAllUsersInfo,
 } from '../../actions/actionCreators/userActions'
-import { fetchAllBoards } from '../../actions/actionCreators/boardActions'
 
 const role = [
   {
@@ -43,9 +42,6 @@ const CreateNewAccount = (props) => {
   console.log('users:', users)
   return (
     <>
-      <Helmet>
-        <title>Create Account</title>
-      </Helmet>
       <Formik
         initialValues={{
           username: '',
@@ -55,10 +51,12 @@ const CreateNewAccount = (props) => {
           passwordCheck: '',
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('First name is required'),
-          role: Yup.string().max(255).required('Last name is required'),
-          password: Yup.string().max(255).required('password is required'),
-          passwordCheck: Yup.string().max(255).required('password is required'),
+          username: Yup.string().max(255).required('Username is required'),
+          role: Yup.string().max(255).required('Role is required'),
+          password: Yup.string().max(255).required('Password is required'),
+          passwordCheck: Yup.string()
+            .max(255)
+            .required('Retype password is required'),
         })}
         onSubmit={(e) => {
           console.log('register')

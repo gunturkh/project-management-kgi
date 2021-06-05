@@ -113,6 +113,27 @@ export const updateUser = (params) => (dispatch) => {
   return Promise.resolve()
 }
 
+export const deleteUserById = (id, token) => (dispatch) => {
+  axios
+    .delete(BASE_URL + id, {
+      headers: { 'x-auth-token': token },
+    })
+    .then((res) => {
+      console.log('res delete: ', res)
+      dispatch({
+        type: ACTIONS.DELETE_USER,
+        payload: {
+          users: res.data,
+          token,
+        },
+      })
+    })
+    .catch((e) => {
+      dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
+    })
+  return Promise.resolve()
+}
+
 export const logoutUser = () => (dispatch) => {
   dispatch({ type: ACTIONS.LOGOUT_USER })
 }

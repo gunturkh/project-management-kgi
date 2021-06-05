@@ -52,11 +52,11 @@ const items = [
   //   icon: ShoppingBagIcon,
   //   title: 'Products',
   // },
-  // {
-  //   href: '/app/account',
-  //   icon: UserIcon,
-  //   title: 'Account',
-  // },
+  {
+    href: '/app/account',
+    icon: UserIcon,
+    title: 'Account',
+  },
   {
     href: '/app/settings',
     icon: SettingsIcon,

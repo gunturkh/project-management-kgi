@@ -46,6 +46,13 @@ export const userReducer = (state = initialState, action) => {
         token: action.payload.token,
         userRequest: false,
       }
+    case ACTIONS.DELETE_USER:
+      return {
+        ...state,
+        users: action.payload.users,
+        token: action.payload.token,
+        userRequest: false,
+      }
     case ACTIONS.LOGIN_REQUEST:
       return { ...state, requestLogin: true, successLogin: false }
     case ACTIONS.REGISTER_REQUEST:

@@ -149,4 +149,20 @@ router.patch('/update', async (req, res, next) => {
     }
 })
 
+// delete user based on id
+router.delete('/:id', auth, async (req, res, next) => {
+    const _id = req.params.id
+    console.log('deleted user id: ', _id)
+    try {
+        const user = await User.findOneAndDelete({ _id })
+        if (!user) return res.status(404).send()
+        // find all lists within user and delete them as well
+        const userList = await User.find({})
+        console.log('deleted user list: ', userList)
+        res.send(userList)
+    } catch (error) {
+        next(error)
+    }
+})
+
 module.exports = router
