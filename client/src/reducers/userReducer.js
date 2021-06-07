@@ -88,14 +88,15 @@ export const userReducer = (state = initialState, action) => {
         requestLogin: false,
         successLogin: true,
         isValid: true,
+        loginError: '',
       }
     case ACTIONS.REGISTER_SUCCESS:
       return {
         ...state,
-        user: {
-          id: action.payload.user._id,
-          username: action.payload.user.username,
-        },
+        // user: {
+        //   id: action.payload.user._id,
+        //   username: action.payload.user.username,
+        // },
         requestRegister: false,
         successRegister: true,
       }

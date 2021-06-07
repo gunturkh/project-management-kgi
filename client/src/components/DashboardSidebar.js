@@ -22,6 +22,7 @@ import {
   Users as UsersIcon,
   Calendar as CalendarIcon,
   LogOut as LogOutIcon,
+  Briefcase,
 } from 'react-feather'
 import NavItem from './NavItem'
 
@@ -63,9 +64,9 @@ const items = [
     title: 'Settings',
   },
   {
-    href: '/login',
-    icon: LockIcon,
-    title: 'Login',
+    href: '/app/company',
+    icon: Briefcase,
+    title: 'Company',
   },
   // {
   //   href: '/register',

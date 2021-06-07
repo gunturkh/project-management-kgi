@@ -10,6 +10,7 @@ import { activityReducer } from '../reducers/activityReducer'
 import { imageReducer } from '../reducers/imageReducer'
 import { userReducer } from '../reducers/userReducer'
 import { timelinesReducer } from '../reducers/timelinesReducer'
+import { companyReducer } from '../reducers/companyReducer'
 import * as ACTIONS from '../actions/actions'
 
 const persistConfig = {
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   images: imageReducer,
   user: userReducer,
   timeline: timelinesReducer,
+  company: companyReducer,
 })
 
 const rootReducer = (state, action) => {

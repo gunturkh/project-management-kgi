@@ -71,6 +71,7 @@ export const loginUser = (params) => (dispatch) => {
         payload: { error: e.response.data.msg },
       })
     })
+  return Promise.resolve()
 }
 
 export const registerUser = (params) => (dispatch) => {

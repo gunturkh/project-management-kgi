@@ -2,14 +2,14 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Box, Container, Grid, Button } from '@material-ui/core'
 import { useNavigate } from 'react-router-dom'
-import UsersList from '../components/dashboard/UsersList'
+import CompanyList from '../components/company/CompanyList'
 
-const Account = () => {
+const Company = () => {
   const navigate = useNavigate()
   return (
     <>
       <Helmet>
-        <title>Account</title>
+        <title>Company</title>
       </Helmet>
       <Box
         sx={{
@@ -32,16 +32,16 @@ const Account = () => {
             <Button
               color="primary"
               variant="contained"
-              onClick={() => navigate(`/app/account/new`, { replace: true })}
+              onClick={() => navigate(`/app/company/new`, { replace: true })}
             >
-              Add User
+              Add Company
             </Button>
           </Box>
         </Box>
         <Container maxWidth="lg">
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <UsersList />
+              <CompanyList />
             </Grid>
           </Grid>
         </Container>
@@ -50,4 +50,4 @@ const Account = () => {
   )
 }
 
-export default Account
+export default Company
