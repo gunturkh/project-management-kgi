@@ -33,22 +33,8 @@ import {
   fetchBoardById,
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
-// import { createNewActivity } from '../../actions/actionCreators/activityActions'
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama',
-  },
-  {
-    value: 'new-york',
-    label: 'New York',
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco',
-  },
-]
+import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
+import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -77,27 +63,16 @@ const EditProject = (props) => {
   const { board, loading, currBoard, error } = useSelector(
     (state) => state.boards,
   )
-  const { listLoading, lists } = useSelector((state) => state.lists)
-  const { cardLoading, cards } = useSelector((state) => state.cards)
-  const { activities } = useSelector((state) => state.activities)
-  const { isValid, user, token, tokenRequest } = useSelector(
+  const { companies } = useSelector((state) => state.company)
+  const { isValid, user, users, token, tokenRequest } = useSelector(
     (state) => state.user,
   )
   useEffect(() => {
-    console.log('token: ', token)
-    console.log('tokenRequest: ', tokenRequest)
-    console.log('id: ', id)
-    console.log('isValid: ', isValid)
-    console.log('!error: ', !error)
-    console.log('error: ', error)
-    if (isValid && !error) {
+    if (isValid) {
       if (id.length === 24) {
         dispatch(fetchBoardById(id, token))
-        console.log('board: ', board)
-        console.log('currBoard: ', currBoard)
-        // dispatch(fetchListsFromBoard(id, token))
-        // dispatch(fetchsCardsFromBoard(id, token))
-        // dispatch(fetchActivitiesFromBoard(id, token))
+        dispatch(fetchAllUsersInfo(token))
+        dispatch(fetchAllCompaniesInfo(token))
       }
     }
   }, [dispatch, id, isValid, token, error])
@@ -294,9 +269,13 @@ const EditProject = (props) => {
                         style={{ maxWidth: '100%' }}
                         required
                       >
-                        {names.map((name) => (
-                          <MenuItem key={name} value={name} style={getStyles()}>
-                            {name}
+                        {users.map((user) => (
+                          <MenuItem
+                            key={`${user.username}-${user._id}`}
+                            value={user._id}
+                            style={getStyles()}
+                          >
+                            {user.username}
                           </MenuItem>
                         ))}
                       </Select>
@@ -304,15 +283,36 @@ const EditProject = (props) => {
                   </div>
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Company"
-                    name="company"
-                    onChange={handleChange}
-                    required
-                    value={values.company}
-                    variant="outlined"
-                  />
+                  <div>
+                    <FormControl style={{ width: '100%' }}>
+                      <InputLabel id="demo-mutiple-name-label">
+                        Company
+                      </InputLabel>
+                      <Select
+                        // labelId="demo-mutiple-name-label"
+                        // id="demo-mutiple-name"
+                        // multiple
+                        value={values.company}
+                        onChange={(e) =>
+                          setFieldValue('company', e.target.value)
+                        }
+                        input={<OutlinedInput label="Company" />}
+                        MenuProps={MenuProps}
+                        style={{ maxWidth: '100%' }}
+                        required
+                      >
+                        {companies.map((company) => (
+                          <MenuItem
+                            key={`${company.companyName}-${company._id}`}
+                            value={company._id}
+                            style={getStyles()}
+                          >
+                            {company.companyName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
                 </Grid>
               </Grid>
             </CardContent>

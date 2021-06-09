@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 
@@ -25,22 +25,8 @@ import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewBoard } from '../../actions/actionCreators/boardActions'
-// import { createNewActivity } from '../../actions/actionCreators/activityActions'
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama',
-  },
-  {
-    value: 'new-york',
-    label: 'New York',
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco',
-  },
-]
+import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
+import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -64,20 +50,11 @@ const MenuProps = {
 const CreateProject = (props) => {
   const classes = useStyles()
   const theme = useTheme()
-  const { token, isValid, user, tokenRequest } = useSelector(
+  const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
   )
+  const { companies } = useSelector((state) => state.company)
   const dispatch = useDispatch()
-  console.log('classes: ', classes)
-  console.log('user: ', user)
-  const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA',
-  })
 
   const navigate = useNavigate()
   function getStyles() {
@@ -86,20 +63,12 @@ const CreateProject = (props) => {
     }
   }
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    })
-  }
-  const names = [
-    'Alex Nico',
-    'Jonathan',
-    'Programmer',
-    'Mechanical',
-    'Electrical',
-    'Sales',
-  ]
+  useEffect(() => {
+    if (isValid) {
+      dispatch(fetchAllCompaniesInfo(token))
+      dispatch(fetchAllUsersInfo(token))
+    }
+  }, [])
 
   return (
     <Formik
@@ -138,13 +107,6 @@ const CreateProject = (props) => {
           console.log('done create project')
           navigate('/app/projects')
         })
-        // navigate(`/app/projects`, { replace: true })
-        // const { username, password } = e
-        // const loginReq = { username, password }
-        // dispatch(loginUser(loginReq))
-        // setUsername('')
-        // setPassword('')
-        // navigate('/', { replace: true })
       }}
     >
       {({
@@ -253,15 +215,21 @@ const CreateProject = (props) => {
                         // id="demo-mutiple-name"
                         multiple
                         value={values.pic}
-                        onChange={(e) => setFieldValue('pic', e.target.value)}
+                        onChange={(e) => {
+                          setFieldValue('pic', e.target.value)
+                        }}
                         input={<OutlinedInput label="PIC" />}
                         MenuProps={MenuProps}
                         style={{ maxWidth: '100%' }}
                         required
                       >
-                        {names.map((name) => (
-                          <MenuItem key={name} value={name} style={getStyles()}>
-                            {name}
+                        {users.map((user) => (
+                          <MenuItem
+                            key={`${user.username}-${user._id}`}
+                            value={user._id}
+                            style={getStyles()}
+                          >
+                            {user.username}
                           </MenuItem>
                         ))}
                       </Select>
@@ -269,15 +237,36 @@ const CreateProject = (props) => {
                   </div>
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Company"
-                    name="company"
-                    onChange={handleChange}
-                    required
-                    value={values.company}
-                    variant="outlined"
-                  />
+                  <div>
+                    <FormControl style={{ width: '100%' }}>
+                      <InputLabel id="demo-mutiple-name-label">
+                        Company
+                      </InputLabel>
+                      <Select
+                        // labelId="demo-mutiple-name-label"
+                        // id="demo-mutiple-name"
+                        // multiple
+                        value={values.company}
+                        onChange={(e) =>
+                          setFieldValue('company', e.target.value)
+                        }
+                        input={<OutlinedInput label="Company" />}
+                        MenuProps={MenuProps}
+                        style={{ maxWidth: '100%' }}
+                        required
+                      >
+                        {companies.map((company) => (
+                          <MenuItem
+                            key={`${company.companyName}-${company._id}`}
+                            value={company._id}
+                            style={getStyles()}
+                          >
+                            {company.companyName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
                 </Grid>
               </Grid>
             </CardContent>

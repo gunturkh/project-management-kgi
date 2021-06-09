@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,6 +19,8 @@ import {
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import { User, Edit, Trash2 } from 'react-feather'
+import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
+import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
 function rand() {
   return Math.round(Math.random() * 20) - 10
@@ -50,19 +52,34 @@ const ProjectCard = ({ board, ...rest }) => {
   const classes = useStyles()
   const [modalStyle] = useState(getModalStyle)
   const [openModal, setOpenModal] = useState(false)
-  const { token } = useSelector((state) => state.user)
+  const { isValid, token, users } = useSelector((state) => state.user)
+  const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
   const navigate = useNavigate()
   console.log('board:', board)
+  console.log('companies:', companies)
   const dispatch = useDispatch()
 
-  const handleOpen = () => {
-    setOpenModal(true)
-  }
+  let mappedPic = []
+  let mappedCompany = []
+  const [projectPic, setProjectPic] = useState([])
+  useEffect(() => {
+    if (isValid) {
+      dispatch(fetchAllCompaniesInfo(token))
+      dispatch(fetchAllUsersInfo(token))
+    }
+  }, [])
+  mappedPic = board?.pic?.map((pic) => {
+    return users.find((user) => user._id === pic)?.username
+  })
+  mappedCompany = companies.find((company) => company._id === board.company)
+    ?.companyName
   const handleClose = () => {
     setOpenModal(false)
   }
-
+  console.log('mapped pic: ', mappedPic)
+  console.log('mapped company: ', mappedCompany)
+  console.log('projectPic: ', projectPic)
   return (
     <Card
       sx={{
@@ -124,7 +141,7 @@ const ProjectCard = ({ board, ...rest }) => {
           gutterBottom
           variant="h6"
         >
-          {board?.company || ''}
+          {mappedCompany || ''}
         </Typography>
         <Typography
           align="left"
@@ -190,7 +207,7 @@ const ProjectCard = ({ board, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {board?.pic.join(', ') || ''}
+              {mappedPic?.join(', ') || ''}
             </Typography>
           </Grid>
           <Modal open={openModal} onClose={handleClose}>

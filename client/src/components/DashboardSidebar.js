@@ -27,7 +27,7 @@ import {
 import NavItem from './NavItem'
 
 const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
+  avatar: '/static/images/avatars/kgi.png',
   jobTitle: 'Admin',
   name: 'Kuantum Gabe Integritas',
 }
@@ -59,14 +59,14 @@ const items = [
     title: 'Account',
   },
   {
-    href: '/app/settings',
-    icon: SettingsIcon,
-    title: 'Settings',
-  },
-  {
     href: '/app/company',
     icon: Briefcase,
     title: 'Company',
+  },
+  {
+    href: '/app/settings',
+    icon: SettingsIcon,
+    title: 'Settings',
   },
   // {
   //   href: '/register',

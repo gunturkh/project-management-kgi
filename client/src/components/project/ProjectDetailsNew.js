@@ -40,16 +40,10 @@ import {
   createNewActivity,
   deleteActivityById,
 } from '../../actions/actionCreators/activityActions'
+import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
+import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 import AddItem from '../AddItem'
-// import Header from './Header'
-// import BoardHeader from './BoardHeader'
-// import SideMenu from './SideMenu'
-// import NotFound from './NotFound'
-import {
-  fetchTimelineByBoardId,
-  updateTimelineById,
-  updateTimelineByBoardId,
-} from '../../actions/actionCreators/timelineActions'
+import { fetchTimelineByBoardId } from '../../actions/actionCreators/timelineActions'
 import Timeline from '../Timeline'
 
 const useStyles = makeStyles((theme) => ({
@@ -96,9 +90,10 @@ export default function ProjectDetailsNew() {
   const { listLoading, lists } = useSelector((state) => state.lists)
   const { cardLoading, cards } = useSelector((state) => state.cards)
   const { activities } = useSelector((state) => state.activities)
-  const { isValid, user, token, tokenRequest } = useSelector(
+  const { isValid, user, users, token, tokenRequest } = useSelector(
     (state) => state.user,
   )
+  const { companies } = useSelector((state) => state.company)
   const [initialData, setInitialData] = useState({})
   const [initDone, setInitDone] = useState(false)
   const addFlag = useRef(true)
@@ -109,6 +104,8 @@ export default function ProjectDetailsNew() {
   const [editable, setEditable] = useState(false)
   const [boardTitle, setBoardTitle] = useState('')
   const dispatch = useDispatch()
+  let mappedPic = []
+  let mappedCompany = []
 
   // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
   //   name = currBoard.name
@@ -126,10 +123,16 @@ export default function ProjectDetailsNew() {
       dispatch(fetchsCardsFromBoard(id, token))
       dispatch(fetchActivitiesFromBoard(id, token))
       dispatch(fetchTimelineByBoardId(id, token))
+      dispatch(fetchAllCompaniesInfo(token))
+      dispatch(fetchAllUsersInfo(token))
     }
     // }
   }, [dispatch, id, isValid, token, error])
-
+  mappedPic = currBoard?.pic?.map((pic) => {
+    return users.find((user) => user._id === pic)?.username
+  })
+  mappedCompany = companies.find((company) => company._id === currBoard.company)
+    ?.companyName
   useEffect(() => {
     if (!_.isEmpty(currBoard)) {
       // setColor(currBoard.image.color)
@@ -432,7 +435,7 @@ export default function ProjectDetailsNew() {
                 gutterBottom
                 variant="h5"
               >
-                Company: {currBoard?.company || ''}
+                Company: {mappedCompany || ''}
               </Typography>
             </Grid>
             <Grid item md={12} xs={12}>
@@ -499,7 +502,7 @@ export default function ProjectDetailsNew() {
                 sx={{ pl: 1 }}
                 variant="body2"
               >
-                PIC: {currBoard?.pic?.join(', ') || ''}
+                PIC: {mappedPic.join(', ') || ''}
               </Typography>
             </Grid>
           </Grid>

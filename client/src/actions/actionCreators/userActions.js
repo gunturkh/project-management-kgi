@@ -3,16 +3,16 @@ import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/user/'
 
-export const fetchAllUsersInfo = (params, token) => (dispatch) => {
+export const fetchAllUsersInfo = (token) => (dispatch) => {
   dispatch({ type: ACTIONS.USERS_REQUEST })
   axios
-    .post(`${BASE_URL}list`, params, {
+    .get(`${BASE_URL}list`, {
       headers: { 'x-auth-token': token },
     })
     .then((res) => {
       dispatch({
         type: ACTIONS.GET_USERS,
-        payload: { users: res.data, role: params.role, token },
+        payload: { users: res.data, token },
       })
     })
     .catch((e) => {

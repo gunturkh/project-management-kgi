@@ -105,19 +105,11 @@ router.get('/', auth, async (req, res, next) => {
 })
 
 //get all users
-router.post('/list', auth, async (req, res, next) => {
+router.get('/list', auth, async (req, res, next) => {
     try {
-        const { role } = req.body
         const token = req.header('x-auth-token')
-        console.log('req.body:', req.body)
-        console.log('token:', token)
         if (!token) return res.json(false)
         // console.log('req.body:', req)
-        if (role !== 'ADMIN')
-            return res
-                .status(400)
-                .json({ msg: 'You are not authorized to view this info' })
-
         const user = await User.find({})
         res.json(user)
     } catch (error) {
