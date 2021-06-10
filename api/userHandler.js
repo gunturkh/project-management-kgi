@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const User = require('../models/user')
+const Board = require('../models/board')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { auth } = require('../middleware')
@@ -148,7 +149,7 @@ router.delete('/:id', auth, async (req, res, next) => {
     try {
         const user = await User.findOneAndDelete({ _id })
         if (!user) return res.status(404).send()
-        // find all lists within user and delete them as well
+        Board.findOneAndUpdate({ pic: _id }, { $pullAll: { pic: [_id] } })
         const userList = await User.find({})
         console.log('deleted user list: ', userList)
         res.send(userList)

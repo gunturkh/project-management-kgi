@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 const Timeline = (props) => {
   const classes = useStyles()
   const { token } = useSelector((state) => state.user)
-  const { company, companies, currentCompany } = useSelector(
+  const { company, companies, companyLoading } = useSelector(
     (state) => state.company,
   )
   const [openModal, setOpenModal] = useState(false)
@@ -60,7 +60,7 @@ const Timeline = (props) => {
   const navigate = useNavigate()
   console.log('token: ', token)
   useEffect(() => {
-    dispatch(fetchAllCompaniesInfo(token))
+    if (!companyLoading) dispatch(fetchAllCompaniesInfo(token))
     // dispatch(fetchAllBoards(token))
   }, [dispatch])
   console.log('companies:', companies)

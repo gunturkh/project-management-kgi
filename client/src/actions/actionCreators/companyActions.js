@@ -4,7 +4,7 @@ import * as ACTIONS from '../actions'
 const BASE_URL = '/api/company/'
 
 export const fetchAllCompaniesInfo = (token) => (dispatch) => {
-  // dispatch({ type: ACTIONS.COMPANY_REQUEST })
+  dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
   axios
     .get(`${BASE_URL}`, {
       headers: { 'x-auth-token': token },
@@ -21,7 +21,7 @@ export const fetchAllCompaniesInfo = (token) => (dispatch) => {
 }
 
 export const fetchCompanyById = (id, token) => (dispatch) => {
-  // dispatch({ type: ACTIONS.COMPANY_REQUEST })
+  dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
   axios
     .get(BASE_URL + id, {
       headers: { 'x-auth-token': token },
@@ -77,7 +77,7 @@ export const addCompany = (params) => (dispatch) => {
 }
 
 export const updateCompanyById = (id, params, token) => (dispatch) => {
-  // dispatch({ type: ACTIONS.UPDATE_REQUEST })
+  dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
   axios
     .patch(`${BASE_URL}+${id}`, params, {
       headers: { 'x-auth-token': token },
@@ -100,6 +100,7 @@ export const updateCompanyById = (id, params, token) => (dispatch) => {
 }
 
 export const deleteCompanyById = (id, token) => (dispatch) => {
+  dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
   axios
     .delete(BASE_URL + id, {
       headers: { 'x-auth-token': token },

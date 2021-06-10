@@ -45,6 +45,7 @@ export const userReducer = (state = initialState, action) => {
         users: action.payload.users,
         token: action.payload.token,
         userRequest: false,
+        tokenRequest: false,
       }
     case ACTIONS.DELETE_USER:
       return {
@@ -52,11 +53,18 @@ export const userReducer = (state = initialState, action) => {
         users: action.payload.users,
         token: action.payload.token,
         userRequest: false,
+        tokenRequest: false,
       }
     case ACTIONS.LOGIN_REQUEST:
       return { ...state, requestLogin: true, successLogin: false }
     case ACTIONS.REGISTER_REQUEST:
-      return { ...state, requestRegister: true, successRegister: false }
+      return {
+        ...state,
+        tokenRequest: true,
+        requestRegister: true,
+        successRegister: false,
+        tokenRequest: true,
+      }
     case ACTIONS.LOGIN_FAILED:
       return {
         ...state,
@@ -69,6 +77,7 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         successRegister: false,
         requestRegister: false,
+        tokenRequest: false,
         registerError: action.payload.error,
       }
     case ACTIONS.UPDATE_FAILED:
@@ -99,6 +108,7 @@ export const userReducer = (state = initialState, action) => {
         // },
         requestRegister: false,
         successRegister: true,
+        tokenRequest: false,
       }
     case ACTIONS.UPDATE_SUCCESS:
       return {

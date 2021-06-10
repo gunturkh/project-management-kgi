@@ -24,7 +24,8 @@ const boardSchema = new Schema(
             required: true,
         },
         company: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'company',
             required: true,
         },
         userId: {

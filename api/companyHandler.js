@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const Company = require('../models/company')
+const Board = require('../models/board')
 const { auth } = require('../middleware')
 const router = Router()
 
@@ -43,6 +44,7 @@ router.delete('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
         await Company.findOneAndDelete({ _id })
+        Board.findOneAndUpdate({ company: _id }, { company: '' })
         const company = await Company.find({})
         res.send(company)
     } catch (error) {
@@ -83,4 +85,3 @@ router.patch('/:id', auth, async (req, res, next) => {
 })
 
 module.exports = router
-

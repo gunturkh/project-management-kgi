@@ -133,7 +133,7 @@ const ProjectCard = ({ board, ...rest }) => {
           </Button>
         </Box>
         <Typography align="left" color="textPrimary" gutterBottom variant="h4">
-          {board?.projectName || ''}
+          {board?.projectName || 'No Project Name Filled'}
         </Typography>
         <Typography
           align="left"
@@ -141,7 +141,7 @@ const ProjectCard = ({ board, ...rest }) => {
           gutterBottom
           variant="h6"
         >
-          {mappedCompany || ''}
+          {mappedCompany || 'No Company Assigned'}
         </Typography>
         <Typography
           align="left"
@@ -149,7 +149,7 @@ const ProjectCard = ({ board, ...rest }) => {
           variant="body2"
           style={{ paddingTop: 10 }}
         >
-          {board?.projectDescription || ''}
+          {board?.projectDescription || 'No Description Filled'}
         </Typography>
         <Button
           component={RouterLink}
@@ -190,7 +190,7 @@ const ProjectCard = ({ board, ...rest }) => {
                 ? `${moment(board.startDate).format('DD MMMM YYYY')} - ${moment(
                     board.endDate,
                   ).format('DD MMMM YYYY')}`
-                : ''}
+                : 'No Start Date - End Date Filled'}
             </Typography>
           </Grid>
           <Grid
@@ -207,7 +207,7 @@ const ProjectCard = ({ board, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {mappedPic?.join(', ') || ''}
+              {mappedPic?.join(', ') || 'No PIC Assigned'}
             </Typography>
           </Grid>
           <Modal open={openModal} onClose={handleClose}>

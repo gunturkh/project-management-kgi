@@ -114,7 +114,8 @@ export const updateUser = (params) => (dispatch) => {
   return Promise.resolve()
 }
 
-export const deleteUserById = (id, token) => (dispatch) => {
+export const deleteUserById = (data, token) => (dispatch) => {
+  const { id } = data
   axios
     .delete(BASE_URL + id, {
       headers: { 'x-auth-token': token },

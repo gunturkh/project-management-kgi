@@ -36,6 +36,7 @@ import {
   updateListById,
 } from '../../actions/actionCreators/listActions'
 import InputCard from '../InputCard'
+import Loading from '../Loading'
 import {
   createNewActivity,
   deleteActivityById,
@@ -420,105 +421,109 @@ export default function ProjectDetailsNew() {
 
   return (
     <>
-      <Card>
-        <CardHeader
-          subheader="Details about the project"
-          title="Project Details"
-        />
-        <Divider />
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              <Typography
-                align="left"
-                color="textPrimary"
-                gutterBottom
-                variant="h5"
-              >
-                Company: {mappedCompany || ''}
-              </Typography>
-            </Grid>
-            <Grid item md={12} xs={12}>
-              <Typography
-                align="left"
-                color="textPrimary"
-                gutterBottom
-                variant="h5"
-              >
-                Name: {currBoard?.projectName}
-              </Typography>
-            </Grid>
-            <Grid item md={12} xs={12}>
-              <Typography
-                align="left"
-                color="textPrimary"
-                gutterBottom
-                variant="h6"
-              >
-                Description: {currBoard?.projectDescription}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-              sx={{
-                alignItems: 'center',
-                display: 'flex',
-              }}
-            >
-              <AccessTimeIcon color="action" />
-              <Typography
-                align="left"
-                color="textSecondary"
-                display="inline"
+      {loading ? (
+        <Loading />
+      ) : (
+        <Card>
+          <CardHeader
+            subheader="Details about the project"
+            title="Project Details"
+          />
+          <Divider />
+          <CardContent>
+            <Grid container spacing={3}>
+              <Grid item md={6} xs={12}>
+                <Typography
+                  align="left"
+                  color="textPrimary"
+                  gutterBottom
+                  variant="h5"
+                >
+                  Company: {mappedCompany || ''}
+                </Typography>
+              </Grid>
+              <Grid item md={12} xs={12}>
+                <Typography
+                  align="left"
+                  color="textPrimary"
+                  gutterBottom
+                  variant="h5"
+                >
+                  Name: {currBoard?.projectName}
+                </Typography>
+              </Grid>
+              <Grid item md={12} xs={12}>
+                <Typography
+                  align="left"
+                  color="textPrimary"
+                  gutterBottom
+                  variant="h6"
+                >
+                  Description: {currBoard?.projectDescription}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                md={6}
+                xs={12}
                 sx={{
-                  pl: 1,
+                  alignItems: 'center',
+                  display: 'flex',
                 }}
-                variant="body2"
               >
-                {currBoard?.startDate && currBoard?.endDate
-                  ? `${moment(currBoard.startDate).format(
-                      'DD MMMM YYYY',
-                    )} - ${moment(currBoard.endDate).format('DD MMMM YYYY')}`
-                  : ''}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-              md={6}
-              xs={12}
-              sx={{
-                alignItems: 'center',
-                display: 'flex',
-              }}
-            >
-              <User size="20" />
-              <Typography
-                color="textSecondary"
-                display="inline"
-                sx={{ pl: 1 }}
-                variant="body2"
+                <AccessTimeIcon color="action" />
+                <Typography
+                  align="left"
+                  color="textSecondary"
+                  display="inline"
+                  sx={{
+                    pl: 1,
+                  }}
+                  variant="body2"
+                >
+                  {currBoard?.startDate && currBoard?.endDate
+                    ? `${moment(currBoard.startDate).format(
+                        'DD MMMM YYYY',
+                      )} - ${moment(currBoard.endDate).format('DD MMMM YYYY')}`
+                    : ''}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                md={6}
+                xs={12}
+                md={6}
+                xs={12}
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                }}
               >
-                PIC: {mappedPic.join(', ') || ''}
-              </Typography>
+                <User size="20" />
+                <Typography
+                  color="textSecondary"
+                  display="inline"
+                  sx={{ pl: 1 }}
+                  variant="body2"
+                >
+                  PIC: {mappedPic.join(', ') || ''}
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid item lg={12} md={12} xl={12} xs={12}></Grid>
-        </CardContent>
-        <Divider />
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            p: 2,
-          }}
-        >
-          <Timeline title={currBoard.projectName} eventsData={timelines} />
-        </Box>
-      </Card>
+            <Grid item lg={12} md={12} xl={12} xs={12}></Grid>
+          </CardContent>
+          <Divider />
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              p: 2,
+            }}
+          >
+            <Timeline title={currBoard.projectName} eventsData={timelines} />
+          </Box>
+        </Card>
+      )}
       {isValid || tokenRequest ? (
         <div
           className={classes.root}
@@ -630,11 +635,11 @@ export default function ProjectDetailsNew() {
             </DragDropContext>
           </>
           {/*
-          <SideMenu
-          setBackground={setBackground}
-          board={{ id, color, url, title: boardTitle }}
-          />
-          */}
+            <SideMenu
+            setBackground={setBackground}
+            board={{ id, color, url, title: boardTitle }}
+            />
+            */}
         </div>
       ) : (
         <div></div>
