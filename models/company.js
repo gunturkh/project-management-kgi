@@ -17,7 +17,9 @@ const companySchema = new Schema({
     companyLogo: {
         type: String,
     },
+    companyTeam: {
+        type: Array,
+    },
 })
 
 module.exports = mongoose.model('company', companySchema)
-

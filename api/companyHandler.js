@@ -29,7 +29,24 @@ router.get('/:id', auth, async (req, res, next) => {
 
 //create new company
 router.post('/', async (req, res, next) => {
+    const { companyName, companyEmail, companyAddress } = req.body
     try {
+        if (!companyName || !companyEmail || !companyAddress)
+            return res
+                .status(400)
+                .json({ msg: 'Don\'t be lazy 🦥, enter all fields value' })
+        const existingCompany = await Company.findOne({ companyName })
+        const existingCompanyEmail = await Company.findOne({ companyEmail })
+        if (existingCompany)
+            return res.status(400).json({
+                msg: 'Company exists, please enter different company name ',
+            })
+        if (existingCompanyEmail)
+            return res.status(400).json({
+                msg:
+                    'Company Email exists, please enter different company name ',
+            })
+
         const company = new Company(req.body)
         const respData = await company.save()
         res.send(respData)
@@ -61,6 +78,7 @@ router.patch('/:id', auth, async (req, res, next) => {
         'companyEmail',
         'companyAddress',
         'companyLogo',
+        'companyTeam',
     ]
     console.log('update?', updates)
     const isValidOperation = updates.every((update) => {

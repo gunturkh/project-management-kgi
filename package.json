@@ -35,7 +35,9 @@
     "jsonwebtoken": "^8.5.1",
     "migrate-mongo": "^8.2.2",
     "mongoose": "^5.9.24",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "sharp": "^0.28.3"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",

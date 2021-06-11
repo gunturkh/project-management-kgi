@@ -4,11 +4,31 @@ const Board = require('../models/board')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { auth } = require('../middleware')
+const multer = require('multer')
+const sharp = require('sharp')
 const router = Router()
 
+const upload = multer({
+    limits: {
+        fileSize: 1000000,
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+            cb(new Error('Please upload an image.'))
+        }
+        cb(undefined, true)
+    },
+})
 // register a new user
 router.post('/register', async (req, res, next) => {
-    const { password, passwordCheck, username, userRole, role } = req.body
+    const {
+        password,
+        passwordCheck,
+        username,
+        userRole,
+        role,
+        avatar,
+    } = req.body
     try {
         if (!password || !passwordCheck || !username || !userRole || !role)
             return res
@@ -33,12 +53,18 @@ router.post('/register', async (req, res, next) => {
 
         const salt = await bcrypt.genSalt()
         const passwordHash = await bcrypt.hash(password, salt)
-        const newUser = new User({ username, password: passwordHash, role })
+        const newUser = new User({
+            username,
+            password: passwordHash,
+            role,
+            avatar,
+        })
         const response = await newUser.save()
         res.send({
             username: response.username,
             _id: response._id,
             role: response.role,
+            avatar: response.avatar,
         })
     } catch (error) {
         if (error.name === 'ValidationError') return res.status(422)
@@ -94,11 +120,13 @@ router.post('/tokenIsValid', async (req, res, next) => {
 
 router.get('/', auth, async (req, res, next) => {
     try {
-        const user = await User.findById(req.user)
+        const user = await User.findById(req.user, { avatar: 0 })
         if (!user) return res.status(404).send()
         res.json({
             username: user.username,
             id: user._id,
+            role: user.role,
+            avatar: user.avatar,
         })
     } catch (error) {
         next(error)
@@ -111,7 +139,7 @@ router.get('/list', auth, async (req, res, next) => {
         const token = req.header('x-auth-token')
         if (!token) return res.json(false)
         // console.log('req.body:', req)
-        const user = await User.find({})
+        const user = await User.find({}, { avatar: 0 })
         res.json(user)
     } catch (error) {
         next(error)
@@ -147,7 +175,7 @@ router.delete('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     console.log('deleted user id: ', _id)
     try {
-        const user = await User.findOneAndDelete({ _id })
+        const user = await User.findOneAndDelete({ _id }, { avatar: 0 })
         if (!user) return res.status(404).send()
         Board.findOneAndUpdate({ pic: _id }, { $pullAll: { pic: [_id] } })
         const userList = await User.find({})
@@ -158,4 +186,54 @@ router.delete('/:id', auth, async (req, res, next) => {
     }
 })
 
+// upload avatar
+router.post(
+    '/upload',
+    upload.single('upload'),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.body.id)
+            const buffer = await sharp(req.file.buffer)
+                // .resize({ width: 500, height: 500 })
+                .png()
+                .toBuffer()
+            user.avatar = buffer
+            user.save()
+            res.send()
+        } catch (e) {
+            res.status(400).send(e)
+        }
+    },
+    (error, req, res, next) => {
+        res.status(400).send({ error: `${error.message}, maximum 1MB` })
+    }
+)
+
+// delete avatar
+router.delete('/:id/image', async (req, res) => {
+    try {
+        console.log('user id delete avatar:', req.params.id)
+        const user = await User.findById({ _id: req.params.id })
+        user.avatar = undefined
+        user.save()
+        res.send()
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
+// get avatar
+router.get('/:id/image', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error()
+        }
+        //response header, use set
+        res.set('Content-Type', 'image/png')
+        res.send(user.avatar)
+    } catch (e) {
+        res.status(404).send()
+    }
+})
 module.exports = router

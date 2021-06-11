@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Box, Container, Grid } from '@material-ui/core'
 import LatestOrders from '../components/dashboard/LatestOrders'
@@ -10,27 +12,38 @@ import TotalProfit from '../components/dashboard/TotalProfit'
 import TrafficByDevice from '../components/dashboard/TrafficByDevice'
 import UsersList from '../components/dashboard/UsersList'
 
-const Dashboard = () => (
-  <>
-    <Helmet>
-      <title>Dashboard | Material Kit</title>
-    </Helmet>
-    <Box
-      sx={{
-        backgroundColor: 'background.default',
-        minHeight: '100%',
-        py: 3,
-      }}
-    >
-      <Container maxWidth={false}>
-        <Grid container spacing={3}>
-          <Grid item lg={6} md={6} xl={6} xs={12}>
-            <UsersList widget />
-          </Grid>
-          <Grid item lg={3} sm={6} xl={3} xs={12}>
-            <TotalProjects />
-          </Grid>
-          {/*
+const Dashboard = () => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const localToken = localStorage.getItem('auth-token')
+    console.log('localToken:', localToken)
+    console.log('localToken?:', localToken === '')
+    if (localToken === '') {
+      console.log('localToken Empty')
+      navigate('/login', { replace: 'true' })
+    }
+  }, [])
+  return (
+    <>
+      <Helmet>
+        <title>Dashboard | Material Kit</title>
+      </Helmet>
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          py: 3,
+        }}
+      >
+        <Container maxWidth={false}>
+          <Grid container spacing={3}>
+            <Grid item lg={6} md={6} xl={6} xs={12}>
+              <UsersList widget />
+            </Grid>
+            <Grid item lg={3} sm={6} xl={3} xs={12}>
+              <TotalProjects />
+            </Grid>
+            {/*
             <Grid item lg={3} sm={6} xl={3} xs={12}>
             <TasksProgress />
             </Grid>
@@ -50,10 +63,11 @@ const Dashboard = () => (
             <LatestOrders />
             </Grid>
             */}
-        </Grid>
-      </Container>
-    </Box>
-  </>
-)
+          </Grid>
+        </Container>
+      </Box>
+    </>
+  )
+}
 
 export default Dashboard

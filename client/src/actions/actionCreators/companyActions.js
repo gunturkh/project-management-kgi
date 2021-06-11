@@ -79,7 +79,7 @@ export const addCompany = (params) => (dispatch) => {
 export const updateCompanyById = (id, params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
   axios
-    .patch(`${BASE_URL}+${id}`, params, {
+    .patch(`${BASE_URL}/${id}`, params, {
       headers: { 'x-auth-token': token },
     })
     .then((res) => {

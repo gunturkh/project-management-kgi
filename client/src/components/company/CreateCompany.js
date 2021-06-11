@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 
 import {
@@ -10,12 +10,20 @@ import {
   Divider,
   Grid,
   TextField,
+  InputLabel,
+  OutlinedInput,
+  MenuItem,
+  Select,
+  FormControl,
+  Snackbar,
+  Alert as MuiAlert,
 } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { addCompany } from '../../actions/actionCreators/companyActions'
+import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -24,6 +32,10 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '300px',
   },
 }))
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -39,7 +51,30 @@ const MenuProps = {
 const CreateCompany = (props) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const theme = useTheme()
+  const { error } = useSelector((state) => state.company)
+  const { token, isValid, user, users, tokenRequest } = useSelector(
+    (state) => state.user,
+  )
+  const [alertOpen, setAlertOpen] = React.useState(false)
+  function getStyles() {
+    return {
+      fontWeight: theme.typography.fontWeightRegular,
+    }
+  }
 
+  useEffect(() => {
+    // if (isValid) {
+    dispatch(fetchAllUsersInfo(token))
+    // }
+  }, [])
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setAlertOpen(false)
+  }
   return (
     <Formik
       initialValues={{
@@ -47,6 +82,7 @@ const CreateCompany = (props) => {
         companyEmail: '',
         companyAddress: '',
         companyLogo: '',
+        companyTeam: [],
       }}
       validationSchema={Yup.object().shape({
         companyName: Yup.string().max(255).required('Company name is required'),
@@ -57,6 +93,7 @@ const CreateCompany = (props) => {
         companyAddress: Yup.string()
           .max(255)
           .required('Company address is required'),
+        // companyTeam: Yup.array().required('Company team PIC is required'),
       })}
       onSubmit={(e) => {
         // e.preventDefault()
@@ -66,10 +103,15 @@ const CreateCompany = (props) => {
           companyEmail: e.companyEmail,
           companyAddress: e.companyAddress,
           companyLogo: '',
+          companyTeam: e.companyTeam,
         }
         console.log('postCompanyReq submit: ', postCompanyReq)
         dispatch(addCompany(postCompanyReq)).then(() => {
-          navigate('/app/company')
+          if (!error) {
+            navigate('/app/company')
+          } else {
+            setAlertOpen(true)
+          }
         })
       }}
     >
@@ -138,6 +180,38 @@ const CreateCompany = (props) => {
                     multiline
                   />
                 </Grid>
+                <Grid item md={6} xs={12}>
+                  <div>
+                    <FormControl style={{ width: '100%' }}>
+                      <InputLabel id="demo-mutiple-name-label">
+                        Team Member
+                      </InputLabel>
+                      <Select
+                        // labelId="demo-mutiple-name-label"
+                        // id="demo-mutiple-name"
+                        multiple
+                        value={values.companyTeam}
+                        onChange={(e) => {
+                          setFieldValue('companyTeam', e.target.value)
+                        }}
+                        input={<OutlinedInput label="Team Member" />}
+                        MenuProps={MenuProps}
+                        style={{ maxWidth: '100%' }}
+                        required
+                      >
+                        {users.map((user) => (
+                          <MenuItem
+                            key={`${user.username}-${user._id}`}
+                            value={user._id}
+                            style={getStyles()}
+                          >
+                            {user.username}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </Grid>
               </Grid>
             </CardContent>
             <Divider />
@@ -151,12 +225,25 @@ const CreateCompany = (props) => {
               <Button
                 color="primary"
                 variant="contained"
-                disabled={isSubmitting}
+                // disabled={isSubmitting}
                 type="submit"
               >
                 Create Company
               </Button>
             </Box>
+            <Snackbar
+              open={alertOpen}
+              autoHideDuration={6000}
+              onClose={handleClose}
+            >
+              <Alert
+                onClose={handleClose}
+                severity="error"
+                sx={{ width: '100%' }}
+              >
+                {error}
+              </Alert>
+            </Snackbar>
           </Card>
         </form>
       )}

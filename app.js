@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
 const path = require('path')
+const multer = require('multer')
 const { notFoundHandler, errorHandler } = require('./middleware')
 const boardHandler = require('./api/boardHandler')
 const listHandler = require('./api/listHandler')
@@ -12,6 +13,17 @@ const userHandler = require('./api/userHandler')
 const activityHandler = require('./api/activityHandler')
 const companyHandler = require('./api/companyHandler')
 
+const upload = multer({
+    limits: {
+        fileSize: 10000000,
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+            cb(new Error('Please upload an image.'))
+        }
+        cb(undefined, true)
+    },
+})
 const app = express()
 
 console.log(`database ${process.env.DATABASE_URL}`)
@@ -33,6 +45,9 @@ app.use('/api/cards/', cardHandler)
 app.use('/api/timelines/', timelineHandler)
 app.use('/api/activities/', activityHandler)
 app.use('/api/company/', companyHandler)
+app.post('/upload', upload.single('upload'), (req, res) => {
+    res.send()
+})
 app.use(errorHandler)
 
 if (process.env.NODE_ENV === 'production') {

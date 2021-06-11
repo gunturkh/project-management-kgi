@@ -58,6 +58,7 @@ export const companyReducer = (state = initialState, action) => {
         companies: companiesCopy,
         currentCompany: action.payload.company,
         companyLoading: false,
+        error: null,
       }
     }
     case ACTIONS.ERROR_COMPANY:
