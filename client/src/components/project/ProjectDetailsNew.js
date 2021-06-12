@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   listContainer: {
     display: 'flex',
     alignItems: 'flex-start',
-    width: '100%',
+    width: 'fit-content',
     marginTop: theme.spacing(0.5),
     padding: 20,
     boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
@@ -340,7 +340,7 @@ export default function ProjectDetailsNew() {
       setListTitle(listTitle)
       return
     }
-    const totalLists = initialData.columnOrder.length
+    const totalLists = initialData?.columnOrder?.length
     const postListReq = {
       name: text,
       boardId: currBoard._id,
@@ -506,7 +506,7 @@ export default function ProjectDetailsNew() {
                   sx={{ pl: 1 }}
                   variant="body2"
                 >
-                  PIC: {mappedPic.join(', ') || ''}
+                  PIC: {mappedPic?.join(', ') || ''}
                 </Typography>
               </Grid>
             </Grid>

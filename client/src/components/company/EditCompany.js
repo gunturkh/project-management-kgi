@@ -74,13 +74,15 @@ const EditCompany = (props) => {
     (state) => state.user,
   )
   let mappedTeam = []
-  mappedTeam = company?.companyTeam?.map((team) => {
-    console.log('team:', team)
-    return {
-      username: users.find((user) => user._id === team)?.username,
-      _id: users.find((user) => user._id === team)?._id,
-    }
-  })
+  mappedTeam = company.companyTeam
+    ? company?.companyTeam?.map((team) => {
+        console.log('team:', team)
+        return {
+          username: users.find((user) => user._id === team)?.username,
+          _id: users.find((user) => user._id === team)?._id,
+        }
+      })
+    : []
   console.log('mappedTeam:', mappedTeam)
   const [alertOpen, setAlertOpen] = React.useState(false)
   function getStyles() {
@@ -130,7 +132,7 @@ const EditCompany = (props) => {
             companyEmail: company?.companyEmail,
             companyAddress: company?.companyAddress,
             companyLogo: company?.companyLogo,
-            companyTeam: company?.companyTeam,
+            companyTeam: company?.companyTeam || [],
           }}
           validationSchema={Yup.object().shape({
             companyName: Yup.string()

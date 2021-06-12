@@ -52,7 +52,7 @@ const ProjectCard = ({ board, ...rest }) => {
   const classes = useStyles()
   const [modalStyle] = useState(getModalStyle)
   const [openModal, setOpenModal] = useState(false)
-  const { isValid, token, users } = useSelector((state) => state.user)
+  const { isValid, token, users, user } = useSelector((state) => state.user)
   const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
   const navigate = useNavigate()
@@ -77,9 +77,12 @@ const ProjectCard = ({ board, ...rest }) => {
   const handleClose = () => {
     setOpenModal(false)
   }
-  console.log('mapped pic: ', mappedPic)
-  console.log('mapped company: ', mappedCompany)
-  console.log('projectPic: ', projectPic)
+
+  const disableButton = () => {
+    if (user.role === 'ADMIN') return false
+    else if (board.userId === user.id) return false
+    else return true
+  }
   return (
     <Card
       sx={{
@@ -99,6 +102,7 @@ const ProjectCard = ({ board, ...rest }) => {
         >
           <Button
             component={RouterLink}
+            disabled={disableButton()}
             sx={{
               color: 'text.secondary',
               fontWeight: 'medium',
@@ -118,6 +122,7 @@ const ProjectCard = ({ board, ...rest }) => {
             onClick={() => {
               setOpenModal(true)
             }}
+            disabled={disableButton()}
             sx={{
               color: 'text.secondary',
               fontWeight: 'medium',
@@ -163,6 +168,7 @@ const ProjectCard = ({ board, ...rest }) => {
             width: '100%',
             color: 'primary.main',
           }}
+          disabled={board?.pic.some((item) => item === user.id)}
           to={`/app/projects/details/${board._id}`}
         >
           See Details

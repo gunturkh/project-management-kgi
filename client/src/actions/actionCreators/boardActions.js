@@ -21,9 +21,7 @@ export const fetchAllBoards = (token) => (dispatch) => {
 export const fetchBoardById = (id, token) => (dispatch) => {
   dispatch({ type: ACTIONS.MAKE_REQUEST_BOARD })
   axios
-    .get(BASE_URL + id, {
-      headers: { 'x-auth-token': token },
-    })
+    .get(BASE_URL + id, { headers: { 'x-auth-token': token } })
     .then((res) => {
       dispatch({
         type: ACTIONS.GET_BOARD_BY_ID,

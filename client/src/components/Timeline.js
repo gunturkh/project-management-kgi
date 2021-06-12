@@ -402,9 +402,11 @@ const Timeline = (props) => {
                         variant="body2"
                       >
                         {timeline?.start && timeline?.end
-                          ? `${moment(timeline.start).format(
-                              'DD MMMM YYYY',
-                            )} - ${moment(timeline.end).format('DD MMMM YYYY')}`
+                          ? `${moment
+                              .utc(timeline.start)
+                              .format('DD MMMM YYYY')} - ${moment
+                              .utc(timeline.end)
+                              .format('DD MMMM YYYY')}`
                           : ''}
                       </Typography>
                     </Grid>
@@ -416,8 +418,8 @@ const Timeline = (props) => {
                   initialValues={{
                     title: '',
                     // projectDescription: '',
-                    start: moment(),
-                    end: moment(),
+                    start: moment.utc(),
+                    end: moment.utc().add(1, 'days'),
                     boardId: currBoard._id,
                     // pic: [],
                   }}
@@ -582,10 +584,10 @@ const Timeline = (props) => {
                     title: timeline?.title,
                     // projectDescription: '',
                     start: timeline?.start
-                      ? moment(timeline.start).format('DD MMM YYYY')
+                      ? moment.utc(timeline.start).format('DD MMM YYYY')
                       : '',
                     end: timeline?.end
-                      ? moment(timeline.end).format('DD MMM YYYY')
+                      ? moment.utc(timeline.end).format('DD MMM YYYY')
                       : '',
                     boardId: currBoard._id,
                     id: timeline?.id,
@@ -780,7 +782,7 @@ const Timeline = (props) => {
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
             header={false}
             height={700}
-            width={'100%'}
+            width={'fit-content'}
             // slotDuration="00:30:00"
             // snapDuration="00:30:00"
             // scrollTime="09:00:00"

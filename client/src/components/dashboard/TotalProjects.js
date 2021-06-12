@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import _ from 'lodash'
 import {
   Avatar,
   Box,
@@ -15,18 +16,29 @@ import AppsIcon from '@material-ui/icons/Apps'
 import { Link as RouterLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchAllBoards } from '../../actions/actionCreators/boardActions'
+import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
 
 const TotalProjects = (props) => {
   const { boards } = useSelector((state) => state.boards)
   const { token, isValid, user, tokenRequest } = useSelector(
     (state) => state.user,
   )
+  const { companies } = useSelector((state) => state.company)
   const dispatch = useDispatch()
   useEffect(() => {
     if (isValid) {
       dispatch(fetchAllBoards(token))
+      dispatch(fetchAllCompaniesInfo(token))
     }
   }, [token, isValid, dispatch])
+
+  let userPartOfCompany = []
+  let companyFromUser = ''
+  userPartOfCompany = _.filter(companies, { companyTeam: [user.id] })
+  companyFromUser = userPartOfCompany[0]?._id
+  const mappedBoardsForUser = boards.filter(
+    (board) => board.company === companyFromUser,
+  )
   console.log('boards:', boards)
   return (
     <Card {...props}>
@@ -37,7 +49,9 @@ const TotalProjects = (props) => {
               TOTAL PROJECTS
             </Typography>
             <Typography color="textPrimary" variant="h3">
-              {boards.length}
+              {user.role === 'ADMIN'
+                ? boards.length
+                : mappedBoardsForUser.length}
             </Typography>
           </Grid>
           <Grid item>

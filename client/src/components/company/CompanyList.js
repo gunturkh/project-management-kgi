@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 const Timeline = (props) => {
   const classes = useStyles()
-  const { token, users } = useSelector((state) => state.user)
+  const { token, users, user } = useSelector((state) => state.user)
   const { company, companies, companyLoading } = useSelector(
     (state) => state.company,
   )
@@ -102,14 +102,14 @@ const Timeline = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {companies?.map((item) => (
+                  {companies?.map((item, index) => (
                     <>
                       <TableRow hover key={item._id}>
                         <TableCell>{item.companyName}</TableCell>
                         <TableCell>{item.companyEmail}</TableCell>
                         <TableCell>{item.companyAddress}</TableCell>
                         <TableCell>
-                          {mappedTeam[0]?.join(', ') || '-'}
+                          {mappedTeam[index]?.join(', ') || '-'}
                         </TableCell>
                         <TableCell>
                           {' '}
@@ -117,7 +117,9 @@ const Timeline = (props) => {
                             <Button
                               color="secondary"
                               variant="contained"
-                              disabled={item._id === company.id}
+                              disabled={
+                                item._id === company.id || user.role !== 'ADMIN'
+                              }
                               onClick={() => {
                                 setOpenModal(true)
                                 setDeleteId(item._id)
@@ -133,6 +135,7 @@ const Timeline = (props) => {
                             component={RouterLink}
                             color="primary"
                             variant="contained"
+                            disabled={user.role !== 'ADMIN'}
                             to={`/app/company/edit/${item._id}`}
                           >
                             <Edit size="20" />

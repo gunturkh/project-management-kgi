@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 const Timeline = (props) => {
   const classes = useStyles()
-  const { user, users, role, token, tokenRequest } = useSelector(
+  const { user, users, role, token, tokenRequest, userRequest } = useSelector(
     (state) => state.user,
   )
   const [openModal, setOpenModal] = useState(false)
@@ -84,7 +84,7 @@ const Timeline = (props) => {
 
   return (
     <>
-      {tokenRequest ? (
+      {tokenRequest || userRequest ? (
         <Loading />
       ) : (
         <Card {...props}>
@@ -128,7 +128,8 @@ const Timeline = (props) => {
                                   variant="contained"
                                   disabled={
                                     item._id === user.id ||
-                                    item.role === 'ADMIN'
+                                    item.role === 'ADMIN' ||
+                                    user.role !== 'ADMIN'
                                   }
                                   onClick={() => {
                                     setOpenModal(true)

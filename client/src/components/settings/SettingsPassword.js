@@ -54,6 +54,7 @@ const SettingsPassword = (props) => {
   console.log('user:', user)
   return (
     <>
+      {/*
       <Formik
         initialValues={{
           avatar: user.avatar,
@@ -85,12 +86,12 @@ const SettingsPassword = (props) => {
       >
         {({
           errors,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-          touched,
-          values,
-          setFieldValue,
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            touched,
+            values,
+            setFieldValue,
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -144,6 +145,7 @@ const SettingsPassword = (props) => {
           </form>
         )}
       </Formik>
+        */}
       <Formik
         initialValues={{
           username: user.username,

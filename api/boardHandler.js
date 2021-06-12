@@ -9,7 +9,7 @@ const router = Router()
 // fetch all the boards for a user
 router.get('/', auth, async (req, res, next) => {
     try {
-        const boardsList = await Board.find({ userId: req.user })
+        const boardsList = await Board.find({})
         res.json(boardsList)
     } catch (error) {
         console.log(error)
@@ -33,7 +33,7 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
-        const board = await Board.findOne({ _id, userId: req.user })
+        const board = await Board.findOne({ _id })
         if (!board) return res.status(404).send()
         res.send(board)
     } catch (error) {
@@ -45,7 +45,7 @@ router.get('/:id', auth, async (req, res, next) => {
 router.get('/:id/lists', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
-        const board = await Board.findOne({ _id, userId: req.user })
+        const board = await Board.findOne({ _id })
         if (!board) return res.status(404).send()
         const lists = await List.find({ boardId: _id })
         res.send(lists)
@@ -58,7 +58,7 @@ router.get('/:id/lists', auth, async (req, res, next) => {
 router.get('/:id/cards', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
-        const board = await Board.findOne({ _id, userId: req.user })
+        const board = await Board.findOne({ _id })
         if (!board) return res.status(404).send()
         const cards = await Card.find({ boardId: _id })
         res.send(cards)
@@ -73,7 +73,7 @@ router.get('/:id/activities', auth, async (req, res, next) => {
     const _last = req.query.last
     const _limit = Number.parseInt(req.query.limit, 10) || 10
     try {
-        const board = await Board.findOne({ _id, userId: req.user })
+        const board = await Board.findOne({ _id })
         if (!board) return res.status(404).send()
         const query = { boardId: _id }
         if (_last) query._id = { $lt: _last }
@@ -130,7 +130,7 @@ router.patch('/:id', auth, async (req, res, next) => {
 router.delete('/:id', auth, async (req, res, next) => {
     const _id = req.params.id
     try {
-        const board = await Board.findOneAndDelete({ _id, userId: req.user })
+        const board = await Board.findOneAndDelete({ _id })
         if (!board) return res.status(404).send()
         // find all lists within board and delete them as well
         const lists = await List.find({ boardId: _id })
