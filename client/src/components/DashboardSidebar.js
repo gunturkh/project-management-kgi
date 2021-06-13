@@ -33,57 +33,77 @@ const dummyUser = {
   name: 'Kuantum Gabe Integritas',
 }
 
-const items = [
-  {
-    href: '/app/dashboard',
-    icon: BarChartIcon,
-    title: 'Dashboard',
-  },
-  // {
-  //   href: '/app/customers',
-  //   icon: UsersIcon,
-  //   title: 'Customers',
-  // },
-  {
-    href: '/app/projects',
-    icon: CalendarIcon,
-    title: 'Projects',
-  },
-  // {
-  //   href: '/app/products',
-  //   icon: ShoppingBagIcon,
-  //   title: 'Products',
-  // },
-  {
-    href: '/app/account',
-    icon: UserIcon,
-    title: 'Account',
-  },
-  {
-    href: '/app/company',
-    icon: Briefcase,
-    title: 'Company',
-  },
-  {
-    href: '/app/settings',
-    icon: SettingsIcon,
-    title: 'Settings',
-  },
-  // {
-  //   href: '/register',
-  //   icon: UserPlusIcon,
-  //   title: 'Register',
-  // },
-  // {
-  //   href: '/404',
-  //   icon: AlertCircleIcon,
-  //   title: 'Error',
-  // },
-]
-
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation()
   const { user } = useSelector((state) => state.user)
+  let items = []
+  if (user.role === 'ADMIN') {
+    items = [
+      {
+        href: '/app/dashboard',
+        icon: BarChartIcon,
+        title: 'Dashboard',
+      },
+      // {
+      //   href: '/app/customers',
+      //   icon: UsersIcon,
+      //   title: 'Customers',
+      // },
+      {
+        href: '/app/projects',
+        icon: CalendarIcon,
+        title: 'Projects',
+      },
+      // {
+      //   href: '/app/products',
+      //   icon: ShoppingBagIcon,
+      //   title: 'Products',
+      // },
+      {
+        href: '/app/account',
+        icon: UserIcon,
+        title: 'Account',
+      },
+      {
+        href: '/app/company',
+        icon: Briefcase,
+        title: 'Company',
+      },
+      {
+        href: '/app/settings',
+        icon: SettingsIcon,
+        title: 'Settings',
+      },
+      // {
+      //   href: '/register',
+      //   icon: UserPlusIcon,
+      //   title: 'Register',
+      // },
+      // {
+      //   href: '/404',
+      //   icon: AlertCircleIcon,
+      //   title: 'Error',
+      // },
+    ]
+  } else if (user.role === 'USER') {
+    items = [
+      {
+        href: '/app/dashboard',
+        icon: BarChartIcon,
+        title: 'Dashboard',
+      },
+      {
+        href: '/app/projects',
+        icon: CalendarIcon,
+        title: 'Projects',
+      },
+      {
+        href: '/app/settings',
+        icon: SettingsIcon,
+        title: 'Settings',
+      },
+    ]
+  }
 
   useEffect(() => {
     if (openMobile && onMobileClose) {

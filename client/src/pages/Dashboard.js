@@ -14,6 +14,7 @@ import UsersList from '../components/dashboard/UsersList'
 
 const Dashboard = () => {
   const navigate = useNavigate()
+  const { user } = useSelector((state) => state.user)
   useEffect(() => {
     const localToken = localStorage.getItem('auth-token')
     console.log('localToken:', localToken)
@@ -37,9 +38,11 @@ const Dashboard = () => {
       >
         <Container maxWidth={false}>
           <Grid container spacing={3}>
-            <Grid item lg={6} md={6} xl={6} xs={12}>
-              <UsersList widget />
-            </Grid>
+            {user.role === 'ADMIN' && (
+              <Grid item lg={6} md={6} xl={6} xs={12}>
+                <UsersList widget />
+              </Grid>
+            )}
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <TotalProjects />
             </Grid>

@@ -59,7 +59,7 @@ const ProjectList = () => {
           <Loading />
         ) : (
           <Container maxWidth={false}>
-            <ProjectListToolbar />
+            {user.role === 'ADMIN' && <ProjectListToolbar />}
             <Box sx={{ pt: 3 }}>
               <Grid container spacing={3}>
                 {user.role === 'ADMIN'
