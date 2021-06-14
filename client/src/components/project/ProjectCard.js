@@ -168,7 +168,7 @@ const ProjectCard = ({ board, ...rest }) => {
             width: '100%',
             color: 'primary.main',
           }}
-          disabled={board?.pic.some((item) => item === user.id)}
+          disabled={board?.pic.some((item) => item !== user.id)}
           to={`/app/projects/details/${board._id}`}
         >
           See Details
