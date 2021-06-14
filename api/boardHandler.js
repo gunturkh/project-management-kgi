@@ -114,11 +114,10 @@ router.patch('/:id', auth, async (req, res, next) => {
     if (!isValidOperation)
         return res.status(400).send({ error: 'Invalid updates!' })
     try {
-        const board = await Board.findOneAndUpdate(
-            { _id, userId: req.user },
-            req.body,
-            { new: true, runValidators: true }
-        )
+        const board = await Board.findOneAndUpdate({ _id }, req.body, {
+            new: true,
+            runValidators: true,
+        })
         if (!board) return res.status(404).send({ error: 'Board not found!' })
         res.send(board)
     } catch (error) {

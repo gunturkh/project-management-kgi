@@ -70,6 +70,8 @@ const CreateProject = (props) => {
     }
   }, [])
 
+  const manipulatedCompanies = companies.concat()
+
   return (
     <Formik
       initialValues={{
@@ -88,7 +90,7 @@ const CreateProject = (props) => {
         startDate: Yup.date().required('Project start date is required'),
         endDate: Yup.string().required('Project end date is required'),
         pic: Yup.array().required('Project PIC is required'),
-        company: Yup.string().max(255).required('Project company is required'),
+        // company: Yup.string().max(255).required('Project company is required'),
       })}
       onSubmit={(e) => {
         // e.preventDefault()
@@ -255,6 +257,7 @@ const CreateProject = (props) => {
                         style={{ maxWidth: '100%' }}
                         required
                       >
+                        <MenuItem value="">None</MenuItem>
                         {companies.map((company) => (
                           <MenuItem
                             key={`${company.companyName}-${company._id}`}

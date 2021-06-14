@@ -121,7 +121,7 @@ const EditProject = (props) => {
             projectDescription: currBoard?.projectDescription,
             startDate: currBoard?.startDate ? moment(currBoard.startDate) : '',
             endDate: currBoard?.endDate ? moment(currBoard.endDate) : '',
-            company: currBoard?.company,
+            company: currBoard?.company || null,
             pic: currBoard?.pic || [],
           }}
           validationSchema={Yup.object().shape({
@@ -134,9 +134,7 @@ const EditProject = (props) => {
             startDate: Yup.date().required('Project start date is required'),
             endDate: Yup.string().required('Project end date is required'),
             pic: Yup.array().required('Project PIC is required'),
-            company: Yup.string()
-              .max(255)
-              .required('Project company is required'),
+            // company: Yup.string() .max(255) .required('Project company is required'),
           })}
           onSubmit={(e) => {
             // e.preventDefault()
@@ -320,6 +318,7 @@ const EditProject = (props) => {
                             style={{ maxWidth: '100%' }}
                             required
                           >
+                            <MenuItem value={null}>None</MenuItem>
                             {companies.map((company) => (
                               <MenuItem
                                 key={`${company.companyName}-${company._id}`}

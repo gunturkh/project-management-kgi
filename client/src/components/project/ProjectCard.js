@@ -83,6 +83,15 @@ const ProjectCard = ({ board, ...rest }) => {
     else if (board.userId === user.id) return false
     else return true
   }
+
+  const disableDetailsButton = () => {
+    if (user.role === 'ADMIN') return false
+    else
+      return board.pic.length > 0
+        ? board?.pic?.some((item) => item !== user.id)
+        : true
+  }
+
   return (
     <Card
       sx={{
@@ -168,7 +177,8 @@ const ProjectCard = ({ board, ...rest }) => {
             width: '100%',
             color: 'primary.main',
           }}
-          disabled={board?.pic.some((item) => item !== user.id)}
+          disabled={disableDetailsButton()}
+          // disabled={true}
           to={`/app/projects/details/${board._id}`}
         >
           See Details
