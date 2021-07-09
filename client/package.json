@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^1.6.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@fullcalendar/core": "^5.6.0",
@@ -20,6 +21,7 @@
     "axios": "^0.19.2",
     "chart.js": "^2.9.4",
     "formik": "^2.2.6",
+    "framer-motion": "^4.1.17",
     "history": "^5.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import MainLayout from './components/MainLayout'
+import BlankLayout from './components/BlankLayout'
 import DashboardLayout from './components/DashboardLayout'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
@@ -42,7 +42,7 @@ const routes = [
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: <BlankLayout />,
     children: [
       { path: 'login', element: <Login /> },
       // { path: 'register', element: <Register /> },

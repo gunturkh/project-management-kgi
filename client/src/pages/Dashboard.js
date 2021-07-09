@@ -19,7 +19,7 @@ const Dashboard = () => {
     const localToken = localStorage.getItem('auth-token')
     console.log('localToken:', localToken)
     console.log('localToken?:', localToken === '')
-    if (localToken === '') {
+    if (!localToken) {
       console.log('localToken Empty')
       navigate('/login', { replace: 'true' })
     }

@@ -63,12 +63,21 @@ const Login = () => {
     }
   }, [token, user, successLogin, requestLogin, loginError])
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAlertOpen(false)
+    }, 2000)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [alertOpen === true])
+
   console.log('successLogin:', successLogin)
   console.log('loginError:', loginError)
   return (
     <>
       <Helmet>
-        <title>Login | Material Kit</title>
+        <title>Login | Project Management Kuantum Gabe Integritas</title>
       </Helmet>
       <Box
         sx={{
@@ -79,7 +88,18 @@ const Login = () => {
           justifyContent: 'center',
         }}
       >
-        <Container maxWidth="sm">
+        <Container
+          maxWidth="sm"
+          sx={{
+            height: '500px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            border: '2px solid black',
+            backgroundColor: 'background.paper',
+          }}
+        >
           <Formik
             initialValues={{
               username: '',
@@ -95,13 +115,6 @@ const Login = () => {
               dispatch(loginUser(loginReq)).then(() => {
                 setSubmitting(false)
               })
-              // .then(() => {
-              //   navigate('/app/projects', { replace: true })
-              // })
-              // .catch((e) => {
-              //   window.alert(e)
-              //   // navigate('/login', { replace: true })
-              // })
             }}
           >
             {({
@@ -115,17 +128,37 @@ const Login = () => {
             }) => (
               <form onSubmit={handleSubmit}>
                 <Box sx={{ mb: 3 }}>
-                  <Typography color=")textPrimary" variant="h2">
-                    Sign in
+                  <Typography
+                    color="textPrimary"
+                    variant="h1"
+                    textAlign="center"
+                  >
+                    Welcome Back!
                   </Typography>
                   <Typography
                     color="textSecondary"
-                    gutterBottom
                     variant="body2"
+                    textAlign="center"
                   >
-                    Sign in on the internal platform
+                    Please Login to your account
                   </Typography>
                 </Box>
+                {alertOpen && (
+                  <Box>
+                    <Typography
+                      variant="h3"
+                      textAlign="center"
+                      sx={{
+                        backgroundColor: 'red',
+                        color: 'white',
+                        borderRadius: '5px',
+                        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
+                      }}
+                    >
+                      {loginError}
+                    </Typography>
+                  </Box>
+                )}
                 <TextField
                   error={Boolean(touched.username && errors.username)}
                   fullWidth
@@ -154,8 +187,10 @@ const Login = () => {
                 />
                 <Box sx={{ py: 2 }}>
                   <LoadingButton
-                    color="primary"
                     // disabled={isSubmitting}
+                    sx={{
+                      backgroundColor: 'primary.green',
+                    }}
                     fullWidth
                     size="large"
                     type="submit"
@@ -165,7 +200,7 @@ const Login = () => {
                     Sign in now
                   </LoadingButton>
                 </Box>
-                <Snackbar
+                {/* <Snackbar
                   open={alertOpen}
                   autoHideDuration={6000}
                   onClose={handleClose}
@@ -177,7 +212,7 @@ const Login = () => {
                   >
                     {loginError}
                   </Alert>
-                </Snackbar>
+                </Snackbar> */}
               </form>
             )}
           </Formik>
