@@ -52,13 +52,13 @@ export default function Footer() {
       >
         Github Repo -
         <a
-          href="https://github.com/ayushagg31/Trellis"
+          href="https://github.com/ayushagg31/Project Management KGI"
           rel="noopener noreferrer"
           target="_blank"
           className={classes.clickable}
         >
           {' '}
-          Trellis{' '}
+          Project Management KGI{' '}
         </a>
       </div>
     </div>

@@ -86,7 +86,7 @@
 //   const dispatch = useDispatch()
 
 //   useEffect(() => {
-//     document.title = `Home | Trellis`
+//     document.title = `Home | Project Management KGI`
 //   }, [])
 
 //   useEffect(() => {

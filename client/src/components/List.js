@@ -64,7 +64,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Column({ column, tasks, index }) {
   const classes = useStyles()
-  const [cardTitle, setCardTitle] = useState('')
+  const [taskValue, setTaskValue] = useState({
+    name: '',
+    description: '',
+    priority: [],
+    pic: [],
+    dueDate: '',
+  })
+  const [editTaskValue, setEditTaskValue] = useState(taskValue)
   const [listTitle, setListTitle] = useState(column.name)
   const [addCardFlag, setAddCardFlag] = useState(false)
   const [editable, setEditable] = useState(false)
@@ -73,18 +80,34 @@ export default function Column({ column, tasks, index }) {
   const { token, user } = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
-  const handleChange = (e) => {
-    e.preventDefault()
-    setCardTitle(e.target.value)
+  const handleChange = (e, target) => {
+    const noPersistChange = ['priority', 'pic']
+    if (target === 'dueDate') {
+      setTaskValue((prevState) => {
+        return { ...prevState, dueDate: e }
+      })
+    } else {
+      if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+      else e.persist()
+
+      setTaskValue((prevState) => {
+        return { ...prevState, [e.target.name]: e.target.value }
+      })
+    }
   }
 
   const submitHandler = () => {
-    if (cardTitle === '') return
-    const text = cardTitle.trim().replace(/\s+/g, ' ')
-    setCardTitle(text)
+    if (taskValue.length === 0) return
+    // const text = taskValue.trim().replace(/\s+/g, ' ')
+
+    setTaskValue(taskValue)
     const totalTasks = tasks.length
     const postCardReq = {
-      name: text,
+      name: taskValue.name,
+      description: taskValue.description,
+      priority: taskValue.priority,
+      pic: taskValue.pic,
+      dueDate: taskValue.dueDate,
       boardId: column.boardId,
       listId: column._id,
       order:
@@ -94,24 +117,40 @@ export default function Column({ column, tasks, index }) {
     dispatch(
       createNewActivity(
         {
-          text: `${user.username} added ${text} to ${column.name}`,
+          text: `${user.username} added ${taskValue.name} to ${column.name}`,
           boardId: column.boardId,
         },
         token,
       ),
     )
-    setCardTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+      dueDate: '',
+    })
   }
   const handleAddition = () => {
     setAddCardFlag(true)
   }
   const closeButtonHandler = () => {
     setAddCardFlag(false)
-    setCardTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+      dueDate: '',
+    })
   }
   const changedHandler = (e) => {
-    e.preventDefault()
-    setListTitle(e.target.value)
+    const noPersistChange = ['priority', 'pic']
+    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    else e.persist()
+    setTaskValue((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value }
+    })
   }
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -133,6 +172,40 @@ export default function Column({ column, tasks, index }) {
     setEditable(false)
   }
 
+  const submitHandlerUpdate = () => {
+    // if (text === '') {
+    //   setListTitle(column.name)
+    //   setEditable(false)
+    //   return
+    // }
+    setTaskValue(editTaskValue)
+    dispatch(updateListById(column._id, editTaskValue))
+    // eslint-disable-next-line no-param-reassign
+    column.name = editTaskValue.title
+    setEditable(false)
+  }
+
+  const borderColor = (listTitle) => {
+    let color
+    switch (listTitle) {
+      case 'To-Do':
+        return (color = 'gray')
+        break
+      case 'On-Progress':
+        return (color = 'orange')
+        break
+      case 'Done':
+        return (color = 'blue')
+        break
+      case 'Checked':
+        return (color = 'green')
+        break
+      default:
+        break
+    }
+  }
+
+  console.log('tasks', tasks)
   return (
     <div className={classes.wrapper}>
       {list && (
@@ -144,6 +217,10 @@ export default function Column({ column, tasks, index }) {
                 onMouseEnter={() => setShowDelete(true)}
                 onMouseLeave={() => setShowDelete(false)}
                 className={classes.root}
+                style={{
+                  backgroundColor: `${borderColor(listTitle)}`,
+                  padding: '5px',
+                }}
                 {...provided.dragHandleProps}
               >
                 <div
@@ -152,7 +229,15 @@ export default function Column({ column, tasks, index }) {
                 >
                   {!editable && (
                     <div style={{ position: 'relative' }}>
-                      <div>{column.name}</div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontFamily: 'sans-serif',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {column.name}
+                      </div>
                       {showDelete && (
                         <IconButton
                           size="small"
@@ -199,6 +284,18 @@ export default function Column({ column, tasks, index }) {
                         }}
                         onBlur={updateListTitle}
                       />
+                      {/* <InputCard
+                              value={taskValue}
+                              changedHandler={handleChange}
+                              // itemAdded={submitHandler}
+                              itemAdded={submitHandlerUpdate}
+                              closeHandler={closeButtonHandler}
+                              keyDownHandler={handleKeyDown}
+                              type="card"
+                              btnText="Edit Card"
+                              placeholder="Enter a title for this card..."
+                              width="230px"
+                            /> */}
                     </div>
                   )}
                 </div>
@@ -206,15 +303,24 @@ export default function Column({ column, tasks, index }) {
                   {
                     // eslint-disable-next-line no-shadow
                     (provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={{ textAlign: 'center' }}
+                      >
                         <div className={classes.scroll}>
                           {/* eslint-disable-next-line no-shadow */}
                           {tasks.map((task, index) => (
-                            <Card key={task._id} task={task} index={index} />
+                            <Card
+                              key={task._id}
+                              task={task}
+                              index={index}
+                              closeHandler={closeButtonHandler}
+                            />
                           ))}
                           {addCardFlag && (
                             <InputCard
-                              value={cardTitle}
+                              value={taskValue}
                               changedHandler={handleChange}
                               itemAdded={submitHandler}
                               closeHandler={closeButtonHandler}

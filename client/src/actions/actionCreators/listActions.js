@@ -18,6 +18,7 @@ export const createNewList = (params, token) => (dispatch) => {
       else if (e.response.status === 422)
         dispatch({ type: ACTIONS.VALIDATION_ERROR_LIST })
     })
+  // return Promise.resolve()
 }
 
 export const updateListById = (id, params) => (dispatch) => {

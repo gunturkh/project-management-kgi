@@ -23,10 +23,40 @@ import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
 import DatePicker from '@material-ui/lab/DatePicker'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import midString from '../../ordering/ordering'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewBoard } from '../../actions/actionCreators/boardActions'
+import {
+  createNewList,
+  updateListById,
+} from '../../actions/actionCreators/listActions'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
 import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
+import Axios from 'axios'
+import * as ACTIONS from '../../actions/actions'
+
+const statusOptions = [
+  {
+    label: 'Kick Off',
+    value: 'Kick Off',
+  },
+  {
+    label: 'In Progress',
+    value: 'In Progress',
+  },
+  {
+    label: 'Installation & Commissioning',
+    value: 'Installation & Commissioning',
+  },
+  {
+    label: 'Validation',
+    value: 'Validation',
+  },
+  {
+    label: 'Closed',
+    value: 'Closed',
+  },
+]
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -54,6 +84,12 @@ const CreateProject = (props) => {
     (state) => state.user,
   )
   const { companies } = useSelector((state) => state.company)
+  const { loading, boards, newBoard, error } = useSelector(
+    (state) => state.boards,
+  )
+  const [initialData, setInitialData] = useState({})
+  const [boardId, setBoardId] = useState('')
+  const [boardCreated, setBoardCreated] = useState(false)
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -70,6 +106,32 @@ const CreateProject = (props) => {
     }
   }, [])
 
+  // useEffect(() => {
+  //   setBoardId(newBoard)
+  // }, [newBoard])
+  // useEffect(() => {
+  //   console.log('newBoard id', boardId)
+  //   const listTitle = 'To-Do'
+  //   const text = listTitle.trim().replace(/\s+/g, ' ')
+  //   const totalLists = initialData?.columnOrder?.length ?? 0
+  //   const postListReq = {
+  //     name: text,
+  //     boardId: boardId?._id,
+  //     order:
+  //       totalLists === 0
+  //         ? 'n'
+  //         : midString(
+  //             initialData.columns[initialData.columnOrder[totalLists - 1]]
+  //               .order,
+  //             '',
+  //           ),
+  //   }
+  //   dispatch(createNewList(postListReq, token)).then(() => {
+  //     console.log('done create project')
+  //     navigate('/app/projects')
+  //   })
+  // }, [boardCreated === true])
+
   const manipulatedCompanies = companies.concat()
 
   return (
@@ -81,6 +143,7 @@ const CreateProject = (props) => {
         endDate: moment().add(1, 'months'),
         company: '',
         pic: [],
+        status: '',
       }}
       validationSchema={Yup.object().shape({
         projectName: Yup.string().max(255).required('Project name is required'),
@@ -90,6 +153,7 @@ const CreateProject = (props) => {
         startDate: Yup.date().required('Project start date is required'),
         endDate: Yup.string().required('Project end date is required'),
         pic: Yup.array().required('Project PIC is required'),
+        status: Yup.string().required('Project status is required'),
         // company: Yup.string().max(255).required('Project company is required'),
       })}
       onSubmit={(e) => {
@@ -103,12 +167,75 @@ const CreateProject = (props) => {
           endDate: e.endDate,
           company: e.company,
           pic: e.pic,
+          status: e.status,
         }
         console.log('postBoardReq submit: ', postBoardReq)
-        dispatch(createNewBoard(postBoardReq)).then(() => {
-          console.log('done create project')
-          navigate('/app/projects')
+        Axios.post('/api/boards', postBoardReq, {
+          headers: { 'x-auth-token': token },
         })
+          .then((res) => {
+            dispatch({ type: ACTIONS.ADD_BOARD, payload: { board: res.data } })
+            // const postListReq = {
+            // name: text,
+            // boardId: res.data._id,
+            // order: 'n',
+            // order:
+            //   totalLists === 0
+            //     ? 'n'
+            //     : midString(
+            //         initialData.columns[initialData.columnOrder[totalLists - 1]]
+            //           .order,
+            //         '',
+            //       ),
+            // }
+            const taskPhase = [
+              {
+                name: 'To-Do',
+                description: ' ',
+                priority: '',
+                pic: [],
+                boardId: res.data._id,
+                order: 'n',
+              },
+              {
+                name: 'On-Progress',
+                description: ' ',
+                priority: '',
+                pic: [],
+                boardId: res.data._id,
+                order: 'o',
+              },
+              {
+                name: 'Checked',
+                description: ' ',
+                priority: '',
+                pic: [],
+                boardId: res.data._id,
+                order: 'p',
+              },
+              {
+                name: 'Done',
+                description: ' ',
+                priority: '',
+                pic: [],
+                boardId: res.data._id,
+                order: 'q',
+              },
+            ]
+            taskPhase.forEach((task) => {
+              dispatch(createNewList(task, token))
+            })
+            navigate('/app/projects')
+          })
+          .catch((e) => {
+            if (e.message === 'Network Error')
+              dispatch({ type: ACTIONS.ERROR_BOARD, payload: { error: e } })
+            else if (e.response.status === 422)
+              dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD })
+          })
+        // dispatch(createNewBoard(postBoardReq, token)).then(() => {
+        //   setBoardCreated(true)
+        // })
       }}
     >
       {({
@@ -162,7 +289,7 @@ const CreateProject = (props) => {
                     multiline
                   />
                 </Grid>
-                <Grid item md={6} xs={6}>
+                <Grid item md={4} xs={4}>
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                       views={['day', 'month', 'year']}
@@ -184,7 +311,7 @@ const CreateProject = (props) => {
                     />
                   </LocalizationProvider>
                 </Grid>
-                <Grid item md={6} xs={6}>
+                <Grid item md={4} xs={4}>
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
                       views={['day', 'month', 'year']}
@@ -205,6 +332,37 @@ const CreateProject = (props) => {
                       )}
                     />
                   </LocalizationProvider>
+                </Grid>
+                <Grid item md={4} xs={4}>
+                  <div>
+                    <FormControl style={{ width: '100%' }}>
+                      <InputLabel id="demo-mutiple-name-label">
+                        Project Status
+                      </InputLabel>
+                      <Select
+                        // labelId="demo-mutiple-name-label"
+                        // id="demo-mutiple-name"
+                        value={values.status}
+                        onChange={(e) => {
+                          setFieldValue('status', e.target.value)
+                        }}
+                        input={<OutlinedInput label="Status" />}
+                        MenuProps={MenuProps}
+                        style={{ maxWidth: '100%' }}
+                        required
+                      >
+                        {statusOptions.map((status, id) => (
+                          <MenuItem
+                            key={`${status.label}-${id}`}
+                            value={status.value}
+                            style={getStyles()}
+                          >
+                            {status.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <div>

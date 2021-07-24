@@ -96,8 +96,10 @@ const Login = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            border: '2px solid black',
+            // border: '0.5px solid black',
+            borderRadius: '10px',
             backgroundColor: 'background.paper',
+            boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
           }}
         >
           <Formik

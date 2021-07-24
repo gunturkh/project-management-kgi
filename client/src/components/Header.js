@@ -22,7 +22,7 @@
 //     width: '100%',
 //     zIndex: 1,
 //   },
-//   trellis: {
+//   Project Management KGI: {
 //     color: 'black',
 //     textShadow: '2px 2px white',
 //     zIndex: 100,
@@ -61,7 +61,7 @@
 //     <>
 //       <div className={classes.header}>
 //         <Link to="/" style={{ textDecoration: 'none' }}>
-//           <div className={classes.trellis}>Trellis</div>
+//           <div className={classes.Project Management KGI}>Project Management KGI</div>
 //         </Link>
 //       </div>
 //       {loggedIn ? (

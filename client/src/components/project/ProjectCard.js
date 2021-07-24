@@ -26,6 +26,41 @@ function rand() {
   return Math.round(Math.random() * 20) - 10
 }
 
+const projectStatusColor = (status) => {
+  let color
+  let backgroundColor
+  console.log('projectStatusColor status: ', status)
+  console.log('status === Kick Off? ', status === 'Kick Off')
+  switch (status) {
+    case 'Kick Off':
+      backgroundColor = 'white'
+      color = 'black'
+      break
+    case 'In Progress':
+      backgroundColor = 'green'
+      color = 'white'
+      break
+    case 'Installation & Commissioning':
+      backgroundColor = 'cyan'
+      color = 'black'
+      break
+    case 'Validation':
+      backgroundColor = 'blue'
+      color = 'white'
+      break
+    case 'Closed':
+      backgroundColor = 'gray'
+      color = 'white'
+      break
+
+    default:
+      backgroundColor = 'white'
+      color = 'white'
+      break
+  }
+  return [color, backgroundColor]
+}
+
 function getModalStyle() {
   const top = 50 + rand()
   const left = 50 + rand()
@@ -91,7 +126,7 @@ const ProjectCard = ({ board, ...rest }) => {
         ? board?.pic?.some((item) => item !== user.id)
         : true
   }
-
+  console.log('projectStatusColor: ', projectStatusColor(board?.status))
   return (
     <Card
       sx={{
@@ -264,6 +299,26 @@ const ProjectCard = ({ board, ...rest }) => {
             </div>
           </Modal>
         </Grid>
+      </Box>
+      <Divider />
+      <Box
+        sx={{
+          p: 2,
+          backgroundColor: projectStatusColor(board?.status)[1],
+        }}
+      >
+        <Typography
+          align="center"
+          color="textPrimary"
+          gutterBottom
+          variant="h4"
+          sx={{
+            color: projectStatusColor(board?.status)[0],
+            fontWeight: 700,
+          }}
+        >
+          {board?.status || 'No Project Status Filled'}
+        </Typography>
       </Box>
     </Card>
   )

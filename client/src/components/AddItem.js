@@ -41,7 +41,14 @@ export default function AddItem({
 }) {
   const classes = useStyles({ type, width, color, noshadow })
   return (
-    <Button className={`${classes.add} ${classes.width}`} onClick={handleClick}>
+    <Button
+      // className={`${classes.add} ${classes.width}`}
+      style={{
+        backgroundColor: 'white',
+        width,
+      }}
+      onClick={handleClick}
+    >
       {icon} {btnText}
     </Button>
   )

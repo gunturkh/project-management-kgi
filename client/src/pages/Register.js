@@ -16,7 +16,7 @@
 //   const dispatch = useDispatch()
 
 //   useEffect(() => {
-//     document.title = `Register | Trellis`
+//     document.title = `Register | Project Management KGI`
 //   }, [])
 
 //   useEffect(() => {

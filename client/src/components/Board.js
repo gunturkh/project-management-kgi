@@ -100,7 +100,7 @@
 //       setColor(currBoard.image.color)
 //       setUrl(currBoard.image.full)
 //       setBoardTitle(currBoard.name)
-//       document.title = `${currBoard.name} | Trellis`
+//       document.title = `${currBoard.name} | Project Management KGI`
 //     }
 //   }, [currBoard])
 

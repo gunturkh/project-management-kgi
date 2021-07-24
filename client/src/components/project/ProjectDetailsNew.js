@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   listContainer: {
     display: 'flex',
     alignItems: 'flex-start',
-    width: 'fit-content',
+    width: '100%',
     marginTop: theme.spacing(0.5),
     padding: 20,
     boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
@@ -82,11 +82,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ProjectDetailsNew() {
   const classes = useStyles()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   /* eslint-disable-next-line */
   // var { id, name } = useParams()
   const { id } = useParams()
-  const { timelines, timelineError } = useSelector((state) => state.timeline)
+  const { timelines } = useSelector((state) => state.timeline)
   const { loading, currBoard, error } = useSelector((state) => state.boards)
   const { listLoading, lists } = useSelector((state) => state.lists)
   const { cardLoading, cards } = useSelector((state) => state.cards)
@@ -99,6 +99,14 @@ export default function ProjectDetailsNew() {
   const [initDone, setInitDone] = useState(false)
   const addFlag = useRef(true)
   const [addListFlag, setAddListFlag] = useState(false)
+  const [taskValue, setTaskValue] = useState({
+    name: '',
+    description: '',
+    priority: [],
+    pic: [],
+    dueDate: '',
+  })
+  const [editTaskValue, setEditTaskValue] = useState(taskValue)
   const [listTitle, setListTitle] = useState('')
   const [color, setColor] = useState('white')
   const [url, setUrl] = useState('')
@@ -141,8 +149,8 @@ export default function ProjectDetailsNew() {
       // setBoardTitle(currBoard.name)
       setColor('white')
       setUrl('')
-      setBoardTitle('test')
-      document.title = `${'test'} | Trellis`
+      // setBoardTitle('test')
+      document.title = `${'Project'} | Project Management KGI`
     }
   }, [currBoard])
 
@@ -328,21 +336,34 @@ export default function ProjectDetailsNew() {
   }
 
   if (id.length < 24) return <h1>Invalid URL</h1>
+  // const handleChange = (e) => {
+  //   e.preventDefault()
+  //   console.log("handleChange from PDN")
+  //   // setListTitle(e.target.value)
+  // }
+
   const handleChange = (e) => {
-    e.preventDefault()
-    setListTitle(e.target.value)
+    const noPersistChange = ['priority', 'pic']
+    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    else e.persist()
+    setTaskValue((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value }
+    })
   }
 
   const submitHandler = () => {
-    if (listTitle === '') return
-    const text = listTitle.trim().replace(/\s+/g, ' ')
-    if (text === '') {
-      setListTitle(listTitle)
-      return
-    }
+    if (taskValue.length === 0) return
+    // const text = listTitle.trim().replace(/\s+/g, ' ')
+    // if (text === '') {
+    //   setListTitle(listTitle)
+    //   return
+    // }
     const totalLists = initialData?.columnOrder?.length
     const postListReq = {
-      name: text,
+      name: taskValue.title,
+      description: taskValue.description,
+      priority: taskValue.priority,
+      pic: taskValue.pic,
       boardId: currBoard._id,
       order:
         totalLists === 0
@@ -357,13 +378,32 @@ export default function ProjectDetailsNew() {
     dispatch(
       createNewActivity(
         {
-          text: `${user.username} added ${listTitle} to this board`,
+          text: `${user.username} added ${taskValue.title} to this board`,
           boardId: currBoard._id,
         },
         token,
       ),
     )
-    setListTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+      dueDate: '',
+    })
+  }
+
+  const submitHandlerUpdate = () => {
+    setEditable(false)
+    // if (text === '') {
+    //   setListTitle(column.name)
+    //   setEditable(false)
+    //   return
+    // }
+    setEditTaskValue(editTaskValue)
+    dispatch(updateBoardById(id, editTaskValue))
+    // eslint-disable-next-line no-param-reassign
+    currBoard.name = editTaskValue.title
   }
 
   const handleKeyDown = (e) => {
@@ -376,7 +416,13 @@ export default function ProjectDetailsNew() {
   const closeButtonHandler = () => {
     setAddListFlag(false)
     addFlag.current = true
-    setListTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+      dueDate: '',
+    })
   }
 
   const handleAddition = () => {
@@ -418,7 +464,6 @@ export default function ProjectDetailsNew() {
       )
     }
   }
-
   return (
     <>
       {loading ? (
@@ -567,6 +612,18 @@ export default function ProjectDetailsNew() {
                   currBoard.name = boardTitle
                 }}
               />
+              {/* <InputCard
+                value={editTaskValue}
+                changedHandler={handleChange}
+                itemAdded={submitHandlerUpdate}
+                closeHandler={closeButtonHandler}
+                keyDownHandler={handleKeyDown}
+                type="list"
+                btnText="Edit List"
+                placeholder="Enter list title..."
+                width="230px"
+                marginLeft="1"
+              /> */}
             </div>
           ) : (
             <div></div>
@@ -602,7 +659,7 @@ export default function ProjectDetailsNew() {
                         )
                       })}
                     <div className={classes.wrapper}>
-                      {addFlag.current && (
+                      {/* {addFlag.current && (
                         <AddItem
                           handleClick={handleAddition}
                           btnText="Add another list"
@@ -612,7 +669,7 @@ export default function ProjectDetailsNew() {
                           color="white"
                           noshadow
                         />
-                      )}
+                      )} */}
                       {addListFlag && (
                         <InputCard
                           value={listTitle}

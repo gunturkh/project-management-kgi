@@ -87,7 +87,7 @@ export default function Auth({
               paddingBottom: '30px',
             }}
           >
-            {authName} to Trellis
+            {authName} to Project Management KGI
           </div>
           <form onSubmit={submitHandler}>
             <label htmlFor={`${authName}-username`}></label>

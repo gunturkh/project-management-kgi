@@ -74,6 +74,14 @@ export default function Task() {
   const [initDone, setInitDone] = useState(false)
   const addFlag = useRef(true)
   const [addListFlag, setAddListFlag] = useState(false)
+  const [taskValue, setTaskValue] = useState({
+    name: '',
+    description: '',
+    priority: [],
+    pic: [],
+    dueDate: '',
+  })
+  const [editTaskValue, setEditTaskValue] = useState(taskValue)
   const [listTitle, setListTitle] = useState('')
   const [color, setColor] = useState('white')
   const [url, setUrl] = useState('')
@@ -101,7 +109,7 @@ export default function Task() {
       setColor(currBoard.image.color)
       setUrl(currBoard.image.full)
       setBoardTitle(currBoard.name)
-      document.title = `${currBoard.name} | Trellis`
+      document.title = `${currBoard.name} | Project Management KGI`
     }
   }, [currBoard])
 
@@ -287,21 +295,29 @@ export default function Task() {
   }
 
   if (id.length < 24) return <h1>Invalid URL</h1>
+  // const handleChange = (e) => {
+  //   e.preventDefault()
+  //   console.log("handleChange from Task")
+  //   // setListTitle(e.target.value)
+  // }
   const handleChange = (e) => {
-    e.preventDefault()
-    setListTitle(e.target.value)
+    const noPersistChange = ['priority', 'pic']
+    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    else e.persist()
+    setTaskValue((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value }
+    })
   }
 
   const submitHandler = () => {
-    if (listTitle === '') return
-    const text = listTitle.trim().replace(/\s+/g, ' ')
-    if (text === '') {
-      setListTitle(listTitle)
-      return
-    }
+    if (taskValue.length === 0) return
     const totalLists = initialData.columnOrder.length
     const postListReq = {
-      name: text,
+      name: taskValue.name,
+      description: taskValue.description,
+      priority: taskValue.priority,
+      pic: taskValue.pic,
+      dueDate: taskValue.dueDate,
       boardId: currBoard._id,
       order:
         totalLists === 0
@@ -316,13 +332,26 @@ export default function Task() {
     dispatch(
       createNewActivity(
         {
-          text: `${user.username} added ${listTitle} to this board`,
+          text: `${user.username} added ${taskValue.name} to this board`,
           boardId: currBoard._id,
         },
         token,
       ),
     )
-    setListTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+    })
+  }
+
+  const submitHandlerUpdate = () => {
+    setEditable(false)
+    setEditTaskValue(editTaskValue)
+    dispatch(updateBoardById(id, editTaskValue))
+    // eslint-disable-next-line no-param-reassign
+    currBoard.name = editTaskValue.title
   }
 
   const handleKeyDown = (e) => {
@@ -332,10 +361,23 @@ export default function Task() {
     }
   }
 
+  const handleUpdateKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      submitHandlerUpdate()
+    }
+  }
+
   const closeButtonHandler = () => {
     setAddListFlag(false)
     addFlag.current = true
-    setListTitle('')
+    setTaskValue({
+      title: '',
+      description: '',
+      priority: [],
+      pic: [],
+      dueDate: '',
+    })
   }
 
   const handleAddition = () => {
@@ -394,7 +436,7 @@ export default function Task() {
           <Header loggedIn />
           {editable ? (
             <div className={classes.editable}>
-              <InputBase
+              {/* <InputBase
                 onChange={(e) => {
                   e.preventDefault()
                   setBoardTitle(e.target.value)
@@ -422,6 +464,18 @@ export default function Task() {
                   dispatch(updateBoardById(id, { name: text }, token))
                   currBoard.name = boardTitle
                 }}
+              /> */}
+              <InputCard
+                value={editTaskValue}
+                changedHandler={handleChange}
+                itemAdded={submitHandlerUpdate}
+                closeHandler={closeButtonHandler}
+                keyDownHandler={handleUpdateKeyDown}
+                type="list"
+                btnText="Edit List"
+                placeholder="Enter list title..."
+                width="230px"
+                marginLeft="1"
               />
             </div>
           ) : (
@@ -470,7 +524,7 @@ export default function Task() {
                     )}
                     {addListFlag && (
                       <InputCard
-                        value={listTitle}
+                        value={taskValue}
                         changedHandler={handleChange}
                         itemAdded={submitHandler}
                         closeHandler={closeButtonHandler}

@@ -37,6 +37,29 @@ import {
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
 import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
+const statusOptions = [
+  {
+    label: 'Kick Off',
+    value: 'Kick Off',
+  },
+  {
+    label: 'In Progress',
+    value: 'In Progress',
+  },
+  {
+    label: 'Installation & Commissioning',
+    value: 'Installation & Commissioning',
+  },
+  {
+    label: 'Validation',
+    value: 'Validation',
+  },
+  {
+    label: 'Closed',
+    value: 'Closed',
+  },
+]
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -123,6 +146,7 @@ const EditProject = (props) => {
             endDate: currBoard?.endDate ? moment(currBoard.endDate) : '',
             company: currBoard?.company || null,
             pic: currBoard?.pic || [],
+            status: currBoard?.status || '',
           }}
           validationSchema={Yup.object().shape({
             projectName: Yup.string()
@@ -134,6 +158,7 @@ const EditProject = (props) => {
             startDate: Yup.date().required('Project start date is required'),
             endDate: Yup.string().required('Project end date is required'),
             pic: Yup.array().required('Project PIC is required'),
+            status: Yup.string().required('Project status is required'),
             // company: Yup.string() .max(255) .required('Project company is required'),
           })}
           onSubmit={(e) => {
@@ -147,6 +172,7 @@ const EditProject = (props) => {
               endDate: e.endDate,
               company: e.company,
               pic: e.pic,
+              status: e.status,
             }
             console.log('postBoardReq submit: ', postBoardReq)
             console.log('update id: ', id)
@@ -223,7 +249,7 @@ const EditProject = (props) => {
                         multiline
                       />
                     </Grid>
-                    <Grid item md={6} xs={6}>
+                    <Grid item md={4} xs={4}>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                           views={['day', 'month', 'year']}
@@ -245,7 +271,7 @@ const EditProject = (props) => {
                         />
                       </LocalizationProvider>
                     </Grid>
-                    <Grid item md={6} xs={6}>
+                    <Grid item md={4} xs={4}>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                           views={['day', 'month', 'year']}
@@ -266,6 +292,37 @@ const EditProject = (props) => {
                           )}
                         />
                       </LocalizationProvider>
+                    </Grid>
+                    <Grid item md={4} xs={4}>
+                      <div>
+                        <FormControl style={{ width: '100%' }}>
+                          <InputLabel id="demo-mutiple-name-label">
+                            Project Status
+                          </InputLabel>
+                          <Select
+                            // labelId="demo-mutiple-name-label"
+                            // id="demo-mutiple-name"
+                            value={values.status}
+                            onChange={(e) => {
+                              setFieldValue('status', e.target.value)
+                            }}
+                            input={<OutlinedInput label="Status" />}
+                            MenuProps={MenuProps}
+                            style={{ maxWidth: '100%' }}
+                            required
+                          >
+                            {statusOptions.map((status, id) => (
+                              <MenuItem
+                                key={`${status.label}-${id}`}
+                                value={status.value}
+                                style={getStyles()}
+                              >
+                                {status.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
                     </Grid>
                     <Grid item md={6} xs={12}>
                       <div>
