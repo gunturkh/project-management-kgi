@@ -3,6 +3,7 @@ import moment from 'moment'
 import { v4 as uuid } from 'uuid'
 import { useNavigate } from 'react-router-dom'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { FrappeGantt } from 'frappe-gantt-react'
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns'
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
 import DatePicker from '@material-ui/lab/DatePicker'
@@ -225,7 +226,7 @@ const Timeline = (props) => {
   }
 
   return (
-    <Card {...props}>
+    <Card {...props} style={{ width: '100%' }}>
       {/* <CardHeader title={props.title || ''} /> */}
       <Box>
         <Box
@@ -365,6 +366,16 @@ const Timeline = (props) => {
                     >
                       {timeline?.title}
                     </Typography>
+                    <Typography
+                      align="left"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h5"
+                    >
+                      Progress :{' '}
+                      {timeline?.progress ? parseInt(timeline?.progress) : '-'}{' '}
+                      %
+                    </Typography>
                     {/* <Typography */}
                     {/*   align="left" */}
                     {/*   color="textPrimary" */}
@@ -402,10 +413,10 @@ const Timeline = (props) => {
                         variant="body2"
                       >
                         {timeline?.start && timeline?.end
-                          ? `${moment
-                              .utc(timeline.start)
-                              .format('DD MMMM YYYY')} - ${moment
-                              .utc(timeline.end)
+                          ? `${moment(timeline.start)
+                              // .utc(timeline.start)
+                              .format('DD MMMM YYYY')} - ${moment(timeline.end)
+                              // .utc(timeline.end)
                               .format('DD MMMM YYYY')}`
                           : ''}
                       </Typography>
@@ -418,8 +429,9 @@ const Timeline = (props) => {
                   initialValues={{
                     title: '',
                     // projectDescription: '',
-                    start: moment.utc(),
-                    end: moment.utc().add(1, 'days'),
+                    start: moment(),
+                    end: moment().add(1, 'days'),
+                    progress: 0,
                     boardId: currBoard._id,
                     // pic: [],
                   }}
@@ -443,6 +455,7 @@ const Timeline = (props) => {
                       // projectDescription: e.projectDescription,
                       start: e.start,
                       end: e.end,
+                      progress: e.progress,
                       boardId: currBoard._id,
                     }
                     console.log('timelineReq submit: ', timelineReq)
@@ -498,6 +511,23 @@ const Timeline = (props) => {
                                 onChange={handleChange}
                                 required
                                 value={values.title}
+                                variant="outlined"
+                              />
+                            </Grid>
+                            <Grid item md={12} xs={12}>
+                              <TextField
+                                error={Boolean(
+                                  touched.progress && errors.progress,
+                                )}
+                                fullWidth
+                                helperText="Please fill project progress"
+                                label="Timeline progress"
+                                name="progress"
+                                type="number"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                required
+                                value={values.progress}
                                 variant="outlined"
                               />
                             </Grid>
@@ -584,12 +614,15 @@ const Timeline = (props) => {
                     title: timeline?.title,
                     // projectDescription: '',
                     start: timeline?.start
-                      ? moment.utc(timeline.start).format('DD MMM YYYY')
+                      ? // ? moment.utc(timeline.start).format('DD MMM YYYY')
+                        moment(timeline.start).format('DD MMM YYYY')
                       : '',
                     end: timeline?.end
-                      ? moment.utc(timeline.end).format('DD MMM YYYY')
+                      ? // ? moment.utc(timeline.end).format('DD MMM YYYY')
+                        moment(timeline.end).format('DD MMM YYYY')
                       : '',
                     boardId: currBoard._id,
+                    progress: parseInt(timeline?.progress) || 0,
                     id: timeline?.id,
                     // pic: [],
                   }}
@@ -615,6 +648,7 @@ const Timeline = (props) => {
                       title: e.title,
                       start: e.start,
                       end: endTime,
+                      progress: e.progress,
                       boardId: currBoard._id,
                     }
                     console.log('timelineReq submit: ', timelineReq)
@@ -676,6 +710,23 @@ const Timeline = (props) => {
                                 onChange={handleChange}
                                 required
                                 value={values.title}
+                                variant="outlined"
+                              />
+                            </Grid>
+                            <Grid item md={12} xs={12}>
+                              <TextField
+                                error={Boolean(
+                                  touched.progress && errors.progress,
+                                )}
+                                fullWidth
+                                helperText="Please fill project progress"
+                                label="Timeline progress"
+                                name="progress"
+                                type="number"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                required
+                                value={values.progress}
                                 variant="outlined"
                               />
                             </Grid>
@@ -771,7 +822,7 @@ const Timeline = (props) => {
         {/*
     <Box sx={{ minWidth: 800 }}>{calendar}</Box>
     */}
-        <Box sx={{ p: 2, minWidth: 800 }}>
+        {/* <Box sx={{ p: 2, minWidth: 800 }}>
           <FullCalendar
             // class
             weekNumberCalculation="ISO"
@@ -852,7 +903,71 @@ const Timeline = (props) => {
             // }}
             eventLimit
           />
-        </Box>
+        </Box> */}
+        {props.eventsData.length > 0 && (
+          <FrappeGantt
+            tasks={props.eventsData.map((timeline) => {
+              return {
+                id: timeline._id,
+                name: timeline.title,
+                start: timeline.start,
+                end: timeline.end,
+                progress: parseInt(timeline.progress),
+                dependencies: '',
+              }
+            })}
+            viewMode={'Day'}
+            onClick={(task) => {
+              // setTimelineDialogStatus('edit')
+              console.log('task onClick: ', { task })
+              setOpen(true)
+              setTimelineDialogStatus('view')
+              const timelineObj = {
+                start: task.start,
+                end: task.end,
+                title: task.name,
+                id: task.id,
+                progress: task.progress,
+              }
+              setTimeline(timelineObj)
+            }}
+            onDateChange={(task, start, end) => {
+              console.log('onDateChange: ', { task, start, end })
+              // const startTime = new Date(start).setHours(0)
+              // const endTime = new Date(end).setHours(23, 59, 59)
+              const timelineReq = {
+                _id: task.id,
+                title: task.name,
+                start: start,
+                end: end,
+                boardId: currBoard._id,
+              }
+              console.log('timelineReq submit: ', timelineReq)
+              console.log('timeline token submit: ', token)
+              dispatch(
+                updateTimelineByBoardId(
+                  // `${timelineReq.boardId}/${timelineReq._id}`,
+                  `${timelineReq.boardId}/${timelineReq._id}`,
+                  timelineReq,
+                ),
+              )
+            }}
+            onProgressChange={(task, progress) => console.log(task, progress)}
+            onTasksChange={(tasks) => console.log(tasks)}
+          />
+        )}
+        {props.eventsData.length === 0 && (
+          <Box sx={{ padding: 5, width: '100%' }}>
+            <Typography
+              align="center"
+              color="textPrimary"
+              gutterBottom
+              variant="h1"
+            >
+              There is no timeline on this project
+            </Typography>
+          </Box>
+        )}
       </PerfectScrollbar>
       <Box
         sx={{

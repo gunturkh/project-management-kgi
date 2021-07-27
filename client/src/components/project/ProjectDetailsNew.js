@@ -87,6 +87,7 @@ export default function ProjectDetailsNew() {
   // var { id, name } = useParams()
   const { id } = useParams()
   const { timelines } = useSelector((state) => state.timeline)
+  const [manipulatedTimelines, setManipulatedTimelines] = useState([])
   const { loading, currBoard, error } = useSelector((state) => state.boards)
   const { listLoading, lists } = useSelector((state) => state.lists)
   const { cardLoading, cards } = useSelector((state) => state.cards)
@@ -182,6 +183,41 @@ export default function ProjectDetailsNew() {
       setInitDone(true)
     }
   }, [setInitDone, listLoading, cardLoading, setInitialData, cards, lists])
+
+  useEffect(() => {
+    // let manipulatedTimelines = (timelines) => {
+    new Promise(async (resolve, reject) => {
+      try {
+        const result = await Promise.all(
+          timelines?.map((time) => {
+            let localStart = moment(time.start).local().format('YYYY-MM-DD')
+            let localEnd = moment(time.end).local().format('YYYY-MM-DD')
+            console.log({ localStart, localEnd })
+            const start = localStart.split('T')[0]
+            const end = localEnd.split('T')[0]
+
+            return {
+              ...time,
+              start,
+              end,
+            }
+          }),
+        )
+
+        if (result?.length > 0) {
+          resolve(result)
+          console.log('timelines time', timelines)
+          setManipulatedTimelines(result)
+        } else resolve([])
+      } catch (error) {
+        reject([])
+      }
+    })
+    // }
+    // console.log('timelines', timelines)
+    // const result = await manipulatedTimelines(timelines)
+    // console.log('manipulatedTimelines', result)
+  }, [timelines])
 
   const onDragEnd = (result) => {
     // eslint-disable-next-line no-var
@@ -565,7 +601,10 @@ export default function ProjectDetailsNew() {
               p: 2,
             }}
           >
-            <Timeline title={currBoard.projectName} eventsData={timelines} />
+            <Timeline
+              title={currBoard.projectName}
+              eventsData={manipulatedTimelines ?? []}
+            />
           </Box>
         </Card>
       )}
