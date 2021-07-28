@@ -101,49 +101,6 @@ const orders = [
   },
 ]
 
-// const calendar = new Calendar(calendarEl, {
-//   plugins: [dayGridPlugin, timeGridPlugin, listPlugin],
-//   initialView: 'dayGridMonth',
-//   headerToolbar: {
-//     left: 'prev,next today',
-//     center: 'title',
-//     right: 'dayGridMonth,timeGridWeek,listWeek',
-//   },
-// })
-
-// const viewCalendar = () => {
-//   let view
-//   if ($(window).width() < 600) {
-//     view = 'timeGridDay'
-//   } else {
-//     view = 'dayGridMonth'
-//   }
-//   return view
-// }
-const eventsData = [
-  { title: 'All Day Event', start: '2021-05-01' },
-  { title: 'Long Event', start: '2021-05-07', end: '2021-05-10' },
-  {
-    groupId: '999',
-    title: 'Repeating Event',
-    start: '2021-05-09T16:00:00+00:00',
-  },
-  {
-    groupId: '999',
-    title: 'Repeating Event',
-    start: '2021-05-16T16:00:00+00:00',
-  },
-  { title: 'Conference', start: '2021-05-06', end: '2021-05-08' },
-  {
-    title: 'Meeting',
-    start: '2021-05-07T10:30:00+00:00',
-    end: '2021-05-07T12:30:00+00:00',
-  },
-  { title: 'Lunch', start: '2021-05-07T12:00:00+00:00' },
-  { title: 'Birthday Party', start: '2021-05-08T07:00:00+00:00' },
-  { url: 'http://google.com/', title: 'Click for Google', start: '2021-05-28' },
-]
-
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -225,6 +182,7 @@ const Timeline = (props) => {
     setOpen(false)
   }
 
+  console.log('timeline user', user)
   return (
     <Card {...props} style={{ width: '100%' }}>
       {/* <CardHeader title={props.title || ''} /> */}
@@ -236,14 +194,16 @@ const Timeline = (props) => {
             p: 2,
           }}
         >
-          <Button
-            color="primary"
-            variant="contained"
-            // onClick={() => navigate(`/app/projects/new`, { replace: true })}
-            onClick={handleClickOpen}
-          >
-            Create Timeline
-          </Button>
+          {user.role === 'ADMIN' && (
+            <Button
+              color="primary"
+              variant="contained"
+              // onClick={() => navigate(`/app/projects/new`, { replace: true })}
+              onClick={handleClickOpen}
+            >
+              Create Timeline
+            </Button>
+          )}
           <Dialog open={openModal} onClose={handleModalClose}>
             <div style={modalStyle} className={classes.paper}>
               <h2 style={{ padding: 5 }}>Delete Timeline {timeline?.title}</h2>
@@ -319,9 +279,7 @@ const Timeline = (props) => {
                     >
                       <Button
                         component="div"
-                        // color="primary"
-                        // variant="contained"
-                        // onClick={() => navigate(`/app/projects/new`, { replace: true })}
+                        disabled={user.role !== 'ADMIN'}
                         onClick={() => {
                           console.log('edit')
                           setTimelineDialogStatus('edit')
@@ -341,6 +299,7 @@ const Timeline = (props) => {
                       </Button>
                       <Button
                         component="div"
+                        disabled={user.role !== 'ADMIN'}
                         onClick={() => {
                           setOpenModal(true)
                         }}
