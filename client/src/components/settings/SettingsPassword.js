@@ -23,9 +23,8 @@ import {
 } from '../../actions/actionCreators/userActions'
 import Thumb from '../Thumb'
 
-const CLOUDINARY_BASE_URL =
-  'https://api.cloudinary.com/v1_1/dzl9cgxtk/image/upload'
-const preset = 'avatarkgi'
+const CLOUDINARY_BASE_URL = process.env.REACT_APP_CLOUDINARY_BASE_URL
+const preset = process.env.REACT_APP_PRESET
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -221,10 +220,9 @@ const SettingsPassword = (props) => {
                       loading={loading}
                       color="primary"
                       variant="contained"
-                      loadingIndicator="Updating Profile..."
                       type="submit"
                     >
-                      Submit Updated Profile
+                      Submit
                     </LoadingButton>
                   </>
                 ) : (
