@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import {
   Box,
   Button,
@@ -10,12 +11,21 @@ import {
   Divider,
   TextField,
   Snackbar,
+  InputLabel,
   Alert as MuiAlert,
 } from '@material-ui/core'
+import LoadingButton from '@material-ui/lab/LoadingButton'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { updateUser } from '../../actions/actionCreators/userActions'
+import {
+  updateUser,
+  uploadAvatarUser,
+} from '../../actions/actionCreators/userActions'
 import Thumb from '../Thumb'
+
+const CLOUDINARY_BASE_URL =
+  'https://api.cloudinary.com/v1_1/dzl9cgxtk/image/upload'
+const preset = 'avatarkgi'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -30,13 +40,19 @@ const SettingsPassword = (props) => {
     password: '',
     confirm: '',
   })
+  const [edit, setEdit] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
+  useEffect(() => {
+    setImageUrl(user.avatar)
+  }, [user])
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    })
-  }
+  // const handleChange = (event) => {
+  //   setValues({
+  //     ...values,
+  //     [event.target.name]: event.target.value,
+  //   })
+  // }
   const [open, setOpen] = React.useState(false)
 
   const handleClick = () => {
@@ -54,26 +70,53 @@ const SettingsPassword = (props) => {
   console.log('user:', user)
   return (
     <>
-      {/*
       <Formik
         initialValues={{
           avatar: user.avatar,
+          name: user.name,
+          role: user.role,
+          position: user.position,
         }}
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           // e.preventDefault()
+          setLoading(true)
           console.log('avatar submit: ', e)
-          // const postUserReq = {
-          //   username: user.username,
-          //   newPassword: e.newPassword,
-          //   newPasswordCheck: e.newPassword,
-          //   role: e.role,
-          //   avatar: e.avatar,
-          // }
-          // console.log('postBoardReq submit: ', postUserReq)
-          // dispatch(updateUser(postUserReq)).then(() => {
-          //   console.log('done create project')
-          //   setOpen(true)
-          //   // navigate('/app/projects')
+          console.log('url: ', CLOUDINARY_BASE_URL)
+          console.log('user submit: ', user)
+          const formData = new FormData()
+          formData.append('file', e.avatar)
+          formData.append('upload_preset', preset)
+          try {
+            // setLoading(true);
+            console.log('upload avatar progressing...')
+            const res = await axios.post(CLOUDINARY_BASE_URL, formData)
+            const imageUrl = res.data.secure_url
+            setImageUrl(imageUrl)
+            // setLoading(false);
+            const postUserReq = {
+              username: user.username,
+              newPassword: e.newPassword,
+              newPasswordCheck: e.newPassword,
+              role: user.role,
+              name: e.name,
+              position: e.position,
+              avatar: imageUrl,
+            }
+            dispatch(updateUser(postUserReq)).then(() => {
+              console.log('upload avatar done!', user)
+              setLoading(false)
+              setEdit(false)
+            })
+            // setImage(image.data);
+          } catch (err) {
+            console.error(err)
+          }
+          // dispatch(uploadAvatarUser(e.avatar)).then(() => {
+          //   dispatch(updateUser(postUserReq)).then(() => {
+          //     console.log('done update user')
+          //     // setOpen(true)
+          //     // navigate('/app/projects')
+          //   })
           // })
           // navigate(`/app/projects`, { replace: true })
           // const { username, password } = e
@@ -86,12 +129,12 @@ const SettingsPassword = (props) => {
       >
         {({
           errors,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            touched,
-            values,
-            setFieldValue,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          touched,
+          values,
+          setFieldValue,
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -99,22 +142,61 @@ const SettingsPassword = (props) => {
             noValidate
             {...props}
           >
-            <Card>
+            <Card sx={{ marginBottom: 5 }}>
               <CardHeader
                 subheader="Update Profile Picture"
                 title="Profile Picture"
               />
               <Divider />
               <CardContent>
-                <input
-                  id="file"
-                  name="avatar"
-                  type="file"
-                  onChange={(event) => {
-                    setFieldValue('avatar', event.currentTarget.files[0])
-                  }}
+                {user.avatar ? (
+                  <InputLabel>Avatar</InputLabel>
+                ) : (
+                  <InputLabel>There is no avatar uploaded</InputLabel>
+                )}
+                {edit && (
+                  <input
+                    id="file"
+                    name="avatar"
+                    type="file"
+                    onChange={(event) => {
+                      setFieldValue('avatar', event.currentTarget.files[0])
+                    }}
+                  />
+                )}
+                {edit ? (
+                  <Thumb file={values.avatar} />
+                ) : (
+                  <img width="250px" src={imageUrl} />
+                )}
+                <TextField
+                  fullWidth
+                  error={Boolean(touched.name && errors.name)}
+                  label="Name"
+                  margin="normal"
+                  name="name"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="text"
+                  required
+                  value={values.name}
+                  variant="outlined"
+                  disabled={!edit}
                 />
-                <Thumb file={values.avatar} />
+                <TextField
+                  fullWidth
+                  error={Boolean(touched.position && errors.position)}
+                  label="Job Position"
+                  margin="normal"
+                  name="position"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="text"
+                  required
+                  value={values.position}
+                  variant="outlined"
+                  disabled={!edit}
+                />
               </CardContent>
               <Divider />
               <Box
@@ -124,9 +206,36 @@ const SettingsPassword = (props) => {
                   p: 2,
                 }}
               >
-                <Button color="primary" variant="contained" type="submit">
-                  Upload Profile Picture
-                </Button>
+                {edit ? (
+                  <>
+                    {' '}
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={() => setEdit(false)}
+                      sx={{ marginRight: 2 }}
+                    >
+                      Cancel
+                    </Button>
+                    <LoadingButton
+                      loading={loading}
+                      color="primary"
+                      variant="contained"
+                      loadingIndicator="Updating Profile..."
+                      type="submit"
+                    >
+                      Submit Updated Profile
+                    </LoadingButton>
+                  </>
+                ) : (
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => setEdit(true)}
+                  >
+                    Update Profile
+                  </Button>
+                )}
                 <Snackbar
                   open={open}
                   autoHideDuration={6000}
@@ -145,7 +254,7 @@ const SettingsPassword = (props) => {
           </form>
         )}
       </Formik>
-        */}
+
       <Formik
         initialValues={{
           username: user.username,

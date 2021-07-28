@@ -129,7 +129,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       >
         <Avatar
           component={RouterLink}
-          src={dummyUser.avatar}
+          src={user?.avatar || dummyUser.avatar}
           sx={{
             cursor: 'pointer',
             width: 64,
@@ -138,10 +138,10 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
           to="/app/account"
         />
         <Typography color="textPrimary" variant="h5">
-          {user.username}
+          {user.name}
         </Typography>
         <Typography color="textSecondary" variant="body2">
-          {user.role}
+          {user.position}
         </Typography>
       </Box>
       <Divider />
@@ -195,22 +195,24 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
 
   return (
     <>
-      <Hidden lgUp>
-        <Drawer
-          anchor="left"
-          onClose={onMobileClose}
-          open={openMobile}
-          variant="temporary"
-          PaperProps={{
-            sx: {
-              width: 256,
-            },
-          }}
-        >
-          {content}
-        </Drawer>
-      </Hidden>
-      <Hidden lgDown>
+      {/* <Hidden lgUp> */}
+      <Drawer
+        anchor="left"
+        onClose={onMobileClose}
+        open={openMobile}
+        variant="temporary"
+        PaperProps={{
+          sx: {
+            width: 256,
+            top: 64,
+            height: 'calc(100% - 64px)',
+          },
+        }}
+      >
+        {content}
+      </Drawer>
+      {/* </Hidden> */}
+      {/* <Hidden lgDown>
         <Drawer
           anchor="left"
           open
@@ -225,7 +227,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         >
           {content}
         </Drawer>
-      </Hidden>
+      </Hidden> */}
     </>
   )
 }

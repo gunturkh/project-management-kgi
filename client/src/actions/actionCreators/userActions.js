@@ -2,6 +2,8 @@ import axios from 'axios'
 import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/user/'
+const CLOUDINARY_BASE_URL = 'https://api.cloudinary.com/v1_1/dzl9cgxtk'
+const preset = 'avatarkgi'
 
 export const fetchAllUsersInfo = (token) => (dispatch) => {
   dispatch({ type: ACTIONS.USERS_REQUEST })
@@ -89,6 +91,35 @@ export const registerUser = (params) => (dispatch) => {
         type: ACTIONS.REGISTER_FAILED,
         payload: { error: e.response.data.msg },
       })
+    })
+  return Promise.resolve()
+}
+
+export const uploadAvatarUser = (params) => (dispatch) => {
+  // dispatch({ type: ACTIONS.REGISTER_REQUEST })
+  const formData = new FormData()
+  formData.append('file', params)
+  formData.append('upload_preset', preset)
+  // const config = {
+  //   headers: {
+  //     'content-type': 'multipart/form-data',
+  //   },
+  // }
+  axios
+    // .post(`${BASE_URL}upload`, formData, config)
+    .post(`${CLOUDINARY_BASE_URL}/image/upload`, formData)
+    .then((res) => {
+      dispatch({
+        type: ACTIONS.REGISTER_SUCCESS,
+        payload: { user: res.data },
+      })
+    })
+    .catch((e) => {
+      console.log('error upload', e)
+      // dispatch({
+      //   type: ACTIONS.REGISTER_FAILED,
+      //   payload: { error: e.response.data.msg },
+      // })
     })
   return Promise.resolve()
 }

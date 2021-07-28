@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import AccountCircle from '@material-ui/icons/AccountCircle'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
   AppBar,
@@ -10,6 +11,10 @@ import {
   Hidden,
   IconButton,
   Toolbar,
+  Typography,
+  Menu,
+  MenuItem,
+  Avatar,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
@@ -21,7 +26,28 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
   const [notifications] = useState([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { user } = useSelector((state) => state.user)
+  const [auth, setAuth] = React.useState(true)
+  const [anchorEl, setAnchorEl] = React.useState(null)
 
+  const handleChange = (event) => {
+    setAuth(event.target.checked)
+  }
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const dummyUser = {
+    avatar: '/static/images/avatars/kgi.png',
+    jobTitle: 'Admin',
+    name: 'Kuantum Gabe Integritas',
+  }
+  console.log('user navbar: ', user)
   return (
     <AppBar elevation={0} {...rest}>
       <Toolbar>
@@ -30,8 +56,16 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
             <Logo />
           </div>
         </RouterLink>
+        <Typography
+          sx={{ marginLeft: '1rem' }}
+          align="left"
+          color="white"
+          variant="h4"
+        >
+          {user?.name} - {user?.position}
+        </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        <Hidden lgDown>
+        {/* <Hidden lgDown>
           <IconButton
             color="inherit"
             onClick={() => {
@@ -42,22 +76,72 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
           >
             <InputIcon />
           </IconButton>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton
-            color="inherit"
+        </Hidden> */}
+        {/* <Hidden lgUp> */}
+        {/* <IconButton
+          color="inherit"
+          onClick={() => {
+            dispatch(logoutUser())
+            localStorage.setItem('auth-token', '')
+            navigate('/login')
+          }}
+        >
+          <InputIcon />
+        </IconButton> */}
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          onClick={handleMenu}
+          color="inherit"
+        >
+          {/* <AccountCircle /> */}
+          <Avatar
+            src={user?.avatar || dummyUser.avatar}
+            sx={{
+              cursor: 'pointer',
+              width: 24,
+              height: 24,
+            }}
+          />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem
+            onClick={() => {
+              navigate('/app/settings')
+            }}
+          >
+            Edit Profile
+          </MenuItem>
+          <MenuItem
             onClick={() => {
               dispatch(logoutUser())
               localStorage.setItem('auth-token', '')
               navigate('/login')
             }}
           >
-            <InputIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={onMobileNavOpen}>
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+            Logout
+          </MenuItem>
+        </Menu>
+        <IconButton color="inherit" onClick={onMobileNavOpen}>
+          <MenuIcon />
+        </IconButton>
+        {/* </Hidden> */}
       </Toolbar>
     </AppBar>
   )

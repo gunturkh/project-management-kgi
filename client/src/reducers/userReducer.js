@@ -7,6 +7,8 @@ const initialState = {
     username: undefined,
     role: undefined,
     avatar: undefined,
+    name: undefined,
+    position: undefined,
   },
   users: [],
   isValid: false,
@@ -95,6 +97,8 @@ export const userReducer = (state = initialState, action) => {
           username: action.payload.user.user.username,
           role: action.payload.user.user.role,
           avatar: action.payload.user.user.avatar,
+          name: action.payload.user.user.name,
+          position: action.payload.user.user.position,
         },
         requestLogin: false,
         successLogin: true,
@@ -120,6 +124,8 @@ export const userReducer = (state = initialState, action) => {
           username: action.payload.user.username,
           role: action.payload.user.role,
           avatar: action.payload.user.avatar,
+          name: action.payload.user.name,
+          position: action.payload.user.position,
         },
       }
     case ACTIONS.ERROR_USER:

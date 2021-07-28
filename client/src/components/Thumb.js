@@ -39,8 +39,9 @@ export default class Thumb extends React.Component {
         src={thumb}
         alt={file.name}
         className="img-thumbnail mt-2"
-        height={200}
-        width={200}
+        height={'auto'}
+        maxWidth={'250px'}
+        width={'auto '}
       />
     )
   }
