@@ -28,6 +28,7 @@ import {
   fetchActivitiesFromBoard,
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
+import { updateUserNotification } from '../../actions/actionCreators/userActions'
 import List from '../List'
 import midString from '../../ordering/ordering'
 import { updateCardById } from '../../actions/actionCreators/cardActions'
@@ -46,6 +47,7 @@ import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 import AddItem from '../AddItem'
 import { fetchTimelineByBoardId } from '../../actions/actionCreators/timelineActions'
 import Timeline from '../Timeline'
+import { makeid } from '../../utils/randomString'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -219,7 +221,7 @@ export default function ProjectDetailsNew() {
     // console.log('manipulatedTimelines', result)
   }, [timelines])
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     // eslint-disable-next-line no-var
     var newOrder
     const { destination, source, draggableId, type } = result
@@ -332,7 +334,8 @@ export default function ProjectDetailsNew() {
     dispatch(
       updateCardById(draggableId, { order: newOrder, listId: endList._id }),
     )
-    const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name}`
+    // const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name}`
+    const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name} on project ${currBoard.projectName}`
     const recentActivity = activities[activities.length - 1]
     if (
       recentActivity.text ===
@@ -341,6 +344,26 @@ export default function ProjectDetailsNew() {
     ) {
       dispatch(deleteActivityById(recentActivity._id))
     } else dispatch(createNewActivity({ text, boardId: currBoard._id }, token))
+
+    if (currBoard?.pic.length > 0) {
+      await currBoard.pic.map(async (pic) => {
+        const picData = await users.filter((user) => user._id === pic)[0]
+        console.log('picData: ', { picData })
+        const notifMessage = {
+          id: makeid(5),
+          message: text,
+          link: `/app/projects/details/${currBoard._id}`,
+          read: false,
+        }
+        const userParams = {
+          ...picData,
+          notification: picData.notification.length
+            ? [...picData.notification, notifMessage]
+            : [notifMessage],
+        }
+        dispatch(updateUserNotification(userParams))
+      })
+    }
 
     const startTaskIds = Array.from(startList.taskIds)
     startTaskIds.splice(source.index, 1)
@@ -429,18 +452,18 @@ export default function ProjectDetailsNew() {
     })
   }
 
-  const submitHandlerUpdate = () => {
-    setEditable(false)
-    // if (text === '') {
-    //   setListTitle(column.name)
-    //   setEditable(false)
-    //   return
-    // }
-    setEditTaskValue(editTaskValue)
-    dispatch(updateBoardById(id, editTaskValue))
-    // eslint-disable-next-line no-param-reassign
-    currBoard.name = editTaskValue.title
-  }
+  // const submitHandlerUpdate = () => {
+  //   setEditable(false)
+  //   // if (text === '') {
+  //   //   setListTitle(column.name)
+  //   //   setEditable(false)
+  //   //   return
+  //   // }
+  //   setEditTaskValue(editTaskValue)
+  //   dispatch(updateBoardById(id, editTaskValue))
+  //   // eslint-disable-next-line no-param-reassign
+  //   currBoard.name = editTaskValue.title
+  // }
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -461,45 +484,45 @@ export default function ProjectDetailsNew() {
     })
   }
 
-  const handleAddition = () => {
-    setAddListFlag(true)
-    addFlag.current = false
-  }
-  const setBackground = (background) => {
-    if (background.thumb) {
-      setUrl(background.full)
-      setColor('white')
-      dispatch(
-        updateBoardById(
-          currBoard._id,
-          {
-            image: {
-              full: background.full,
-              thumb: background.thumb,
-              color: 'white',
-            },
-          },
-          token,
-        ),
-      )
-    } else {
-      setColor(background)
-      setUrl('')
-      dispatch(
-        updateBoardById(
-          currBoard._id,
-          {
-            image: {
-              full: '',
-              thumb: '',
-              color: background,
-            },
-          },
-          token,
-        ),
-      )
-    }
-  }
+  // const handleAddition = () => {
+  //   setAddListFlag(true)
+  //   addFlag.current = false
+  // }
+  // const setBackground = (background) => {
+  //   if (background.thumb) {
+  //     setUrl(background.full)
+  //     setColor('white')
+  //     dispatch(
+  //       updateBoardById(
+  //         currBoard._id,
+  //         {
+  //           image: {
+  //             full: background.full,
+  //             thumb: background.thumb,
+  //             color: 'white',
+  //           },
+  //         },
+  //         token,
+  //       ),
+  //     )
+  //   } else {
+  //     setColor(background)
+  //     setUrl('')
+  //     dispatch(
+  //       updateBoardById(
+  //         currBoard._id,
+  //         {
+  //           image: {
+  //             full: '',
+  //             thumb: '',
+  //             color: background,
+  //           },
+  //         },
+  //         token,
+  //       ),
+  //     )
+  //   }
+  // }
   return (
     <>
       {loading ? (

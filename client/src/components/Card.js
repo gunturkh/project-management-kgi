@@ -13,6 +13,8 @@ import {
 import { createNewActivity } from '../actions/actionCreators/activityActions'
 import { capitalizeFirstLetter } from '../utils/capitalizeFirstLetter'
 import moment from 'moment'
+import { makeid } from '../utils/randomString'
+import { updateUserNotification } from '../actions/actionCreators/userActions'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -35,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Card({ task, index }) {
-  const { users } = useSelector((state) => state.user)
+  const { token, user, users } = useSelector((state) => state.user)
   const [editable, setEditable] = useState(false)
   const [title, setTitle] = useState(task.name)
   const [editTaskValue, setEditTaskValue] = useState({
@@ -50,7 +52,7 @@ export default function Card({ task, index }) {
   const [card, setCard] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
   const classes = useStyles()
-  const { token, user } = useSelector((state) => state.user)
+  const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
   let mappedPic = []
   mappedPic = task?.pic?.map((pic) => {
@@ -71,10 +73,33 @@ export default function Card({ task, index }) {
     }
   }
 
-  const submitHandlerUpdate = () => {
+  const submitHandlerUpdate = async () => {
     setEditable(false)
     setEditTaskValue(editTaskValue)
     dispatch(updateCardById(task._id, editTaskValue))
+    if (currBoard?.pic.length > 0) {
+      await currBoard.pic.map(async (pic) => {
+        const picData = await users.filter((user) => user._id === pic)[0]
+        console.log('picData: ', { picData })
+        const notifMessage = {
+          id: makeid(5),
+          message: `Task ${editTaskValue.name}, edited by: ${
+            user.name
+          }, description: ${editTaskValue.description}, priority: ${
+            editTaskValue.priority
+          }, due date: ${moment(editTaskValue.dueDate).format('DD/MM/YYYY')}`,
+          link: `/app/projects/details/${currBoard._id}`,
+          read: false,
+        }
+        const userParams = {
+          ...picData,
+          notification: picData.notification.length
+            ? [...picData.notification, notifMessage]
+            : [notifMessage],
+        }
+        dispatch(updateUserNotification(userParams))
+      })
+    }
     // eslint-disable-next-line no-param-reassign
     task.name = editTaskValue.name
   }
@@ -191,10 +216,31 @@ export default function Card({ task, index }) {
                       <IconButton
                         className={classes.delete}
                         size="small"
-                        onClick={() => {
+                        onClick={async () => {
                           setCard(false)
                           dispatch(deleteCardById(task._id))
                           const text = `${user.username} deleted card ${task.name}`
+                          if (currBoard?.pic.length > 0) {
+                            await currBoard.pic.map(async (pic) => {
+                              const picData = await users.filter(
+                                (user) => user._id === pic,
+                              )[0]
+                              console.log('picData: ', { picData })
+                              const notifMessage = {
+                                id: makeid(5),
+                                message: `Task ${task.name} on project ${currBoard.projectName}, deleted by: ${user.name}`,
+                                link: `/app/projects/details/${currBoard._id}`,
+                                read: false,
+                              }
+                              const userParams = {
+                                ...picData,
+                                notification: picData.notification.length
+                                  ? [...picData.notification, notifMessage]
+                                  : [notifMessage],
+                              }
+                              dispatch(updateUserNotification(userParams))
+                            })
+                          }
                           dispatch(
                             createNewActivity(
                               { text, boardId: task.boardId },

@@ -145,6 +145,48 @@ export const updateUser = (params) => (dispatch) => {
   return Promise.resolve()
 }
 
+export const updateUserNotification = (params) => (dispatch) => {
+  // dispatch({ type: ACTIONS.UPDATE_REQUEST })
+  axios
+    .patch(`${BASE_URL}update-notification`, params)
+    .then((res) => {
+      console.log('res update: ', res)
+      dispatch({
+        type: ACTIONS.UPDATE_NOTIFICATION_SUCCESS,
+        payload: { users: res.data },
+      })
+    })
+    .catch((e) => {
+      console.log('error update: ', e)
+      // dispatch({
+      //   type: ACTIONS.UPDATE_FAILED,
+      //   payload: { error: e.response.data.msg },
+      // })
+    })
+  return Promise.resolve()
+}
+
+export const updateUserNotificationStatusById = (params) => (dispatch) => {
+  // dispatch({ type: ACTIONS.UPDATE_REQUEST })
+  axios
+    .patch(`${BASE_URL}update-notification-status`, params)
+    .then((res) => {
+      console.log('res update: ', res)
+      dispatch({
+        type: ACTIONS.UPDATE_NOTIFICATION_SUCCESS,
+        payload: { users: res.data },
+      })
+    })
+    .catch((e) => {
+      console.log('error update: ', e)
+      // dispatch({
+      //   type: ACTIONS.UPDATE_FAILED,
+      //   payload: { error: e.response.data.msg },
+      // })
+    })
+  return Promise.resolve()
+}
+
 export const deleteUserById = (data, token) => (dispatch) => {
   const { id } = data
   axios

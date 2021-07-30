@@ -11,6 +11,11 @@ import {
   Hidden,
   List,
   Typography,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Paper,
 } from '@material-ui/core'
 import {
   AlertCircle as AlertCircleIcon,
@@ -26,6 +31,7 @@ import {
   Briefcase,
 } from 'react-feather'
 import NavItem from './NavItem'
+import { updateUserNotificationStatusById } from '../actions/actionCreators/userActions'
 
 const dummyUser = {
   avatar: '/static/images/avatars/kgi.png',
@@ -33,9 +39,16 @@ const dummyUser = {
   name: 'Kuantum Gabe Integritas',
 }
 
-const DashboardSidebar = ({ onMobileClose, openMobile }) => {
+const DashboardSidebar = ({
+  onMobileClose,
+  openMobile,
+  onNotificationClose,
+  openNotification,
+}) => {
   const location = useLocation()
-  const { user } = useSelector((state) => state.user)
+  const { user, users } = useSelector((state) => state.user)
+  const picData = users.filter((d) => d._id === user.id)[0]
+  const dispatch = useDispatch()
   let items = []
   if (user.role === 'ADMIN') {
     items = [
@@ -210,6 +223,57 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         }}
       >
         {content}
+      </Drawer>
+      <Drawer
+        anchor={'right'}
+        open={openNotification}
+        onClose={onNotificationClose}
+        variant="temporary"
+        PaperProps={{
+          sx: {
+            width: 256,
+            top: 64,
+            height: 'calc(100% - 64px)',
+            overflow: 'scroll',
+          },
+        }}
+      >
+        {picData?.notification &&
+          picData.notification
+            .map((notif) => (
+              <Card
+                sx={{
+                  padding: 1,
+                  margin: 1,
+                  backgroundColor: notif?.read ? 'white' : '#AAC2FF',
+                  minHeight: '150px',
+                }}
+              >
+                <CardContent
+                  component={RouterLink}
+                  to={notif?.link ? `${notif.link}` : ''}
+                  sx={{ color: 'black' }}
+                >
+                  {notif?.message}
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      dispatch(
+                        updateUserNotificationStatusById({
+                          userId: user.id,
+                          id: notif.id,
+                        }),
+                      )
+                    }}
+                  >
+                    Mark as read
+                  </Button>
+                </CardActions>
+              </Card>
+            ))
+            .reverse()}
       </Drawer>
       {/* </Hidden> */}
       {/* <Hidden lgDown>

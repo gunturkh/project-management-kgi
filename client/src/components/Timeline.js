@@ -15,6 +15,7 @@ import {
   updateTimelineByBoardId,
   deleteTimelineById,
 } from '../actions/actionCreators/timelineActions'
+import { updateUserNotification } from '../actions/actionCreators/userActions'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {
   Box,
@@ -29,7 +30,6 @@ import {
   Dialog,
   DialogContent,
 } from '@material-ui/core'
-// import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import FullCalendar from '@fullcalendar/react'
 // import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -37,69 +37,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
-
-const orders = [
-  {
-    id: uuid(),
-    ref: 'CDD1049',
-    amount: 30.5,
-    customer: {
-      name: 'Ekaterina Tankova',
-    },
-    createdAt: 1555016400000,
-    status: 'pending',
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1048',
-    amount: 25.1,
-    customer: {
-      name: 'Cao Yu',
-    },
-    createdAt: 1555016400000,
-    status: 'delivered',
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1047',
-    amount: 10.99,
-    customer: {
-      name: 'Alexa Richardson',
-    },
-    createdAt: 1554930000000,
-    status: 'refunded',
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1046',
-    amount: 96.43,
-    customer: {
-      name: 'Anje Keizer',
-    },
-    createdAt: 1554757200000,
-    status: 'pending',
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1045',
-    amount: 32.54,
-    customer: {
-      name: 'Clarke Gillebert',
-    },
-    createdAt: 1554670800000,
-    status: 'delivered',
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1044',
-    amount: 16.76,
-    customer: {
-      name: 'Adam Denisov',
-    },
-    createdAt: 1554670800000,
-    status: 'delivered',
-  },
-]
+import { makeid } from '../utils/randomString'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -160,12 +98,13 @@ const Timeline = (props) => {
   const [open, setOpen] = useState(false)
   const [timelineDialogStatus, setTimelineDialogStatus] = useState('view')
   const { currBoard, error } = useSelector((state) => state.boards)
-  const { token, isValid, user, tokenRequest } = useSelector(
+  const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
   )
   // const { currTimeline } = useSelector((state) => state.timeline)
   const [timeline, setTimeline] = useState([])
   useEffect(() => {
+    console.log('currBoard data:', currBoard)
     console.log('timeline data:', timeline)
     console.log('classes:', classes)
     console.log('timelineDialogStatus data:', timelineDialogStatus)
@@ -406,7 +345,7 @@ const Timeline = (props) => {
                     // pic: Yup.array().required('Troject PIC is required'),
                     // company: Yup.string().max(255).required('Project company is required'),
                   })}
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     // e.preventDefault()
                     console.log('create timeline : ', e)
                     const timelineReq = {
@@ -426,6 +365,33 @@ const Timeline = (props) => {
                         // navigate('/app/projects')
                       })
                       .catch((error) => window.alert(error))
+                    if (currBoard?.pic.length > 0) {
+                      await currBoard.pic.map(async (pic) => {
+                        const picData = await users.filter(
+                          (user) => user._id === pic,
+                        )[0]
+                        console.log('picData: ', { picData })
+                        const notifMessage = {
+                          id: makeid(5),
+                          message: `Timeline ${e.title}, created by: ${
+                            user.name
+                          }, start: ${moment(e.start).format(
+                            'DD/MM/YYYY',
+                          )}, end: ${moment(e.end).format(
+                            'DD/MM/YYYY',
+                          )}, progress: ${e.progress}%`,
+                          link: `/app/projects/details/${currBoard._id}`,
+                          read: false,
+                        }
+                        const userParams = {
+                          ...picData,
+                          notification: picData.notification.length
+                            ? [...picData.notification, notifMessage]
+                            : [notifMessage],
+                        }
+                        dispatch(updateUserNotification(userParams))
+                      })
+                    }
                     // navigate(`/app/projects`, { replace: true })
                     // const { username, password } = e
                     // const loginReq = { username, password }
@@ -890,7 +856,7 @@ const Timeline = (props) => {
               }
               setTimeline(timelineObj)
             }}
-            onDateChange={(task, start, end) => {
+            onDateChange={async (task, start, end) => {
               console.log('onDateChange: ', { task, start, end })
               // const startTime = new Date(start).setHours(0)
               // const endTime = new Date(end).setHours(23, 59, 59)
@@ -910,6 +876,33 @@ const Timeline = (props) => {
                   timelineReq,
                 ),
               )
+              if (currBoard?.pic.length > 0) {
+                await currBoard.pic.map(async (pic) => {
+                  const picData = await users.filter(
+                    (user) => user._id === pic,
+                  )[0]
+                  console.log('picData: ', { picData })
+                  const notifMessage = {
+                    id: makeid(5),
+                    message: `Timeline ${task.name}, edited by: ${
+                      user.name
+                    }, start: ${moment(start).format(
+                      'DD/MM/YYYY',
+                    )}, end: ${moment(end).format('DD/MM/YYYY')}, progress: ${
+                      task.progress
+                    }%`,
+                    link: `/app/projects/details/${currBoard._id}`,
+                    read: false,
+                  }
+                  const userParams = {
+                    ...picData,
+                    notification: picData.notification.length
+                      ? [...picData.notification, notifMessage]
+                      : [notifMessage],
+                  }
+                  dispatch(updateUserNotification(userParams))
+                })
+              }
             }}
             onProgressChange={(task, progress) => console.log(task, progress)}
             onTasksChange={(tasks) => console.log(tasks)}

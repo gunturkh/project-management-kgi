@@ -14,6 +14,9 @@ import {
   updateListById,
   deleteListById,
 } from '../actions/actionCreators/listActions'
+import { updateUserNotification } from '../actions/actionCreators/userActions'
+import { makeid } from '../utils/randomString'
+import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,7 +80,8 @@ export default function Column({ column, tasks, index }) {
   const [editable, setEditable] = useState(false)
   const [list, setList] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
-  const { token, user } = useSelector((state) => state.user)
+  const { token, user, users } = useSelector((state) => state.user)
+  const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
 
   const handleChange = (e, target) => {
@@ -96,7 +100,7 @@ export default function Column({ column, tasks, index }) {
     }
   }
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     if (taskValue.length === 0) return
     // const text = taskValue.trim().replace(/\s+/g, ' ')
 
@@ -114,6 +118,29 @@ export default function Column({ column, tasks, index }) {
         totalTasks === 0 ? 'n' : midString(tasks[totalTasks - 1].order, ''),
     }
     dispatch(createNewCard(postCardReq, token))
+    if (currBoard?.pic.length > 0) {
+      await currBoard.pic.map(async (pic) => {
+        const picData = await users.filter((user) => user._id === pic)[0]
+        console.log('picData: ', { picData })
+        const notifMessage = {
+          id: makeid(5),
+          message: `Task ${taskValue.name}, created by: ${
+            user.name
+          }, description: ${taskValue.description}, priority: ${
+            taskValue.priority
+          }, due date: ${moment(taskValue.dueDate).format('DD/MM/YYYY')}`,
+          link: `/app/projects/details/${currBoard._id}`,
+          read: false,
+        }
+        const userParams = {
+          ...picData,
+          notification: picData.notification.length
+            ? [...picData.notification, notifMessage]
+            : [notifMessage],
+        }
+        dispatch(updateUserNotification(userParams))
+      })
+    }
     dispatch(
       createNewActivity(
         {
@@ -130,6 +157,7 @@ export default function Column({ column, tasks, index }) {
       pic: [],
       dueDate: '',
     })
+    setAddCardFlag(false)
   }
   const handleAddition = () => {
     setAddCardFlag(true)

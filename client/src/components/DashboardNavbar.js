@@ -22,11 +22,11 @@ import InputIcon from '@material-ui/icons/Input'
 import Logo from './Logo'
 import { logoutUser } from '../actions/actionCreators/userActions'
 
-const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
+const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
   const [notifications] = useState([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { user } = useSelector((state) => state.user)
+  const { user, users } = useSelector((state) => state.user)
   const [auth, setAuth] = React.useState(true)
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -88,6 +88,23 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
         >
           <InputIcon />
         </IconButton> */}
+        <IconButton
+          size="large"
+          aria-label="show 17 new notifications"
+          color="inherit"
+          onClick={onNotificationClick}
+        >
+          <Badge
+            badgeContent={
+              users
+                .filter((d) => d._id === user.id)[0]
+                ?.notification.filter((d) => d.read === false)?.length
+            }
+            color="error"
+          >
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
         <IconButton
           size="large"
           aria-label="account of current user"

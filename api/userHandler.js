@@ -4,37 +4,8 @@ const Board = require("../models/board");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { auth } = require("../middleware");
-const multer = require("multer");
-const sharp = require("sharp");
 const router = Router();
-const { uploadFilesMiddleware } = require("../middleware");
 
-const upload = multer({
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-      cb(new Error("Please upload an image."));
-    }
-    cb(undefined, true);
-  },
-});
-const uploadFile = async (req, res) => {
-  try {
-    await uploadFilesMiddleware(req, res);
-
-    console.log(req.file);
-    if (req.file == undefined) {
-      return res.send("You must select a file.");
-    }
-
-    return res.send("File has been uploaded.");
-  } catch (error) {
-    console.log(error);
-    return res.send(`Error when trying upload image: ${error}`);
-  }
-};
 // register a new user
 router.post("/register", async (req, res, next) => {
   const {
@@ -46,6 +17,7 @@ router.post("/register", async (req, res, next) => {
     avatar,
     name,
     position,
+    notification,
   } = req.body;
   try {
     if (!password || !passwordCheck || !username || !userRole || !role)
@@ -78,6 +50,7 @@ router.post("/register", async (req, res, next) => {
       avatar,
       name,
       position,
+      notification,
     });
     const response = await newUser.save();
     res.send({
@@ -87,6 +60,7 @@ router.post("/register", async (req, res, next) => {
       avatar: response.avatar,
       name: response.name,
       position: response.position,
+      notification: response.notification,
     });
   } catch (error) {
     if (error.name === "ValidationError") return res.status(422);
@@ -119,6 +93,7 @@ router.post("/login", async (req, res, next) => {
         name: user.name,
         position: user.position,
         avatar: user.avatar,
+        notification: user.notification,
       },
     });
   } catch (error) {
@@ -154,6 +129,7 @@ router.get("/", auth, async (req, res, next) => {
       avatar: user.avatar,
       name: user.name,
       position: user.position,
+      notification: user.notification,
     });
   } catch (error) {
     next(error);
@@ -182,6 +158,7 @@ router.patch("/update", async (req, res, next) => {
     name,
     position,
     avatar,
+    notification,
   } = req.body;
   try {
     // if (!username || !newPassword || !newPasswordCheck)
@@ -196,7 +173,7 @@ router.patch("/update", async (req, res, next) => {
       const passwordHash = await bcrypt.hash(newPassword, salt);
       const updatedUser = await User.findOneAndUpdate(
         { username },
-        { password: passwordHash, role, name, position, avatar },
+        { password: passwordHash, role, name, position, avatar, notification },
         { new: true, runValidators: true }
       );
 
@@ -204,12 +181,57 @@ router.patch("/update", async (req, res, next) => {
     } else {
       const updatedUser = await User.findOneAndUpdate(
         { username },
-        { role, name, position, avatar },
+        { role, name, position, avatar, notification },
         { new: true, runValidators: true }
       );
 
       res.send(updatedUser);
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// update notification
+router.patch("/update-notification", async (req, res, next) => {
+  const { username, role, name, position, avatar, notification } = req.body;
+  try {
+    // const updatedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
+      { username },
+      { role, name, position, avatar, notification },
+      { new: true, runValidators: true }
+    );
+
+    // res.send(updatedUser);
+    const users = await User.find({}, { avatar: 0 });
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// mark notification as read
+router.patch("/update-notification-status", async (req, res, next) => {
+  const { userId, id } = req.body;
+  try {
+    const user = await User.findById(userId);
+    console.log("notif user", user);
+    console.log("notif user id", id);
+    let oldNotifications = user.notification;
+    const manipulatedNotifications = await oldNotifications.map((d) => {
+      if (d.id === id) {
+        const result = { ...d, read: true };
+        return result;
+      } else return d;
+    });
+    console.log("manipulatedNotifications", manipulatedNotifications);
+    user.notification = manipulatedNotifications;
+    await user.save();
+
+    // res.send(updatedUser);
+    const users = await User.find({}, { avatar: 0 });
+    res.json(users);
   } catch (error) {
     next(error);
   }
@@ -251,7 +273,7 @@ router.post(
       res.status(400).send(e);
     }
   },
-  (error, req, res, next) => {
+  (error, req, res) => {
     res.status(400).send({ error: `${error.message}, maximum 1MB` });
   }
 );

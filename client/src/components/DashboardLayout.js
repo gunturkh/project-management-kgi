@@ -36,13 +36,19 @@ const DashboardLayoutContent = experimentalStyled('div')({
 
 const DashboardLayout = () => {
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
+  const [isNotificationOpen, setNotificationOpen] = useState(false)
 
   return (
     <DashboardLayoutRoot>
-      <DashboardNavbar onMobileNavOpen={() => setMobileNavOpen(true)} />
+      <DashboardNavbar
+        onMobileNavOpen={() => setMobileNavOpen(true)}
+        onNotificationClick={() => setNotificationOpen(true)}
+      />
       <DashboardSidebar
         onMobileClose={() => setMobileNavOpen(false)}
         openMobile={isMobileNavOpen}
+        onNotificationClose={() => setNotificationOpen(false)}
+        openNotification={isNotificationOpen}
       />
       <DashboardLayoutWrapper>
         <DashboardLayoutContainer>
