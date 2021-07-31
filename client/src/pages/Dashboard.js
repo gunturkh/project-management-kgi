@@ -11,6 +11,7 @@ import TotalProjects from '../components/dashboard/TotalProjects'
 import TotalProfit from '../components/dashboard/TotalProfit'
 import TrafficByDevice from '../components/dashboard/TrafficByDevice'
 import UsersList from '../components/dashboard/UsersList'
+import ProjectsDashboard from '../components/dashboard/ProjectsDashboard'
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -39,13 +40,13 @@ const Dashboard = () => {
         <Container maxWidth={false}>
           <Grid container spacing={3}>
             {user.role === 'ADMIN' && (
-              <Grid item lg={6} md={6} xl={6} xs={12}>
-                <UsersList widget />
+              <Grid item lg={12} md={12} xl={12} xs={12}>
+                <ProjectsDashboard widget />
               </Grid>
             )}
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
+            {/* <Grid item lg={3} sm={6} xl={3} xs={12}>
               <TotalProjects />
-            </Grid>
+            </Grid> */}
             {/*
             <Grid item lg={3} sm={6} xl={3} xs={12}>
             <TasksProgress />

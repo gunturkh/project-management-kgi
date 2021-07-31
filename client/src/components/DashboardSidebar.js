@@ -100,11 +100,11 @@ const DashboardSidebar = ({
     ]
   } else if (user.role === 'USER') {
     items = [
-      {
-        href: '/app/dashboard',
-        icon: BarChartIcon,
-        title: 'Dashboard',
-      },
+      // {
+      //   href: '/app/dashboard',
+      //   icon: BarChartIcon,
+      //   title: 'Dashboard',
+      // },
       {
         href: '/app/projects',
         icon: CalendarIcon,

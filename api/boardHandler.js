@@ -60,7 +60,7 @@ router.get("/:id/cards", auth, async (req, res, next) => {
   try {
     const board = await Board.findOne({ _id });
     if (!board) return res.status(404).send();
-    const cards = await Card.find({ boardId: _id });
+    const cards = await Card.find({ boardId: _id }).populate("list");
     res.send(cards);
   } catch (error) {
     next(error);
