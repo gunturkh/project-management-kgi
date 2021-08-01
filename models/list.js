@@ -11,10 +11,6 @@ const listSchema = new Schema(
       type: String,
       required: true,
     },
-    priority: {
-      type: String,
-      required: true,
-    },
     pic: {
       type: Array,
     },

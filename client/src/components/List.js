@@ -132,10 +132,11 @@ export default function Column({ column, tasks, index }) {
           link: `/app/projects/details/${currBoard._id}`,
           read: false,
         }
+        let notif = picData?.notification ?? []
         const userParams = {
           ...picData,
-          notification: picData.notification.length
-            ? [...picData.notification, notifMessage]
+          notification: picData?.notification?.length
+            ? [...notif, notifMessage]
             : [notifMessage],
         }
         dispatch(updateUserNotification(userParams))

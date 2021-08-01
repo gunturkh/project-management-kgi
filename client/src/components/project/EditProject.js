@@ -35,7 +35,11 @@ import {
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
-import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
+import {
+  fetchAllUsersInfo,
+  updateUserNotification,
+} from '../../actions/actionCreators/userActions'
+import { makeid } from '../../utils/randomString'
 
 const statusOptions = [
   {
@@ -177,10 +181,42 @@ const EditProject = (props) => {
             console.log('postBoardReq submit: ', postBoardReq)
             console.log('update id: ', id)
             console.log('update token: ', token)
-            dispatch(updateBoardById(id, postBoardReq, token)).then(() => {
-              console.log('done update project')
-              navigate('/app/projects')
-            })
+            dispatch(updateBoardById(id, postBoardReq, token)).then(
+              async () => {
+                console.log('done update project')
+                if (currBoard?.pic.length > 0) {
+                  await currBoard.pic.map(async (pic) => {
+                    const picData = await users.filter(
+                      (user) => user._id === pic,
+                    )[0]
+                    console.log('picData: ', { picData })
+                    const notifMessage = {
+                      id: makeid(5),
+                      message: `Project ${e.projectName}, created by: ${
+                        user.name
+                      }, and you were assigned to it. Description: ${
+                        e.projectDescription
+                      }, status: ${e.status}, start date: ${moment(
+                        e.startDate,
+                      ).format('DD/MM/YYYY')}, end date:${moment(
+                        e.endDate,
+                      ).format('DD/MM/YYYY')} `,
+                      link: `/app/projects/details/${currBoard._id}`,
+                      read: false,
+                    }
+                    let notif = picData?.notification ?? []
+                    const userParams = {
+                      ...picData,
+                      notification: picData?.notification?.length
+                        ? [...notif, notifMessage]
+                        : [notifMessage],
+                    }
+                    dispatch(updateUserNotification(userParams))
+                  })
+                }
+                navigate('/app/projects')
+              },
+            )
             // navigate(`/app/projects`, { replace: true })
             // const { username, password } = e
             // const loginReq = { username, password }

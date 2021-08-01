@@ -26,8 +26,8 @@ const upload = multer({
 });
 const app = express();
 
-console.log(`database ${process.env.DATABASE_URL}`);
-mongoose.connect(process.env.DATABASE_URL, {
+console.log(`database ${process.env.MONGO_URL}`);
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,

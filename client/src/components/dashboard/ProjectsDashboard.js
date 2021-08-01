@@ -89,52 +89,55 @@ const ProjectsDashboard = (props) => {
       dispatch(fetchAllBoards(token))
     }
   }, [])
-  useEffect(async () => {
+  useEffect(() => {
     let result = []
-    if (boards.length) {
-      await boards.map(async (item) => {
-        let combine = {}
-        await axios
-          .get(`/api/boards/${item._id}/cards`, {
-            headers: { 'x-auth-token': token },
-          })
-          .then((res) => {
-            combine.cards = res.data
-          })
-        await axios
-          .get(`/api/boards/${item._id}/lists`, {
-            headers: { 'x-auth-token': token },
-          })
-          .then((res) => {
-            combine.lists = res.data
-          })
-        if (combine.lists.length > 0) {
-          const onProgressList = combine.lists.filter((d) => {
-            return d.name === 'On-Progress'
-          })
-          console.log('OnProgress list', onProgressList)
-          if (onProgressList.length > 0 && combine.cards.length > 0) {
-            const countResult = combine.cards.filter(
-              (d) => d.listId === onProgressList[0]._id,
-            )
-            console.log('count result', countResult)
-            const percentage = Math.round(
-              (countResult.length / combine.cards.length) * 100,
-            )
-            console.log('count result percentage', percentage)
-            combine.percentage = percentage
+    async function fetchData() {
+      if (boards.length) {
+        await boards.map(async (item) => {
+          let combine = {}
+          await axios
+            .get(`/api/boards/${item._id}/cards`, {
+              headers: { 'x-auth-token': token },
+            })
+            .then((res) => {
+              combine.cards = res.data
+            })
+          await axios
+            .get(`/api/boards/${item._id}/lists`, {
+              headers: { 'x-auth-token': token },
+            })
+            .then((res) => {
+              combine.lists = res.data
+            })
+          if (combine.lists.length > 0) {
+            const checkedList = combine.lists.filter((d) => {
+              return d.name === 'Checked'
+            })
+            console.log('OnProgress list', checkedList)
+            if (checkedList.length > 0 && combine.cards.length > 0) {
+              const countResult = combine.cards.filter(
+                (d) => d.listId === checkedList[0]._id,
+              )
+              console.log('count result', countResult)
+              const percentage = Math.round(
+                (countResult.length / combine.cards.length) * 100,
+              )
+              console.log('count result percentage', percentage)
+              combine.percentage = percentage
+            }
           }
-        }
-        result.push({
-          ...item,
-          cards: combine.cards,
-          lists: combine.lists,
-          taskPercentage: combine?.percentage ?? 0,
+          result.push({
+            ...item,
+            cards: combine.cards,
+            lists: combine.lists,
+            taskPercentage: combine?.percentage ?? 0,
+          })
+          console.log('result:', result)
+          if (boards.length === result.length) setBoardsValue(result)
         })
-        console.log('result:', result)
-        if (boards.length === result.length) setBoardsValue(result)
-      })
+      }
     }
+    fetchData()
   }, [])
 
   console.log('users:', users)
@@ -160,127 +163,133 @@ const ProjectsDashboard = (props) => {
             <Divider />
             <PerfectScrollbar>
               <Box>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell color="textPrimary">Project Name</TableCell>
-                      <TableCell color="textPrimary">Status</TableCell>
-                      <TableCell color="textPrimary">Progress</TableCell>
-                      {!props.widget ? (
-                        <TableCell color="textPrimary">Action</TableCell>
-                      ) : null}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {boardsValue?.map((item) => (
-                      <>
-                        <TableRow
-                          hover
-                          key={item._id}
-                          component={RouterLink}
-                          to={`/app/projects/details/${item._id}`}
-                        >
-                          <TableCell color="textSecondary">
-                            {item.projectName}
-                          </TableCell>
-                          <TableCell color="textSecondary">
-                            <Chip
-                              color="primary"
-                              label={item.status}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell color="textSecondary">
-                            <Chip
-                              color="primary"
-                              label={`${item.taskPercentage}%` ?? '0%'}
-                              size="small"
-                            />
-                          </TableCell>
-                          {!props.widget ? (
-                            <TableCell>
-                              {' '}
-                              {item._id !== user.id && (
+                {boardsValue.length > 0 ? (
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell color="textPrimary">Project Name</TableCell>
+                        <TableCell color="textPrimary">Status</TableCell>
+                        <TableCell color="textPrimary">Progress</TableCell>
+                        {!props.widget ? (
+                          <TableCell color="textPrimary">Action</TableCell>
+                        ) : null}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {boardsValue?.map((item) => (
+                        <>
+                          <TableRow
+                            hover
+                            key={item._id}
+                            component={RouterLink}
+                            to={`/app/projects/details/${item._id}`}
+                          >
+                            <TableCell color="textSecondary">
+                              {item.projectName}
+                            </TableCell>
+                            <TableCell color="textSecondary">
+                              <Chip
+                                color="primary"
+                                label={item.status}
+                                size="small"
+                              />
+                            </TableCell>
+                            <TableCell color="textSecondary">
+                              <Chip
+                                color="primary"
+                                label={`${item.taskPercentage}%` ?? '0%'}
+                                size="small"
+                              />
+                            </TableCell>
+                            {!props.widget ? (
+                              <TableCell>
+                                {' '}
+                                {item._id !== user.id && (
+                                  <Button
+                                    color="secondary"
+                                    variant="contained"
+                                    disabled={
+                                      item._id === user.id ||
+                                      item.role === 'ADMIN' ||
+                                      user.role !== 'ADMIN'
+                                    }
+                                    onClick={() => {
+                                      setOpenModal(true)
+                                      // setDeleteItem({
+                                      //   projectName: item.projectName,
+                                      //   id: item._id,
+                                      // })
+                                    }}
+                                    style={{
+                                      marginRight: 5,
+                                    }}
+                                  >
+                                    <Trash2 size="20" />
+                                  </Button>
+                                )}
+                              </TableCell>
+                            ) : null}
+                          </TableRow>
+                          <Modal open={openModal} onClose={handleClose}>
+                            <div style={modalStyle} className={classes.paper}>
+                              <h2 style={{ padding: 5 }}>Delete Project</h2>
+                              <p style={{ padding: 5 }}>
+                                {` Are you sure you want to delete this project '${deleteItem.projectName}'?  `}
+                              </p>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'flex-end',
+                                  p: 2,
+                                }}
+                              >
                                 <Button
                                   color="secondary"
                                   variant="contained"
-                                  disabled={
-                                    item._id === user.id ||
-                                    item.role === 'ADMIN' ||
-                                    user.role !== 'ADMIN'
-                                  }
-                                  onClick={() => {
-                                    setOpenModal(true)
-                                    // setDeleteItem({
-                                    //   projectName: item.projectName,
-                                    //   id: item._id,
-                                    // })
-                                  }}
-                                  style={{
-                                    marginRight: 5,
-                                  }}
-                                >
-                                  <Trash2 size="20" />
-                                </Button>
-                              )}
-                            </TableCell>
-                          ) : null}
-                        </TableRow>
-                        <Modal open={openModal} onClose={handleClose}>
-                          <div style={modalStyle} className={classes.paper}>
-                            <h2 style={{ padding: 5 }}>Delete Project</h2>
-                            <p style={{ padding: 5 }}>
-                              {` Are you sure you want to delete this project '${deleteItem.projectName}'?  `}
-                            </p>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                p: 2,
-                              }}
-                            >
-                              <Button
-                                color="secondary"
-                                variant="contained"
-                                style={{ marginRight: 15 }}
-                                onClick={() =>
-                                  dispatch(
-                                    deleteUserById(
-                                      { id: deleteItem.id },
-                                      token,
-                                    ),
-                                  )
-                                    .then(() => {
-                                      setOpenModal(false)
-                                      handleClose()
-                                    })
-                                    .then(() => {
-                                      navigate('/app/account', {
-                                        replace: 'true',
+                                  style={{ marginRight: 15 }}
+                                  onClick={() =>
+                                    dispatch(
+                                      deleteUserById(
+                                        { id: deleteItem.id },
+                                        token,
+                                      ),
+                                    )
+                                      .then(() => {
+                                        setOpenModal(false)
+                                        handleClose()
                                       })
-                                    })
-                                }
-                              >
-                                Yes
-                              </Button>
-                              <Button
-                                color="primary"
-                                variant="contained"
-                                onClick={() => setOpenModal(false)}
-                              >
-                                No
-                              </Button>
-                            </Box>
-                          </div>
-                        </Modal>
-                      </>
-                    ))}
-                  </TableBody>
-                </Table>
+                                      .then(() => {
+                                        navigate('/app/account', {
+                                          replace: 'true',
+                                        })
+                                      })
+                                  }
+                                >
+                                  Yes
+                                </Button>
+                                <Button
+                                  color="primary"
+                                  variant="contained"
+                                  onClick={() => setOpenModal(false)}
+                                >
+                                  No
+                                </Button>
+                              </Box>
+                            </div>
+                          </Modal>
+                        </>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <Typography textAlign="center">
+                    Currently there is no project to show
+                  </Typography>
+                )}
               </Box>
             </PerfectScrollbar>
           </CardContent>
-          {props.widget ? (
+          {props.widget && boards.length > 0 ? (
             <Box
               sx={{
                 display: 'flex',
