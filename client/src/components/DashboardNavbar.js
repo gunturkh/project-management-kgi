@@ -98,7 +98,7 @@ const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
             badgeContent={
               users
                 .filter((d) => d._id === user.id)[0]
-                ?.notification.filter((d) => d.read === false)?.length
+                ?.notification?.filter((d) => d.read === false)?.length
             }
             color="error"
           >
