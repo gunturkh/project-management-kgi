@@ -51,19 +51,14 @@ const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
   return (
     <AppBar elevation={0} {...rest}>
       <Toolbar>
+        <IconButton color="inherit" onClick={onMobileNavOpen}>
+          <MenuIcon />
+        </IconButton>
         <RouterLink to="/">
-          <div style={{ background: 'white', borderRadius: 50 }}>
-            <Logo />
+          <div>
+            <Logo width={300} />
           </div>
         </RouterLink>
-        <Typography
-          sx={{ marginLeft: '1rem' }}
-          align="left"
-          color="white"
-          variant="h4"
-        >
-          {user?.name} - {user?.position}
-        </Typography>
         <Box sx={{ flexGrow: 1 }} />
         {/* <Hidden lgDown>
           <IconButton
@@ -123,6 +118,15 @@ const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
             }}
           />
         </IconButton>
+        <Typography
+          sx={{ marginLeft: '1rem' }}
+          align="left"
+          color="black"
+          variant="h4"
+        >
+          <div>{user?.name}</div>
+          <div>{user?.position}</div>
+        </Typography>
         <Menu
           id="menu-appbar"
           anchorEl={anchorEl}
@@ -155,9 +159,6 @@ const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
             Logout
           </MenuItem>
         </Menu>
-        <IconButton color="inherit" onClick={onMobileNavOpen}>
-          <MenuIcon />
-        </IconButton>
         {/* </Hidden> */}
       </Toolbar>
     </AppBar>

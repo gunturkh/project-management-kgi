@@ -75,7 +75,7 @@ const DashboardSidebar = ({
       {
         href: '/app/account',
         icon: UserIcon,
-        title: 'Account',
+        title: 'User Manager',
       },
       {
         href: '/app/company',
@@ -98,7 +98,7 @@ const DashboardSidebar = ({
       //   title: 'Error',
       // },
     ]
-  } else if (user.role === 'USER') {
+  } else if (user.role === 'MEMBER' || user.role === 'CLIENT') {
     items = [
       // {
       //   href: '/app/dashboard',
@@ -130,38 +130,42 @@ const DashboardSidebar = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        width: openMobile ? 'auto' : '70px',
       }}
     >
-      <Box
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          p: 2,
-        }}
-      >
-        <Avatar
-          component={RouterLink}
-          src={user?.avatar || dummyUser.avatar}
+      {openMobile && (
+        <Box
           sx={{
-            cursor: 'pointer',
-            width: 64,
-            height: 64,
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            p: 2,
           }}
-          to="/app/account"
-        />
-        <Typography color="textPrimary" variant="h5">
-          {user.name}
-        </Typography>
-        <Typography color="textSecondary" variant="body2">
-          {user.position}
-        </Typography>
-      </Box>
-      <Divider />
+        >
+          <Avatar
+            component={RouterLink}
+            src={user?.avatar || dummyUser.avatar}
+            sx={{
+              cursor: 'pointer',
+              width: 64,
+              height: 64,
+            }}
+            to="/app/account"
+          />
+          <Typography color="textPrimary" variant="h5">
+            {user.name}
+          </Typography>
+          <Typography color="textSecondary" variant="body2">
+            {user.position}
+          </Typography>
+          <Divider />
+        </Box>
+      )}
       <Box sx={{ p: 2 }}>
         <List>
           {items.map((item) => (
             <NavItem
+              openMobile={openMobile}
               href={item.href}
               key={item.title}
               title={item.title}
@@ -205,11 +209,11 @@ const DashboardSidebar = ({
       */}
     </Box>
   )
-
+  console.log({ openMobile, onMobileClose })
   return (
     <>
       {/* <Hidden lgUp> */}
-      <Drawer
+      {/* <Drawer
         anchor="left"
         onClose={onMobileClose}
         open={openMobile}
@@ -221,9 +225,17 @@ const DashboardSidebar = ({
             height: 'calc(100% - 64px)',
           },
         }}
+      > */}
+      <Box
+        sx={{
+          marginTop: '64px',
+          height: 'calc(100% - 64px)',
+          backgroundColor: 'white',
+        }}
       >
         {content}
-      </Drawer>
+      </Box>
+      {/* </Drawer> */}
       <Drawer
         anchor={'right'}
         open={openNotification}
@@ -240,6 +252,7 @@ const DashboardSidebar = ({
       >
         {picData?.notification &&
           picData.notification
+            .filter((notif) => notif.read === false)
             .map((notif) => (
               <Card
                 sx={{

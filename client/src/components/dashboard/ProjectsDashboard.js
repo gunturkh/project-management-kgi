@@ -41,6 +41,60 @@ import {
 } from '../../actions/actionCreators/boardActions'
 import Fade from '@material-ui/core/Fade'
 import Loading from '../Loading'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+
+// fake data generator
+const getItems = (count, offset = 0) =>
+  Array.from({ length: count }, (v, k) => k).map((k) => ({
+    id: `item-${k + offset}-${new Date().getTime()}`,
+    content: `item ${k + offset}`,
+  }))
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+
+  return result
+}
+
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source)
+  const destClone = Array.from(destination)
+  const [removed] = sourceClone.splice(droppableSource.index, 1)
+
+  destClone.splice(droppableDestination.index, 0, removed)
+
+  const result = {}
+  result[droppableSource.droppableId] = sourceClone
+  result[droppableDestination.droppableId] = destClone
+
+  return result
+}
+const grid = 8
+
+const getItemStyle = (isDragging, draggableStyle, color) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: 'none',
+  padding: grid * 2,
+  margin: `0 0 ${grid}px 0`,
+
+  // change background colour if dragging
+  background: isDragging ? 'lightgreen' : color,
+  border: '1px gray solid',
+
+  // styles we need to apply on draggables
+  ...draggableStyle,
+})
+const getListStyle = (isDraggingOver, color) => ({
+  background: isDraggingOver ? 'lightblue' : color,
+  padding: grid,
+  width: '100%',
+  minWidth: '300px',
+})
 
 function rand() {
   return Math.round(Math.random() * 20) - 10
@@ -66,6 +120,224 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
 }))
+
+function ProjectDragDropArea() {
+  // const [state, setState] = useState([
+  //   getItems(10),
+  //   getItems(5, 10),
+  //   getItems(10, 10),
+  // ])
+  const getBoardColor = (status) => {
+    let color
+    switch (status) {
+      case 'Kick Off':
+        color = '#FFFFFF'
+        break
+      case 'In Progress':
+        color = '#FFDD71'
+        break
+      case 'Installation & Commissioning':
+        color = '#00FFFF'
+        break
+      case 'Validation':
+        color = '#85FF85'
+        break
+      case 'Closed':
+        color = '#E8E8E8'
+        break
+
+      default:
+        color = '#FFFFFF'
+        break
+    }
+    return color
+  }
+  const getBoards = (boards, status) => {
+    try {
+      if (boards.length > 0) {
+        return {
+          title: status,
+          projects: boards.filter((board) => board.status === status),
+          color: getBoardColor(status),
+        }
+        // return boards.filter((board) => board.status === status)
+      } else return []
+    } catch (error) {
+      return []
+    }
+  }
+  const { boards } = useSelector((state) => state.boards)
+  const [state, setState] = useState([
+    getBoards(boards, 'Kick Off'),
+    getBoards(boards, 'In Progress'),
+    getBoards(boards, 'Installation & Commissioning'),
+    getBoards(boards, 'Validation'),
+    getBoards(boards, 'Closed'),
+  ])
+
+  console.log('Kick Off Board:', getBoards(boards, 'Kick Off'))
+  function onDragEnd(result) {
+    console.log('onDragEnd result:', result)
+    const { source, destination } = result
+
+    // dropped outside the list
+    if (!destination) {
+      return
+    }
+    const sInd = +source.droppableId
+    const dInd = +destination.droppableId
+
+    if (sInd === dInd) {
+      const items = reorder(
+        state[sInd].projects,
+        source.index,
+        destination.index,
+      )
+      const newState = [...state]
+      newState[sInd].projects = items
+      setState(newState)
+    } else {
+      console.log({ sInd, dInd, state })
+      const result = move(
+        state[sInd].projects,
+        state[dInd].projects,
+        source,
+        destination,
+      )
+      const newState = [...state]
+      newState[sInd].projects = result[sInd]
+      newState[dInd].projects = result[dInd]
+
+      // setState(newState.filter((group) => group.projects.length))
+    }
+  }
+
+  console.log('projects state: ', state)
+  return (
+    <div>
+      {/* <button
+        type="button"
+        onClick={() => {
+          setState([...state, []])
+        }}
+      >
+        Add new group
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          setState([...state, getItems(1)])
+        }}
+      >
+        Add new item
+      </button> */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <DragDropContext onDragEnd={onDragEnd}>
+          {state.map((el, ind) => (
+            <Droppable key={ind} droppableId={`${ind}`}>
+              {(provided, snapshot) => (
+                <>
+                  <div
+                    style={{
+                      backgroundColor: getBoardColor(el.title),
+                      width: '100%',
+                      margin: '10px 0px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        margin: '10px',
+                        textAlign: 'center',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Status Project: {el?.title}
+                    </div>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: '50px 1fr 1fr 1fr 1fr 1fr',
+                        width: '100%',
+                        padding: '0px 20px',
+                        fontWeight: 700,
+                      }}
+                    >
+                      <div>No</div>
+                      <div>Project Name</div>
+                      <div>Job Description</div>
+                      <div>Progress</div>
+                      <div>Start Date</div>
+                      <div>End Date</div>
+                    </Box>
+                    <div
+                      ref={provided.innerRef}
+                      style={getListStyle(
+                        snapshot.isDraggingOver,
+                        getBoardColor(el.title),
+                      )}
+                      {...provided.droppableProps}
+                    >
+                      {el.projects.map((item, index) => (
+                        <Draggable
+                          key={item._id}
+                          draggableId={item._id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(
+                                snapshot.isDragging,
+                                provided.draggableProps.style,
+                                getBoardColor(item.status),
+                              )}
+                            >
+                              <Box
+                                sx={{
+                                  display: 'grid',
+                                  gridTemplateColumns:
+                                    '50px 1fr 1fr 1fr 1fr 1fr',
+                                  width: '100%',
+                                }}
+                              >
+                                <div>{index}</div>
+                                <div>{item.projectName}</div>
+                                <div>{item.projectDescription}</div>
+                                <div>{0}</div>
+                                <div>
+                                  {moment(item.startDate).format(
+                                    'DD MMMM YYYY',
+                                  )}
+                                </div>
+                                <div>
+                                  {moment(item.endDate).format('DD MMMM YYYY')}
+                                </div>
+                              </Box>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>{' '}
+                  </div>
+                </>
+              )}
+            </Droppable>
+          ))}
+        </DragDropContext>
+      </div>
+    </div>
+  )
+}
+
 const ProjectsDashboard = (props) => {
   const classes = useStyles()
   const { user, users, role, token, tokenRequest, userRequest } = useSelector(
@@ -155,161 +427,166 @@ const ProjectsDashboard = (props) => {
       {tokenRequest || userRequest ? (
         <Loading />
       ) : (
-        <Card {...props}>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom variant="h6">
-              Projects
-            </Typography>
-            <Divider />
-            <PerfectScrollbar>
-              <Box>
-                {boardsValue.length > 0 ? (
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell color="textPrimary">Project Name</TableCell>
-                        <TableCell color="textPrimary">Status</TableCell>
-                        <TableCell color="textPrimary">Progress</TableCell>
-                        {!props.widget ? (
-                          <TableCell color="textPrimary">Action</TableCell>
-                        ) : null}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {boardsValue?.map((item) => (
-                        <>
-                          <TableRow
-                            hover
-                            key={item._id}
-                            component={RouterLink}
-                            to={`/app/projects/details/${item._id}`}
-                          >
-                            <TableCell color="textSecondary">
-                              {item.projectName}
-                            </TableCell>
-                            <TableCell color="textSecondary">
-                              <Chip
-                                color="primary"
-                                label={item.status}
-                                size="small"
-                              />
-                            </TableCell>
-                            <TableCell color="textSecondary">
-                              <Chip
-                                color="primary"
-                                label={`${item.taskPercentage}%` ?? '0%'}
-                                size="small"
-                              />
-                            </TableCell>
-                            {!props.widget ? (
-                              <TableCell>
-                                {' '}
-                                {item._id !== user.id && (
+        <Box sx={{ margin: '0px 5rem' }}>
+          <ProjectDragDropArea />
+          <Card {...props}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom variant="h6">
+                Projects
+              </Typography>
+              <Divider />
+              <PerfectScrollbar>
+                <Box>
+                  {boardsValue.length > 0 ? (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell color="textPrimary">
+                            Project Name
+                          </TableCell>
+                          <TableCell color="textPrimary">Status</TableCell>
+                          <TableCell color="textPrimary">Progress</TableCell>
+                          {!props.widget ? (
+                            <TableCell color="textPrimary">Action</TableCell>
+                          ) : null}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {boardsValue?.map((item) => (
+                          <>
+                            <TableRow
+                              hover
+                              key={item._id}
+                              component={RouterLink}
+                              to={`/app/projects/details/${item._id}`}
+                            >
+                              <TableCell color="textSecondary">
+                                {item.projectName}
+                              </TableCell>
+                              <TableCell color="textSecondary">
+                                <Chip
+                                  color="primary"
+                                  label={item.status}
+                                  size="small"
+                                />
+                              </TableCell>
+                              <TableCell color="textSecondary">
+                                <Chip
+                                  color="primary"
+                                  label={`${item.taskPercentage}%` ?? '0%'}
+                                  size="small"
+                                />
+                              </TableCell>
+                              {!props.widget ? (
+                                <TableCell>
+                                  {' '}
+                                  {item._id !== user.id && (
+                                    <Button
+                                      color="secondary"
+                                      variant="contained"
+                                      disabled={
+                                        item._id === user.id ||
+                                        item.role === 'ADMIN' ||
+                                        user.role !== 'ADMIN'
+                                      }
+                                      onClick={() => {
+                                        setOpenModal(true)
+                                        // setDeleteItem({
+                                        //   projectName: item.projectName,
+                                        //   id: item._id,
+                                        // })
+                                      }}
+                                      style={{
+                                        marginRight: 5,
+                                      }}
+                                    >
+                                      <Trash2 size="20" />
+                                    </Button>
+                                  )}
+                                </TableCell>
+                              ) : null}
+                            </TableRow>
+                            <Modal open={openModal} onClose={handleClose}>
+                              <div style={modalStyle} className={classes.paper}>
+                                <h2 style={{ padding: 5 }}>Delete Project</h2>
+                                <p style={{ padding: 5 }}>
+                                  {` Are you sure you want to delete this project '${deleteItem.projectName}'?  `}
+                                </p>
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    p: 2,
+                                  }}
+                                >
                                   <Button
                                     color="secondary"
                                     variant="contained"
-                                    disabled={
-                                      item._id === user.id ||
-                                      item.role === 'ADMIN' ||
-                                      user.role !== 'ADMIN'
-                                    }
-                                    onClick={() => {
-                                      setOpenModal(true)
-                                      // setDeleteItem({
-                                      //   projectName: item.projectName,
-                                      //   id: item._id,
-                                      // })
-                                    }}
-                                    style={{
-                                      marginRight: 5,
-                                    }}
-                                  >
-                                    <Trash2 size="20" />
-                                  </Button>
-                                )}
-                              </TableCell>
-                            ) : null}
-                          </TableRow>
-                          <Modal open={openModal} onClose={handleClose}>
-                            <div style={modalStyle} className={classes.paper}>
-                              <h2 style={{ padding: 5 }}>Delete Project</h2>
-                              <p style={{ padding: 5 }}>
-                                {` Are you sure you want to delete this project '${deleteItem.projectName}'?  `}
-                              </p>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'flex-end',
-                                  p: 2,
-                                }}
-                              >
-                                <Button
-                                  color="secondary"
-                                  variant="contained"
-                                  style={{ marginRight: 15 }}
-                                  onClick={() =>
-                                    dispatch(
-                                      deleteUserById(
-                                        { id: deleteItem.id },
-                                        token,
-                                      ),
-                                    )
-                                      .then(() => {
-                                        setOpenModal(false)
-                                        handleClose()
-                                      })
-                                      .then(() => {
-                                        navigate('/app/account', {
-                                          replace: 'true',
+                                    style={{ marginRight: 15 }}
+                                    onClick={() =>
+                                      dispatch(
+                                        deleteUserById(
+                                          { id: deleteItem.id },
+                                          token,
+                                        ),
+                                      )
+                                        .then(() => {
+                                          setOpenModal(false)
+                                          handleClose()
                                         })
-                                      })
-                                  }
-                                >
-                                  Yes
-                                </Button>
-                                <Button
-                                  color="primary"
-                                  variant="contained"
-                                  onClick={() => setOpenModal(false)}
-                                >
-                                  No
-                                </Button>
-                              </Box>
-                            </div>
-                          </Modal>
-                        </>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <Typography textAlign="center">
-                    Currently there is no project to show
-                  </Typography>
-                )}
-              </Box>
-            </PerfectScrollbar>
-          </CardContent>
-          {props.widget && boards.length > 0 ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                p: 2,
-              }}
-            >
-              <Button
-                component={RouterLink}
-                color="primary"
-                endIcon={<ArrowRightIcon />}
-                size="small"
-                variant="text"
-                to="/app/projects"
+                                        .then(() => {
+                                          navigate('/app/account', {
+                                            replace: 'true',
+                                          })
+                                        })
+                                    }
+                                  >
+                                    Yes
+                                  </Button>
+                                  <Button
+                                    color="primary"
+                                    variant="contained"
+                                    onClick={() => setOpenModal(false)}
+                                  >
+                                    No
+                                  </Button>
+                                </Box>
+                              </div>
+                            </Modal>
+                          </>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <Typography textAlign="center">
+                      Currently there is no project to show
+                    </Typography>
+                  )}
+                </Box>
+              </PerfectScrollbar>
+            </CardContent>
+            {props.widget && boards.length > 0 ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  p: 2,
+                }}
               >
-                View all
-              </Button>
-            </Box>
-          ) : null}
-        </Card>
+                <Button
+                  component={RouterLink}
+                  color="primary"
+                  endIcon={<ArrowRightIcon />}
+                  size="small"
+                  variant="text"
+                  to="/app/projects"
+                >
+                  View all
+                </Button>
+              </Box>
+            ) : null}
+          </Card>
+        </Box>
       )}
     </>
   )

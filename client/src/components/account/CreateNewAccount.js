@@ -25,8 +25,12 @@ const role = [
     label: 'Admin',
   },
   {
-    value: 'USER',
-    label: 'User',
+    value: 'MEMBER',
+    label: 'Member',
+  },
+  {
+    value: 'CLIENT',
+    label: 'Client',
   },
 ]
 
@@ -170,6 +174,15 @@ const CreateNewAccount = (props) => {
                   p: 2,
                 }}
               >
+                <Button
+                  as={RouterLink}
+                  color="primary"
+                  variant="contained"
+                  to={'/app/account'}
+                  sx={{ marginRight: 2 }}
+                >
+                  Cancel
+                </Button>
                 <Button color="primary" variant="contained" type="submit">
                   Create Account
                 </Button>

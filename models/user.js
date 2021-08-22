@@ -30,6 +30,9 @@ const userSchema = new Schema({
   notification: {
     type: Array,
   },
+  pinned: {
+    type: Array,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

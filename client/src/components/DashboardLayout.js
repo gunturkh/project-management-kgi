@@ -41,7 +41,7 @@ const DashboardLayout = () => {
   return (
     <DashboardLayoutRoot>
       <DashboardNavbar
-        onMobileNavOpen={() => setMobileNavOpen(true)}
+        onMobileNavOpen={() => setMobileNavOpen(!isMobileNavOpen)}
         onNotificationClick={() => setNotificationOpen(true)}
       />
       <DashboardSidebar

@@ -38,6 +38,7 @@ import listPlugin from '@fullcalendar/list'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
 import { makeid } from '../utils/randomString'
+import './timeline.scss'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -839,6 +840,7 @@ const Timeline = (props) => {
                 end: timeline.end,
                 progress: parseInt(timeline.progress),
                 dependencies: '',
+                custom_class: 'cc-red',
               }
             })}
             viewMode={'Day'}

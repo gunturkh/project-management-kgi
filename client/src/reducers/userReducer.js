@@ -10,6 +10,7 @@ const initialState = {
     name: undefined,
     position: undefined,
     notification: undefined,
+    pinned: undefined,
   },
   users: [],
   isValid: false,
@@ -101,6 +102,7 @@ export const userReducer = (state = initialState, action) => {
           name: action.payload.user.user.name,
           position: action.payload.user.user.position,
           notification: action.payload.user.user.notification,
+          pinned: action.payload.user.user.pinned,
         },
         requestLogin: false,
         successLogin: true,
@@ -128,7 +130,7 @@ export const userReducer = (state = initialState, action) => {
           avatar: action.payload.user.avatar,
           name: action.payload.user.name,
           position: action.payload.user.position,
-          notification: action.payload.user.notification,
+          pinned: action.payload.user.pinned,
         },
       }
     case ACTIONS.UPDATE_NOTIFICATION_SUCCESS:

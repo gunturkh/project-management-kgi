@@ -18,6 +18,7 @@ router.post("/register", async (req, res, next) => {
     name,
     position,
     notification,
+    pinned,
   } = req.body;
   try {
     if (!password || !passwordCheck || !username || !userRole || !role)
@@ -51,6 +52,7 @@ router.post("/register", async (req, res, next) => {
       name,
       position,
       notification,
+      pinned,
     });
     const response = await newUser.save();
     res.send({
@@ -61,6 +63,7 @@ router.post("/register", async (req, res, next) => {
       name: response.name,
       position: response.position,
       notification: response.notification,
+      pinned: response.pinned,
     });
   } catch (error) {
     if (error.name === "ValidationError") return res.status(422);
@@ -94,6 +97,7 @@ router.post("/login", async (req, res, next) => {
         position: user.position,
         avatar: user.avatar,
         notification: user.notification,
+        pinned: user.pinned,
       },
     });
   } catch (error) {
@@ -129,7 +133,7 @@ router.get("/", auth, async (req, res, next) => {
       avatar: user.avatar,
       name: user.name,
       position: user.position,
-      notification: user.notification,
+      pinned: user.pinned,
     });
   } catch (error) {
     next(error);
@@ -159,6 +163,7 @@ router.patch("/update", async (req, res, next) => {
     position,
     avatar,
     notification,
+    pinned,
   } = req.body;
   try {
     // if (!username || !newPassword || !newPasswordCheck)
@@ -173,7 +178,15 @@ router.patch("/update", async (req, res, next) => {
       const passwordHash = await bcrypt.hash(newPassword, salt);
       const updatedUser = await User.findOneAndUpdate(
         { username },
-        { password: passwordHash, role, name, position, avatar, notification },
+        {
+          password: passwordHash,
+          role,
+          name,
+          position,
+          avatar,
+          notification,
+          pinned,
+        },
         { new: true, runValidators: true }
       );
 
@@ -181,7 +194,7 @@ router.patch("/update", async (req, res, next) => {
     } else {
       const updatedUser = await User.findOneAndUpdate(
         { username },
-        { role, name, position, avatar, notification },
+        { role, name, position, avatar, notification, pinned },
         { new: true, runValidators: true }
       );
 
@@ -194,12 +207,13 @@ router.patch("/update", async (req, res, next) => {
 
 // update notification
 router.patch("/update-notification", async (req, res, next) => {
-  const { username, role, name, position, avatar, notification } = req.body;
+  const { username, role, name, position, avatar, notification, pinned } =
+    req.body;
   try {
     // const updatedUser = await User.findOneAndUpdate(
     await User.findOneAndUpdate(
       { username },
-      { role, name, position, avatar, notification },
+      { role, name, position, avatar, notification, pinned },
       { new: true, runValidators: true }
     );
 
