@@ -242,7 +242,7 @@ const EditProject = (props) => {
               noValidate
               {...props}
             >
-              <Card>
+              <Card sx={{ margin: '5rem 10rem' }}>
                 <CardHeader
                   subheader="Project information can be edited"
                   title="Edit Project"
@@ -438,10 +438,20 @@ const EditProject = (props) => {
                   <Button
                     color="primary"
                     variant="contained"
+                    sx={{ marginRight: 5 }}
+                    // disabled={isSubmitting}
+                    // type="submit"
+                    onClick={() => navigate(-1)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
                     disabled={isSubmitting}
                     type="submit"
                   >
-                    Edit Project
+                    Save
                   </Button>
                 </Box>
               </Card>

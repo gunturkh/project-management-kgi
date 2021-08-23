@@ -26,7 +26,7 @@ import {
 } from '@material-ui/core'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
-import { Trash2 } from 'react-feather'
+import { Trash2, MoreVertical } from 'react-feather'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -121,7 +121,42 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
 }))
+const SimpleMenu = ({ id }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  console.log('id edit: ', id)
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  return (
+    <div>
+      <Button
+        aria-controls="simple-menu"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <MoreVertical size={20} />
+      </Button>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem component={RouterLink} to={`/app/projects/edit/${id}`}>
+          Edit
+        </MenuItem>
+        <MenuItem onClick={handleClose}>Delete</MenuItem>
+      </Menu>
+    </div>
+  )
+}
 function ProjectDragDropArea() {
   const dispatch = useDispatch()
   // const [state, setState] = useState([
@@ -342,7 +377,7 @@ function ProjectDragDropArea() {
                     <Box
                       sx={{
                         display: 'grid',
-                        gridTemplateColumns: '50px 1fr 1fr 1fr 1fr 1fr',
+                        gridTemplateColumns: '50px 1fr 1fr 1fr 1fr 1fr 50px',
                         width: '100%',
                         padding: '0px 20px',
                         fontWeight: 700,
@@ -384,7 +419,7 @@ function ProjectDragDropArea() {
                                 sx={{
                                   display: 'grid',
                                   gridTemplateColumns:
-                                    '50px 1fr 1fr 1fr 1fr 1fr',
+                                    '50px 1fr 1fr 1fr 1fr 1fr 50px',
                                   width: '100%',
                                 }}
                               >
@@ -399,6 +434,9 @@ function ProjectDragDropArea() {
                                 </div>
                                 <div>
                                   {moment(item.endDate).format('DD MMMM YYYY')}
+                                </div>
+                                <div>
+                                  <SimpleMenu id={item._id} />
                                 </div>
                               </Box>
                             </div>
