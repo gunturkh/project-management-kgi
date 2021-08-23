@@ -34,14 +34,15 @@ import {
   fetchAllUsersInfo,
   deleteUserById,
 } from '../../actions/actionCreators/userActions'
+import { updateUserNotification } from '../../actions/actionCreators/userActions'
 import {
   fetchAllBoards,
-  fetchListsFromBoard,
-  fetchsCardsFromBoard,
+  updateBoardById,
 } from '../../actions/actionCreators/boardActions'
 import Fade from '@material-ui/core/Fade'
 import Loading from '../Loading'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { makeid } from '../../utils/randomString'
 
 // fake data generator
 const getItems = (count, offset = 0) =>
@@ -122,6 +123,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function ProjectDragDropArea() {
+  const dispatch = useDispatch()
   // const [state, setState] = useState([
   //   getItems(10),
   //   getItems(5, 10),
@@ -166,7 +168,8 @@ function ProjectDragDropArea() {
       return []
     }
   }
-  const { boards } = useSelector((state) => state.boards)
+  const { boards, currBoard } = useSelector((state) => state.boards)
+  const { user, users, token } = useSelector((state) => state.user)
   const [state, setState] = useState([
     getBoards(boards, 'Kick Off'),
     getBoards(boards, 'In Progress'),
@@ -175,10 +178,20 @@ function ProjectDragDropArea() {
     getBoards(boards, 'Closed'),
   ])
 
+  useEffect(() => {
+    setState([
+      getBoards(boards, 'Kick Off'),
+      getBoards(boards, 'In Progress'),
+      getBoards(boards, 'Installation & Commissioning'),
+      getBoards(boards, 'Validation'),
+      getBoards(boards, 'Closed'),
+    ])
+  }, [boards])
+
   console.log('Kick Off Board:', getBoards(boards, 'Kick Off'))
   function onDragEnd(result) {
     console.log('onDragEnd result:', result)
-    const { source, destination } = result
+    const { source, destination, draggableId } = result
 
     // dropped outside the list
     if (!destination) {
@@ -197,7 +210,6 @@ function ProjectDragDropArea() {
       newState[sInd].projects = items
       setState(newState)
     } else {
-      console.log({ sInd, dInd, state })
       const result = move(
         state[sInd].projects,
         state[dInd].projects,
@@ -207,7 +219,75 @@ function ProjectDragDropArea() {
       const newState = [...state]
       newState[sInd].projects = result[sInd]
       newState[dInd].projects = result[dInd]
-
+      const [draggedData] = result[dInd].filter(
+        (data) => data._id === draggableId,
+      )
+      const {
+        pic,
+        _id,
+        projectName,
+        projectDescription,
+        status,
+        startDate,
+        endDate,
+        company,
+      } = draggedData
+      const { title } = newState[dInd]
+      console.log({ resultsInd: result[sInd], resultdInd: result[dInd] })
+      console.log('newState: ', newState[dInd])
+      console.log('draggedData: ', draggedData)
+      console.log({
+        pic,
+        _id,
+        projectName,
+        projectDescription,
+        status,
+        startDate,
+        endDate,
+        company,
+      })
+      const postBoardReq = {
+        userId: user.id,
+        projectName: projectName,
+        projectDescription: projectDescription,
+        startDate: startDate,
+        endDate: endDate,
+        company: company,
+        pic: pic,
+        status: title,
+      }
+      console.log('title', postBoardReq)
+      dispatch(updateBoardById(draggableId, postBoardReq, token)).then(
+        async () => {
+          console.log('done update project')
+          if (pic.length > 0) {
+            await pic.map(async (pic) => {
+              const picData = await users.filter((user) => user._id === pic)[0]
+              console.log('picData: ', { picData })
+              const notifMessage = {
+                id: makeid(5),
+                message: `Project ${projectName}, created by: ${
+                  user.name
+                }, and you were assigned to it. Description: ${projectDescription}, status: ${status}, start date: ${moment(
+                  startDate,
+                ).format('DD/MM/YYYY')}, end date:${moment(endDate).format(
+                  'DD/MM/YYYY',
+                )} `,
+                link: `/app/projects/details/${_id}`,
+                read: false,
+              }
+              let notif = picData?.notification ?? []
+              const userParams = {
+                ...picData,
+                notification: picData?.notification?.length
+                  ? [...notif, notifMessage]
+                  : [notifMessage],
+              }
+              dispatch(updateUserNotification(userParams))
+            })
+          }
+        },
+      )
       // setState(newState.filter((group) => group.projects.length))
     }
   }
