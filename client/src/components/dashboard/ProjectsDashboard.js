@@ -38,6 +38,7 @@ import { updateUserNotification } from '../../actions/actionCreators/userActions
 import {
   fetchAllBoards,
   updateBoardById,
+  deleteBoardById,
 } from '../../actions/actionCreators/boardActions'
 import Fade from '@material-ui/core/Fade'
 import Loading from '../Loading'
@@ -121,7 +122,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
 }))
-const SimpleMenu = ({ id }) => {
+const SimpleMenu = ({ id, projectName, setOpenModal, setDeleteItem }) => {
+  const { user } = useSelector((state) => state.user)
   const [anchorEl, setAnchorEl] = React.useState(null)
   console.log('id edit: ', id)
 
@@ -152,12 +154,24 @@ const SimpleMenu = ({ id }) => {
         <MenuItem component={RouterLink} to={`/app/projects/edit/${id}`}>
           Edit
         </MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
+        {user.role === 'ADMIN' && (
+          <MenuItem
+            onClick={() => {
+              setOpenModal(true)
+              setDeleteItem({
+                projectName: projectName,
+                id: id,
+              })
+            }}
+          >
+            Delete
+          </MenuItem>
+        )}
       </Menu>
     </div>
   )
 }
-function ProjectDragDropArea() {
+function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
   const dispatch = useDispatch()
   // const [state, setState] = useState([
   //   getItems(10),
@@ -436,7 +450,12 @@ function ProjectDragDropArea() {
                                   {moment(item.endDate).format('DD MMMM YYYY')}
                                 </div>
                                 <div>
-                                  <SimpleMenu id={item._id} />
+                                  <SimpleMenu
+                                    id={item._id}
+                                    projectName={item.projectName}
+                                    setOpenModal={setOpenModal}
+                                    setDeleteItem={setDeleteItem}
+                                  />
                                 </div>
                               </Box>
                             </div>
@@ -546,7 +565,10 @@ const ProjectsDashboard = (props) => {
         <Loading />
       ) : (
         <Box sx={{ margin: '0px 5rem' }}>
-          <ProjectDragDropArea />
+          <ProjectDragDropArea
+            setOpenModal={setOpenModal}
+            setDeleteItem={setDeleteItem}
+          />
           <Card {...props}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="h6">
@@ -628,7 +650,7 @@ const ProjectsDashboard = (props) => {
                               <div style={modalStyle} className={classes.paper}>
                                 <h2 style={{ padding: 5 }}>Delete Project</h2>
                                 <p style={{ padding: 5 }}>
-                                  {` Are you sure you want to delete this project '${deleteItem.projectName}'?  `}
+                                  {` Are you sure you want to delete this project '${deleteItem.projectName} with id : ${deleteItem.id}'?  `}
                                 </p>
                                 <Box
                                   sx={{
@@ -643,20 +665,11 @@ const ProjectsDashboard = (props) => {
                                     style={{ marginRight: 15 }}
                                     onClick={() =>
                                       dispatch(
-                                        deleteUserById(
-                                          { id: deleteItem.id },
-                                          token,
-                                        ),
-                                      )
-                                        .then(() => {
-                                          setOpenModal(false)
-                                          handleClose()
-                                        })
-                                        .then(() => {
-                                          navigate('/app/account', {
-                                            replace: 'true',
-                                          })
-                                        })
+                                        deleteBoardById(deleteItem.id, token),
+                                      ).then(() => {
+                                        setOpenModal(false)
+                                        handleClose()
+                                      })
                                     }
                                   >
                                     Yes
