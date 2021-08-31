@@ -78,6 +78,13 @@ const changeTimelineStatus = (status) => {
   }
   return result
 }
+
+const colorPicker = [
+  { label: 'Maroon', value: 'cc-maroon', color: '#7d0000' },
+  { label: 'Green', value: 'cc-green', color: '#00ff00' },
+  { label: 'Dark Green', value: 'cc-darkgreen', color: '#007d00' },
+]
+
 const Timeline = (props) => {
   const classes = useStyles()
   const [openModal, setOpenModal] = useState(false)
@@ -98,6 +105,7 @@ const Timeline = (props) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [timelineDialogStatus, setTimelineDialogStatus] = useState('view')
+  const [colorPickerState, setColorPickerState] = useState('cc-red')
   const { currBoard, error } = useSelector((state) => state.boards)
   const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
@@ -120,6 +128,12 @@ const Timeline = (props) => {
 
   const handleClose = () => {
     setOpen(false)
+  }
+
+  const handleClickColorPicker = (e) => {
+    console.log('event button', e.target.value)
+    // alert(`${e.target.value}`)
+    setColorPickerState(e.target.value)
   }
 
   console.log('timeline user', user)
@@ -356,6 +370,7 @@ const Timeline = (props) => {
                       end: e.end,
                       progress: e.progress,
                       boardId: currBoard._id,
+                      customClass: colorPickerState,
                     }
                     console.log('timelineReq submit: ', timelineReq)
                     console.log('timeline token submit: ', token)
@@ -386,7 +401,7 @@ const Timeline = (props) => {
                         }
                         const userParams = {
                           ...picData,
-                          notification: picData.notification.length
+                          notification: picData?.notification?.length
                             ? [...picData.notification, notifMessage]
                             : [notifMessage],
                         }
@@ -456,6 +471,27 @@ const Timeline = (props) => {
                                 value={values.progress}
                                 variant="outlined"
                               />
+                            </Grid>
+                            <Grid item md={12} xs={12}>
+                              {colorPicker.map((item) => {
+                                return (
+                                  <button
+                                    type="button"
+                                    name={item.label}
+                                    value={item.value}
+                                    onClick={(e) => {
+                                      handleClickColorPicker(e)
+                                    }}
+                                    style={{
+                                      padding: '5px',
+                                      color: 'white',
+                                      backgroundColor: item.color,
+                                    }}
+                                  >
+                                    {item.label}
+                                  </button>
+                                )
+                              })}
                             </Grid>
                             <Grid item md={6} xs={6}>
                               <LocalizationProvider
@@ -840,7 +876,7 @@ const Timeline = (props) => {
                 end: timeline.end,
                 progress: parseInt(timeline.progress),
                 dependencies: '',
-                custom_class: 'cc-red',
+                custom_class: timeline.customClass,
               }
             })}
             viewMode={'Day'}

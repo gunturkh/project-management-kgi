@@ -100,6 +100,7 @@ const Timeline = (props) => {
                     <TableRow>
                       <TableCell color="textPrimary">USERNAME</TableCell>
                       <TableCell color="textPrimary">ROLE</TableCell>
+                      <TableCell color="textPrimary">COMPANY</TableCell>
                       {!props.widget ? (
                         <TableCell color="textPrimary">ACTION</TableCell>
                       ) : null}
@@ -118,6 +119,9 @@ const Timeline = (props) => {
                               label={item.role}
                               size="small"
                             />
+                          </TableCell>
+                          <TableCell color="textSecondary">
+                            <Chip color="primary" label={'KGI'} size="small" />
                           </TableCell>
                           {!props.widget ? (
                             <TableCell>

@@ -36,6 +36,9 @@ const timelineSchema = new Schema(
       type: String,
       required: false,
     },
+    customClass: {
+      type: String,
+    },
   },
   {
     timestamps: true,
