@@ -81,8 +81,25 @@ const changeTimelineStatus = (status) => {
 
 const colorPicker = [
   { label: 'Maroon', value: 'cc-maroon', color: '#7d0000' },
-  { label: 'Green', value: 'cc-green', color: '#00ff00' },
+  { label: 'Red', value: 'cc-red', color: '#ff0000' },
   { label: 'Dark Green', value: 'cc-darkgreen', color: '#007d00' },
+  { label: 'Green', value: 'cc-green', color: '#00ff00' },
+  { label: 'Dark blue', value: 'cc-darkblue', color: '#00007d' },
+  { label: 'Blue', value: 'cc-blue', color: '#0000ff' },
+  { label: 'Purple', value: 'cc-purple', color: '#7d007d' },
+  { label: 'Gold', value: 'cc-gold', color: '#7d7d00' },
+  { label: 'Teal', value: 'cc-teal', color: '#007d7d' },
+  { label: 'Gray', value: 'cc-gray', color: '#7d7d7d' },
+  { label: 'Pink', value: 'cc-pink', color: '#ff00ff' },
+  { label: 'Yellow', value: 'cc-yellow', color: '#ffff00' },
+  { label: 'Cyan', value: 'cc-cyan', color: '#00ffff' },
+  { label: 'Peach', value: 'cc-peach', color: '#f9cc8b' },
+  { label: 'Tosca Green', value: 'cc-toscagreen', color: '#8bf9cc' },
+  { label: 'Light Purple', value: 'cc-lightpurple', color: '#cc8bf9' },
+  { label: 'Bright Pink', value: 'cc-brightpink', color: '#ef2d77' },
+  { label: 'Light Green', value: 'cc-lightgreen', color: '#77ef2d' },
+  { label: 'Indigo Blue', value: 'cc-indigoblue', color: '#2d77ef' },
+  { label: 'Leaf Green', value: 'cc-leafgreen', color: '#6fa266' },
 ]
 
 const Timeline = (props) => {
@@ -106,6 +123,9 @@ const Timeline = (props) => {
   const [open, setOpen] = useState(false)
   const [timelineDialogStatus, setTimelineDialogStatus] = useState('view')
   const [colorPickerState, setColorPickerState] = useState('cc-red')
+  const [colorPickerDisplayState, setColorPickerDisplayState] = useState(
+    'white',
+  )
   const { currBoard, error } = useSelector((state) => state.boards)
   const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
@@ -132,8 +152,11 @@ const Timeline = (props) => {
 
   const handleClickColorPicker = (e) => {
     console.log('event button', e.target.value)
+    console.log('event color button:', e.target.style.backgroundColor)
+    // console.log('colorPickerDisplayState:', colorPickerDisplayState)
     // alert(`${e.target.value}`)
     setColorPickerState(e.target.value)
+    setColorPickerDisplayState(e.target.style.backgroundColor)
   }
 
   console.log('timeline user', user)
@@ -472,26 +495,53 @@ const Timeline = (props) => {
                                 variant="outlined"
                               />
                             </Grid>
+                            <Grid item md={12} sx={12}>
+                              <Box
+                                md={12}
+                                sx={{
+                                  display: 'block',
+                                  border: 'black solid 2px',
+                                  borderRadius: '5px',
+                                  backgroundColor: colorPickerDisplayState,
+                                  color: colorPickerDisplayState,
+                                }}
+                              >
+                                Pick color below
+                              </Box>
+                            </Grid>
                             <Grid item md={12} xs={12}>
-                              {colorPicker.map((item) => {
-                                return (
-                                  <button
-                                    type="button"
-                                    name={item.label}
-                                    value={item.value}
-                                    onClick={(e) => {
-                                      handleClickColorPicker(e)
-                                    }}
-                                    style={{
-                                      padding: '5px',
-                                      color: 'white',
-                                      backgroundColor: item.color,
-                                    }}
-                                  >
-                                    {item.label}
-                                  </button>
-                                )
-                              })}
+                              <Box
+                                sx={{
+                                  display: 'grid',
+                                  gridTemplateColumns: 'repeat(5, 50px)',
+                                  gridTemplateRows: 'repeat(4, 1fr)',
+                                  justifyItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                {colorPicker.map((item) => {
+                                  return (
+                                    <button
+                                      type="button"
+                                      name={item.label}
+                                      value={item.value}
+                                      onClick={(e) => {
+                                        handleClickColorPicker(e)
+                                      }}
+                                      style={{
+                                        width: '30px',
+                                        height: '20px',
+                                        margin: '3px',
+                                        padding: '5px',
+                                        color: 'white',
+                                        backgroundColor: item.color,
+                                      }}
+                                    >
+                                      {/* {item.label} */}
+                                    </button>
+                                  )
+                                })}
+                              </Box>
                             </Grid>
                             <Grid item md={6} xs={6}>
                               <LocalizationProvider
@@ -612,6 +662,7 @@ const Timeline = (props) => {
                       end: endTime,
                       progress: e.progress,
                       boardId: currBoard._id,
+                      customClass: colorPickerState,
                     }
                     console.log('timelineReq submit: ', timelineReq)
                     console.log('timeline token submit: ', token)
@@ -691,6 +742,54 @@ const Timeline = (props) => {
                                 value={values.progress}
                                 variant="outlined"
                               />
+                            </Grid>
+                            <Grid item md={12} sx={12}>
+                              <Box
+                                md={12}
+                                sx={{
+                                  display: 'block',
+                                  border: 'black solid 2px',
+                                  borderRadius: '5px',
+                                  backgroundColor: colorPickerDisplayState,
+                                  color: colorPickerDisplayState,
+                                }}
+                              >
+                                Pick color below
+                              </Box>
+                            </Grid>
+                            <Grid item md={12} xs={12}>
+                              <Box
+                                sx={{
+                                  display: 'grid',
+                                  gridTemplateColumns: 'repeat(5, 50px)',
+                                  gridTemplateRows: 'repeat(4, 1fr)',
+                                  justifyItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                {colorPicker.map((item) => {
+                                  return (
+                                    <button
+                                      type="button"
+                                      name={item.label}
+                                      value={item.value}
+                                      onClick={(e) => {
+                                        handleClickColorPicker(e)
+                                      }}
+                                      style={{
+                                        width: '30px',
+                                        height: '20px',
+                                        margin: '3px',
+                                        padding: '5px',
+                                        color: 'white',
+                                        backgroundColor: item.color,
+                                      }}
+                                    >
+                                      {/* {item.label} */}
+                                    </button>
+                                  )
+                                })}
+                              </Box>
                             </Grid>
                             <Grid item md={6} xs={6}>
                               <LocalizationProvider
