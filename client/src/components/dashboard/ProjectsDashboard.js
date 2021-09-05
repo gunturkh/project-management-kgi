@@ -569,7 +569,7 @@ const ProjectsDashboard = (props) => {
             setOpenModal={setOpenModal}
             setDeleteItem={setDeleteItem}
           />
-          <Card {...props}>
+          {/* <Card {...props}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="h6">
                 Projects
@@ -716,7 +716,7 @@ const ProjectsDashboard = (props) => {
                 </Button>
               </Box>
             ) : null}
-          </Card>
+          </Card> */}
         </Box>
       )}
     </>

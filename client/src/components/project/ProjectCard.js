@@ -133,6 +133,7 @@ const ProjectCard = ({ board, ...rest }) => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        borderRadius: '50px',
       }}
       {...rest}
     >

@@ -7,6 +7,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import _ from 'lodash'
 import {
   makeStyles,
+  withStyles,
   InputBase,
   Box,
   Button,
@@ -16,6 +17,9 @@ import {
   Divider,
   Grid,
   Typography,
+  AppBar,
+  Tabs,
+  Tab,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
@@ -82,8 +86,47 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  )
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  }
+}
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     flexGrow: 1,
+//     backgroundColor: theme.palette.background.paper,
+//   },
+// }))
+
 export default function ProjectDetailsNew() {
   const classes = useStyles()
+  const [tabValue, setTabValue] = React.useState(0)
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue)
+  }
   // const navigate = useNavigate()
   /* eslint-disable-next-line */
   // var { id, name } = useParams()
@@ -357,7 +400,7 @@ export default function ProjectDetailsNew() {
         }
         const userParams = {
           ...picData,
-          notification: picData.notification.length
+          notification: picData?.notification?.length
             ? [...picData.notification, notifMessage]
             : [notifMessage],
         }
@@ -529,106 +572,189 @@ export default function ProjectDetailsNew() {
         <Loading />
       ) : (
         <Card>
-          <CardHeader
-            subheader="Details about the project"
-            title="Project Details"
-          />
-          <Divider />
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item md={6} xs={12}>
-                <Typography
-                  align="left"
-                  color="textPrimary"
-                  gutterBottom
-                  variant="h5"
-                >
-                  Company: {mappedCompany || ''}
-                </Typography>
-              </Grid>
-              <Grid item md={12} xs={12}>
-                <Typography
-                  align="left"
-                  color="textPrimary"
-                  gutterBottom
-                  variant="h5"
-                >
-                  Name: {currBoard?.projectName}
-                </Typography>
-              </Grid>
-              <Grid item md={12} xs={12}>
-                <Typography
-                  align="left"
-                  color="textPrimary"
-                  gutterBottom
-                  variant="h6"
-                >
-                  Description: {currBoard?.projectDescription}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                md={6}
-                xs={12}
+          <div className={classes.root}>
+            <AppBar position="static" color="transparent">
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                aria-label="project details tab"
+                centered
+              >
+                <Tab label="Overview" {...a11yProps(0)} />
+                <Tab label="Task" {...a11yProps(1)} />
+                <Tab label="Timelines" {...a11yProps(2)} />
+                <Tab label="Files" {...a11yProps(3)} />
+              </Tabs>
+            </AppBar>
+            <TabPanel value={tabValue} index={0}>
+              <CardContent>
+                <Grid container spacing={3}>
+                  <Grid item md={6} xs={12}>
+                    <Typography
+                      align="left"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h5"
+                    >
+                      Company: {mappedCompany || ''}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={12} xs={12}>
+                    <Typography
+                      align="left"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h5"
+                    >
+                      Name: {currBoard?.projectName}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={12} xs={12}>
+                    <Typography
+                      align="left"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h6"
+                    >
+                      Description: {currBoard?.projectDescription}
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    md={6}
+                    xs={12}
+                    sx={{
+                      alignItems: 'center',
+                      display: 'flex',
+                    }}
+                  >
+                    <AccessTimeIcon color="action" />
+                    <Typography
+                      align="left"
+                      color="textSecondary"
+                      display="inline"
+                      sx={{
+                        pl: 1,
+                      }}
+                      variant="body2"
+                    >
+                      {currBoard?.startDate && currBoard?.endDate
+                        ? `${moment(currBoard.startDate).format(
+                            'DD MMMM YYYY',
+                          )} - ${moment(currBoard.endDate).format(
+                            'DD MMMM YYYY',
+                          )}`
+                        : ''}
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    md={6}
+                    xs={12}
+                    md={6}
+                    xs={12}
+                    sx={{
+                      alignItems: 'center',
+                      display: 'flex',
+                    }}
+                  >
+                    <User size="20" />
+                    <Typography
+                      color="textSecondary"
+                      display="inline"
+                      sx={{ pl: 1 }}
+                      variant="body2"
+                    >
+                      PIC: {mappedPic?.join(', ') || ''}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid item lg={12} md={12} xl={12} xs={12}></Grid>
+              </CardContent>
+            </TabPanel>
+            <TabPanel value={tabValue} index={1}>
+              <>
+                <Divider />
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable
+                    droppableId="all-columns"
+                    direction="horizontal"
+                    type="list"
+                  >
+                    {(provided) => (
+                      <div
+                        className={classes.listContainer}
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {initDone &&
+                          initialData.columnOrder.map((columnId, index) => {
+                            const column = initialData.columns[columnId]
+                            const tasks = column.taskIds.map(
+                              (taskId) => initialData.tasks[taskId],
+                            )
+                            return (
+                              <List
+                                key={column._id}
+                                column={column}
+                                tasks={tasks}
+                                index={index}
+                                style={classes.wrapper}
+                              />
+                            )
+                          })}
+                        <div className={classes.wrapper}>
+                          {/* {addFlag.current && (
+                        <AddItem
+                          handleClick={handleAddition}
+                          btnText="Add another list"
+                          type="list"
+                          icon={<AddIcon />}
+                          width="256px"
+                          color="white"
+                          noshadow
+                        />
+                      )} */}
+                          {addListFlag && (
+                            <InputCard
+                              value={listTitle}
+                              changedHandler={handleChange}
+                              itemAdded={submitHandler}
+                              closeHandler={closeButtonHandler}
+                              keyDownHandler={handleKeyDown}
+                              type="list"
+                              btnText="Add List"
+                              placeholder="Enter list title..."
+                              width="230px"
+                              marginLeft="1"
+                            />
+                          )}
+                        </div>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </>
+            </TabPanel>
+            <TabPanel value={tabValue} index={2}>
+              <Box
                 sx={{
-                  alignItems: 'center',
                   display: 'flex',
+                  justifyContent: 'center',
+                  p: 2,
                 }}
               >
-                <AccessTimeIcon color="action" />
-                <Typography
-                  align="left"
-                  color="textSecondary"
-                  display="inline"
-                  sx={{
-                    pl: 1,
-                  }}
-                  variant="body2"
-                >
-                  {currBoard?.startDate && currBoard?.endDate
-                    ? `${moment(currBoard.startDate).format(
-                        'DD MMMM YYYY',
-                      )} - ${moment(currBoard.endDate).format('DD MMMM YYYY')}`
-                    : ''}
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                md={6}
-                xs={12}
-                md={6}
-                xs={12}
-                sx={{
-                  alignItems: 'center',
-                  display: 'flex',
-                }}
-              >
-                <User size="20" />
-                <Typography
-                  color="textSecondary"
-                  display="inline"
-                  sx={{ pl: 1 }}
-                  variant="body2"
-                >
-                  PIC: {mappedPic?.join(', ') || ''}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item lg={12} md={12} xl={12} xs={12}></Grid>
-          </CardContent>
-          <Divider />
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              p: 2,
-            }}
-          >
-            <Timeline
-              title={currBoard.projectName}
-              eventsData={manipulatedTimelines ?? []}
-            />
-          </Box>
+                <Timeline
+                  title={currBoard.projectName}
+                  eventsData={manipulatedTimelines ?? []}
+                />
+              </Box>
+            </TabPanel>
+            <TabPanel value={tabValue} index={3}>
+              Under Development
+            </TabPanel>
+          </div>
         </Card>
       )}
       {isValid || tokenRequest ? (
@@ -690,69 +816,6 @@ export default function ProjectDetailsNew() {
           ) : (
             <div></div>
           )}
-          <>
-            <Divider />
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable
-                droppableId="all-columns"
-                direction="horizontal"
-                type="list"
-              >
-                {(provided) => (
-                  <div
-                    className={classes.listContainer}
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {initDone &&
-                      initialData.columnOrder.map((columnId, index) => {
-                        const column = initialData.columns[columnId]
-                        const tasks = column.taskIds.map(
-                          (taskId) => initialData.tasks[taskId],
-                        )
-                        return (
-                          <List
-                            key={column._id}
-                            column={column}
-                            tasks={tasks}
-                            index={index}
-                            style={classes.wrapper}
-                          />
-                        )
-                      })}
-                    <div className={classes.wrapper}>
-                      {/* {addFlag.current && (
-                        <AddItem
-                          handleClick={handleAddition}
-                          btnText="Add another list"
-                          type="list"
-                          icon={<AddIcon />}
-                          width="256px"
-                          color="white"
-                          noshadow
-                        />
-                      )} */}
-                      {addListFlag && (
-                        <InputCard
-                          value={listTitle}
-                          changedHandler={handleChange}
-                          itemAdded={submitHandler}
-                          closeHandler={closeButtonHandler}
-                          keyDownHandler={handleKeyDown}
-                          type="list"
-                          btnText="Add List"
-                          placeholder="Enter list title..."
-                          width="230px"
-                          marginLeft="1"
-                        />
-                      )}
-                    </div>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </>
           {/*
             <SideMenu
             setBackground={setBackground}

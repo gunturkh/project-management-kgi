@@ -13,6 +13,19 @@ const userHandler = require("./api/userHandler");
 const activityHandler = require("./api/activityHandler");
 const companyHandler = require("./api/companyHandler");
 
+const diskStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "/uploads"));
+  },
+  // konfigurasi penamaan file yang unik
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
 const upload = multer({
   limits: {
     fileSize: 10000000,
