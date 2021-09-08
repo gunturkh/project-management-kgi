@@ -180,6 +180,7 @@ const EditCompany = (props) => {
               autoComplete="off"
               noValidate
               {...props}
+              style={{ display: 'flex', justifyContent: 'center' }}
             >
               <Card>
                 <CardHeader
@@ -203,6 +204,7 @@ const EditCompany = (props) => {
                         required
                         value={values.companyName}
                         variant="outlined"
+                        disabled
                       />
                     </Grid>
                     <Grid item md={12} xs={12}>
@@ -282,12 +284,20 @@ const EditCompany = (props) => {
                   }}
                 >
                   <Button
+                    // color="primary"
+                    variant="contained"
+                    onClick={() => navigate(`/app/company/`, { replace: true })}
+                    style={{ marginRight: '1em', backgroundColor: '#c51162' }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
                     color="primary"
                     variant="contained"
                     // disabled={isSubmitting}
                     type="submit"
                   >
-                    Edit Company
+                    Submit
                   </Button>
                 </Box>
                 <Snackbar

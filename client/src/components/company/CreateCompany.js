@@ -125,7 +125,13 @@ const CreateCompany = (props) => {
         values,
         setFieldValue,
       }) => (
-        <form onSubmit={handleSubmit} autoComplete="off" noValidate {...props}>
+        <form
+          onSubmit={handleSubmit}
+          autoComplete="off"
+          noValidate
+          {...props}
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
           <Card>
             <CardHeader
               subheader="Enter information about your project"
@@ -222,6 +228,14 @@ const CreateCompany = (props) => {
                 p: 2,
               }}
             >
+              <Button
+                // color="primary"
+                variant="contained"
+                onClick={() => navigate(`/app/company/`, { replace: true })}
+                style={{ marginRight: '1em', backgroundColor: '#c51162' }}
+              >
+                Cancel
+              </Button>
               <Button
                 color="primary"
                 variant="contained"
