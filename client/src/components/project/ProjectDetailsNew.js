@@ -52,6 +52,7 @@ import AddItem from '../AddItem'
 import { fetchTimelineByBoardId } from '../../actions/actionCreators/timelineActions'
 import Timeline from '../Timeline'
 import { makeid } from '../../utils/randomString'
+import { DataGrid } from '@mui/x-data-grid'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -527,6 +528,30 @@ export default function ProjectDetailsNew() {
     })
   }
 
+  const dataGridColumn = [
+    {
+      field: 'taskName',
+      headerName: 'Task Name',
+      headerAlign: 'center',
+      width: 200,
+    },
+    {
+      field: 'priority',
+      headerName: 'Priority',
+      headerAlign: 'center',
+      width: 200,
+    },
+    { field: 'list', headerName: 'List', headerAlign: 'center', width: 200 },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      width: 200,
+      sortable: true,
+    },
+  ]
+  const dataGridRow = []
+
   // const handleAddition = () => {
   //   setAddListFlag(true)
   //   addFlag.current = false
@@ -587,8 +612,20 @@ export default function ProjectDetailsNew() {
               </Tabs>
             </AppBar>
             <TabPanel value={tabValue} index={0}>
-              <CardContent>
-                <Grid container spacing={3}>
+              {/* TODO: Change TabPanel[0] content into task list with sorting feature*/}
+
+              <CardContent style={{ display: 'flex' }}>
+                <div style={{ height: 400, width: 800 }}>
+                  <DataGrid
+                    rows={dataGridRow}
+                    columns={dataGridColumn}
+                    // pageSize={5}
+                    // rowsPerPageOptions={[5]}
+                    // checkboxSelection
+                    disableSelectionOnClick
+                  />
+                </div>
+                {/* <Grid container spacing={3}>
                   <Grid item md={6} xs={12}>
                     <Typography
                       align="left"
@@ -668,8 +705,7 @@ export default function ProjectDetailsNew() {
                       PIC: {mappedPic?.join(', ') || ''}
                     </Typography>
                   </Grid>
-                </Grid>
-                <Grid item lg={12} md={12} xl={12} xs={12}></Grid>
+                </Grid> */}
               </CardContent>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
