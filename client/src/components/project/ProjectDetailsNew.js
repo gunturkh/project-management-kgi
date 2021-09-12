@@ -550,7 +550,24 @@ export default function ProjectDetailsNew() {
       sortable: true,
     },
   ]
-  const dataGridRow = []
+  const dataGridRow =
+    cards.length > 0
+      ? cards.map((card, i) => {
+          return {
+            id: i,
+            taskName: card.name,
+            priority:
+              card.priority.charAt(0).toUpperCase() + card.priority.slice(1),
+            list: 'default',
+            status:
+              lists.length > 0
+                ? lists?.filter((list) => {
+                    return list?._id === card.listId
+                  })[0]?.name
+                : '',
+          }
+        })
+      : []
 
   // const handleAddition = () => {
   //   setAddListFlag(true)
@@ -591,6 +608,9 @@ export default function ProjectDetailsNew() {
   //     )
   //   }
   // }
+
+  console.log('initialData', initialData)
+  console.log('cards', cards)
   return (
     <>
       {loading ? (
@@ -614,8 +634,10 @@ export default function ProjectDetailsNew() {
             <TabPanel value={tabValue} index={0}>
               {/* TODO: Change TabPanel[0] content into task list with sorting feature*/}
 
-              <CardContent style={{ display: 'flex' }}>
-                <div style={{ height: 400, width: 800 }}>
+              <CardContent
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <div style={{ height: 'auto', minHeight: 300, width: 800 }}>
                   <DataGrid
                     rows={dataGridRow}
                     columns={dataGridColumn}
