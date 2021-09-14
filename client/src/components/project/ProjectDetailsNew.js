@@ -58,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     // minHeight: '100vh',
     overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
   },
   listContainer: {
     display: 'flex',
