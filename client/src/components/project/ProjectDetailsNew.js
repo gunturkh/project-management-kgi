@@ -56,7 +56,7 @@ import { DataGrid } from '@mui/x-data-grid'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: '100vh',
+    // minHeight: '100vh',
     overflowY: 'auto',
   },
   listContainer: {
@@ -637,7 +637,13 @@ export default function ProjectDetailsNew() {
               <CardContent
                 style={{ display: 'flex', justifyContent: 'center' }}
               >
-                <div style={{ height: 'auto', minHeight: 300, width: 800 }}>
+                <div
+                  style={{
+                    height: 'auto',
+                    minHeight: 400,
+                    width: 800,
+                  }}
+                >
                   <DataGrid
                     rows={dataGridRow}
                     columns={dataGridColumn}
