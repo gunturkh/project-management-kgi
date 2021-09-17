@@ -33,11 +33,7 @@ import {
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
 import { updateUserNotification } from '../../actions/actionCreators/userActions'
-<<<<<<< Updated upstream
-import List from '../List'
-=======
 import ListTask from '../ListTask'
->>>>>>> Stashed changes
 import midString from '../../ordering/ordering'
 import { updateCardById } from '../../actions/actionCreators/cardActions'
 import {
