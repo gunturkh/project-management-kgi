@@ -21,13 +21,6 @@ import {
   Tabs,
   Tab,
 } from '@material-ui/core'
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemButton,
-} from '@mui/material'
 import AddIcon from '@material-ui/icons/Add'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
@@ -40,7 +33,11 @@ import {
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
 import { updateUserNotification } from '../../actions/actionCreators/userActions'
-// import List from '../List'
+<<<<<<< Updated upstream
+import List from '../List'
+=======
+import ListTask from '../ListTask'
+>>>>>>> Stashed changes
 import midString from '../../ordering/ordering'
 import { updateCardById } from '../../actions/actionCreators/cardActions'
 import {
@@ -171,8 +168,6 @@ export default function ProjectDetailsNew() {
   const dispatch = useDispatch()
   let mappedPic = []
   let mappedCompany = []
-
-  const [selectedFolderIndex, setSelectedFolderIndex] = useState(0)
 
   // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
   //   name = currBoard.name
@@ -539,11 +534,6 @@ export default function ProjectDetailsNew() {
     })
   }
 
-  const handleListItemClick = (event, index) => {
-    setSelectedFolderIndex(index)
-    console.log('selected file: ', index)
-  }
-
   const dataGridColumn = [
     {
       field: 'taskName',
@@ -774,7 +764,7 @@ export default function ProjectDetailsNew() {
                               (taskId) => initialData.tasks[taskId],
                             )
                             return (
-                              <List
+                              <ListTask
                                 key={column._id}
                                 column={column}
                                 tasks={tasks}
@@ -832,96 +822,7 @@ export default function ProjectDetailsNew() {
               </Box>
             </TabPanel>
             <TabPanel value={tabValue} index={3}>
-              {/* TODO: Create File management with upload and see all list item*/}
-              <Box sx={{ flexGrow: 1, padding: 0 }}>
-                <Grid
-                  container
-                  spacing={0.5}
-                  // flexDirection={'column'}
-                  rowSpacing={0.5}
-                >
-                  <Grid item xs={3} md={3}>
-                    <List component="nav">
-                      <ListItemButton
-                        selected={selectedFolderIndex === 0}
-                        onClick={(event) => handleListItemClick(event, 0)}
-                      >
-                        <ListItemText primary="All Files" />
-                      </ListItemButton>
-                      <Divider />
-                      <List dense paddingLeft={10}>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 1}
-                          onClick={(event) => handleListItemClick(event, 1)}
-                        >
-                          <ListItemText primary="Mechanical Assembly Drawing" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 2}
-                          onClick={(event) => handleListItemClick(event, 2)}
-                        >
-                          <ListItemText primary="Electrical Wiring Diagram" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 3}
-                          onClick={(event) => handleListItemClick(event, 3)}
-                        >
-                          <ListItemText primary="Pneumatic Diagram" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 4}
-                          onClick={(event) => handleListItemClick(event, 4)}
-                        >
-                          <ListItemText primary="I/O List" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 5}
-                          onClick={(event) => handleListItemClick(event, 5)}
-                        >
-                          <ListItemText primary="PLC Program" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 6}
-                          onClick={(event) => handleListItemClick(event, 6)}
-                        >
-                          <ListItemText primary="HMI Program" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 7}
-                          onClick={(event) => handleListItemClick(event, 7)}
-                        >
-                          <ListItemText primary="VB Source Code Program" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 8}
-                          onClick={(event) => handleListItemClick(event, 8)}
-                        >
-                          <ListItemText primary="Electrical Part List" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 9}
-                          onClick={(event) => handleListItemClick(event, 9)}
-                        >
-                          <ListItemText primary="Mechanical Part List" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 10}
-                          onClick={(event) => handleListItemClick(event, 10)}
-                        >
-                          <ListItemText primary="Pneumatic Part List" />
-                        </ListItemButton>
-                        <ListItemButton
-                          selected={selectedFolderIndex === 11}
-                          onClick={(event) => handleListItemClick(event, 11)}
-                        >
-                          <ListItemText primary="Others" />
-                        </ListItemButton>
-                      </List>
-                    </List>
-                  </Grid>
-                  <Grid item xs={9} md={9}></Grid>
-                </Grid>
-              </Box>
+              Under Development
             </TabPanel>
           </div>
         </Card>

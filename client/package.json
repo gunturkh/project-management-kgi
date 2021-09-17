@@ -15,7 +15,6 @@
     "@material-ui/icons": "^5.0.0-alpha.28",
     "@material-ui/lab": "^5.0.0-alpha.24",
     "@material-ui/styles": "^4.10.0",
-    "@mui/material": "^5.0.0",
     "@mui/x-data-grid": "^4.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
