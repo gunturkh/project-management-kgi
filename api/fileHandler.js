@@ -19,7 +19,7 @@ const auth = new GoogleAuth({
 
 var Storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, "./files");
+    callback(null, "./images");
   },
   filename: function (req, file, callback) {
     var date = new Date();
@@ -76,6 +76,7 @@ router.post("/", (req, res) => {
       const drive = google.drive({ version: "v3", auth });
 
       //upload file
+      let resultFiles = [];
       for (let item of n) {
         var fileMetaData = {
           name: item.file_name,
@@ -90,7 +91,7 @@ router.post("/", (req, res) => {
           {
             resource: fileMetaData,
             media: media,
-            fields: "id",
+            fields: "id, webContentLink, webViewLink, name",
           },
           (err, file) => {
             if (err) {
@@ -105,7 +106,8 @@ router.post("/", (req, res) => {
                   type: "anyone",
                 },
               });
-              res.send(`Create success with file id:${file.data.id}`);
+              // res.send(`Create success with file id:${file.data.id}`);
+              res.send(file);
             }
           }
         );
@@ -177,7 +179,7 @@ router.get("/", async (req, res, next) => {
         spaces: "drive",
         fileId: "1gg6-zCgUmjfwngO1zwBKv7NuhOrp0Bvy",
         fields:
-          "nextPageToken, files(id, name, size, parents, mimeType, modifiedTime)",
+          "nextPageToken, files(id, name, size, parents, mimeType, modifiedTime, webContentLink, webViewLink)",
         // q: `'${fileId}' in parents`,
       },
       (err, response) => {

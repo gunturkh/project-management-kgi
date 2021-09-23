@@ -643,9 +643,11 @@ export default function ProjectDetailsNew() {
     console.log('formData', formData.getAll('files'))
     try {
       const res = axios.post('/files', formData)
-      res.then(() => {
+      res.then((data) => {
         setRefreshList(true)
         setOpenUploadModal(false)
+        console.log('data res: ', data)
+        // dispatch(updateBoardById(id, { name: text }, token))
       })
     } catch (err) {
       console.log('ERROR: ', err)
@@ -1078,7 +1080,17 @@ export default function ProjectDetailsNew() {
                               <>
                                 <TableRow hover key={index}>
                                   <TableCell color="textSecondary">
-                                    {item.name}
+                                    <a
+                                      href={item.webViewLink}
+                                      style={{
+                                        color: 'black',
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
+                                      }}
+                                      target="_blank"
+                                    >
+                                      {item.name}
+                                    </a>
                                   </TableCell>
                                   {/* <SimpleMenu
                                     id={item._id}
