@@ -72,12 +72,12 @@ router.post("/", (req, res) => {
     // Target folder in drive for the uploaded file
     const targetFolderId = "1gg6-zCgUmjfwngO1zwBKv7NuhOrp0Bvy";
 
+    let resultFiles = [];
     function uploadFile() {
       const drive = google.drive({ version: "v3", auth });
 
       //upload file
-      let resultFiles = [];
-      for (let item of n) {
+      n.map((item, index) => {
         var fileMetaData = {
           name: item.file_name,
           parents: [targetFolderId],
@@ -107,11 +107,23 @@ router.post("/", (req, res) => {
                 },
               });
               // res.send(`Create success with file id:${file.data.id}`);
-              res.send(file);
+              resultFiles.push(file.data);
+              console.log("resultFiles: ", resultFiles);
+              if (resultFiles.length === n.length) {
+                res.send(resultFiles);
+              }
+              // res.send(file);
+              // console.log("file: ", file);
             }
           }
         );
-      }
+        // if (index === n.length - 1) {
+        //   res.end(resultFiles);
+        // }
+      });
+      // if (resultFiles.length === n.length) {
+      //   return res.send();
+      // }
     }
     // call upload function
     uploadFile();
