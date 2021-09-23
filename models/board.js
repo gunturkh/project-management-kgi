@@ -38,6 +38,9 @@ const boardSchema = new Schema(
       type: String,
       required: true,
     },
+    files: {
+      type: Array,
+    },
     // image: {
     //     color: {
     //         type: String,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, Fragment } from 'react'
 // import { Redirect, useParams } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
@@ -20,6 +20,11 @@ import {
   AppBar,
   Tabs,
   Tab,
+  Select,
+  TableBody,
+  TableRow,
+  Table,
+  TableCell,
 } from '@material-ui/core'
 import {
   List,
@@ -27,6 +32,13 @@ import {
   ListItemText,
   ListItemIcon,
   ListItemButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuItem,
+  InputLabel,
 } from '@mui/material'
 import AddIcon from '@material-ui/icons/Add'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
@@ -60,6 +72,8 @@ import { fetchTimelineByBoardId } from '../../actions/actionCreators/timelineAct
 import Timeline from '../Timeline'
 import { makeid } from '../../utils/randomString'
 import { DataGrid } from '@mui/x-data-grid'
+import axios from 'axios'
+import { DropzoneDialog, DropzoneArea } from 'material-ui-dropzone'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,6 +107,13 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     marginTop: theme.spacing(4.5),
     boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;',
+  },
+  previewChip: {
+    minWidth: 160,
+    maxWidth: 210,
+  },
+  dropZone: {
+    minHeight: 50,
   },
 }))
 
@@ -173,10 +194,24 @@ export default function ProjectDetailsNew() {
   let mappedCompany = []
 
   const [selectedFolderIndex, setSelectedFolderIndex] = useState(0)
+  const [openUploadModal, setOpenUploadModal] = useState(false)
+  const [addFile, setAddFile] = useState([])
+  const [chooseFolder, setChooseFolder] = useState('')
+  const [listFile, setListFile] = useState([])
+  const [refreshList, setRefreshList] = useState(true)
 
   // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
   //   name = currBoard.name
   // else if (name === undefined) name = ''
+  // let fetchList;
+  useEffect(() => {
+    axios.get('/files').then((res) => {
+      setListFile(res.data)
+      console.log('GET files response:', listFile)
+      // setRefreshList(true)
+      setRefreshList(false)
+    })
+  }, [refreshList])
 
   useEffect(() => {
     console.log('initialData', initialData)
@@ -195,6 +230,7 @@ export default function ProjectDetailsNew() {
     }
     // }
   }, [dispatch, id, isValid, token, error])
+
   mappedPic = currBoard?.pic?.map((pic) => {
     return users.find((user) => user._id === pic)?.username
   })
@@ -585,6 +621,45 @@ export default function ProjectDetailsNew() {
         })
       : []
 
+  // Handle File Upload
+
+  const handleOpenModal = () => {
+    setOpenUploadModal(true)
+    console.log('LIST FILE array:', listFile)
+  }
+
+  const handleCloseModal = () => {
+    setOpenUploadModal(false)
+  }
+
+  const handleUpload = () => {
+    // addFile
+    const formData = new FormData()
+    formData.append('folder', chooseFolder)
+    for (let i = 0; i < addFile.length; i++) {
+      formData.append('files', addFile[i])
+    }
+    console.log('SUBMIT files', addFile)
+    console.log('formData', formData.getAll('files'))
+    try {
+      const res = axios.post('/files', formData)
+      res.then(() => {
+        setRefreshList(true)
+        setOpenUploadModal(false)
+      })
+    } catch (err) {
+      console.log('ERROR: ', err)
+    }
+
+    // fileUpload()
+    // setOpenUploadModal(false)
+  }
+
+  const handleChooseFolder = (e) => {
+    setChooseFolder(e.target.value)
+    console.log('Choosen Folder: ', e.target.value)
+  }
+
   // const handleAddition = () => {
   //   setAddListFlag(true)
   //   addFlag.current = false
@@ -919,7 +994,107 @@ export default function ProjectDetailsNew() {
                       </List>
                     </List>
                   </Grid>
-                  <Grid item xs={9} md={9}></Grid>
+                  <Grid item xs={9} md={9}>
+                    <Button onClick={handleOpenModal}>Attach File</Button>
+                    <Dialog
+                      open={openUploadModal}
+                      onClose={handleCloseModal}
+                      maxWidth={'md'}
+                      fullWidth={true}
+                    >
+                      <DialogContent>
+                        <Box minHeight={120}>
+                          <DropzoneArea
+                            dropzoneClass={classes.dropZone}
+                            onChange={(files) => setAddFile(files)}
+                            dropzoneText={
+                              'Drag & drop or click here, max 3 file at one time'
+                            }
+                            showAlerts={false}
+                            showPreviews={true}
+                            showPreviewsInDropzone={false}
+                            useChipsForPreview
+                            previewGridProps={{
+                              container: { spacing: 1, direction: 'row' },
+                            }}
+                            previewChipProps={{
+                              classes: { root: classes.previewChip },
+                            }}
+                            previewText="Selected files"
+                          />
+                        </Box>
+                        <Select
+                          style={{ minWidth: 300 }}
+                          value={chooseFolder}
+                          onChange={handleChooseFolder}
+                          label="Choose Folder"
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          <MenuItem value="mechanical-drawing">
+                            Mechanical Assembly Drawing
+                          </MenuItem>
+                          <MenuItem value="electrical-drawing">
+                            Electrical Wiring Drawing
+                          </MenuItem>
+                          <MenuItem value="pneumatic-diagram">
+                            Pneumatic Diagram
+                          </MenuItem>
+                          <MenuItem value="io-list">I/O List</MenuItem>
+                          <MenuItem value="plc-program">PLC Program</MenuItem>
+                          <MenuItem value="hmi-program">HMI Program</MenuItem>
+                          <MenuItem value="vb-srccode">
+                            VB Source Code Program
+                          </MenuItem>
+                          <MenuItem value="electrical-partlist">
+                            Electrical Part List
+                          </MenuItem>
+                          <MenuItem value="mechanical-partlist">
+                            Mechanical Part List
+                          </MenuItem>
+                          <MenuItem value="pneumatic-partlist">
+                            Pneumatic Part List
+                          </MenuItem>
+                          <MenuItem value="others">Others</MenuItem>
+                        </Select>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleCloseModal}>Cancel</Button>
+                        <Button
+                          form="form-upload"
+                          type="submit"
+                          onClick={handleUpload}
+                        >
+                          Upload
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                    {selectedFolderIndex === 0 && (
+                      <Box>
+                        <Table>
+                          <TableBody>
+                            {listFile?.map((item, index) => (
+                              <>
+                                <TableRow hover key={index}>
+                                  <TableCell color="textSecondary">
+                                    {item.name}
+                                  </TableCell>
+                                  {/* <SimpleMenu
+                                    id={item._id}
+                                    projectName={item.name}
+                                    setOpenModal={setOpenModal}
+                                    setDeleteItem={setDeleteItem}
+                                  /> */}
+                                </TableRow>
+                              </>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    )}
+                    {/* {selectedFolderIndex === 0 && <div>Div 0</div>} */}
+                  </Grid>
                 </Grid>
               </Box>
             </TabPanel>
