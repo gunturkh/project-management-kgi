@@ -39,6 +39,7 @@ import {
   DialogTitle,
   MenuItem,
   InputLabel,
+  CircularProgress,
 } from '@mui/material'
 import AddIcon from '@material-ui/icons/Add'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
@@ -199,6 +200,7 @@ export default function ProjectDetailsNew() {
   const [chooseFolder, setChooseFolder] = useState('')
   const [listFile, setListFile] = useState([])
   const [refreshList, setRefreshList] = useState(true)
+  const [progressLoading, setProgressLoading] = useState(false)
 
   // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
   //   name = currBoard.name
@@ -642,13 +644,17 @@ export default function ProjectDetailsNew() {
     console.log('SUBMIT files', addFile)
     console.log('formData', formData.getAll('files'))
     try {
-      const res = axios.post('/files', formData)
-      res.then((data) => {
-        setRefreshList(true)
-        setOpenUploadModal(false)
-        console.log('data res: ', data)
-        // dispatch(updateBoardById(id, { name: text }, token))
-      })
+      if (!progressLoading) {
+        setProgressLoading(true)
+        const res = axios.post('/files', formData)
+        res.then((data) => {
+          setRefreshList(true)
+          setOpenUploadModal(false)
+          setProgressLoading(false)
+          console.log('data res: ', data)
+          // dispatch(updateBoardById(id, { name: text }, token))
+        })
+      }
     } catch (err) {
       console.log('ERROR: ', err)
     }
@@ -997,7 +1003,13 @@ export default function ProjectDetailsNew() {
                     </List>
                   </Grid>
                   <Grid item xs={9} md={9}>
-                    <Button onClick={handleOpenModal}>Attach File</Button>
+                    <Button
+                      onClick={handleOpenModal}
+                      color="primary"
+                      variant="contained"
+                    >
+                      Attach File
+                    </Button>
                     <Dialog
                       open={openUploadModal}
                       onClose={handleCloseModal}
@@ -1026,7 +1038,7 @@ export default function ProjectDetailsNew() {
                           />
                         </Box>
                         <Select
-                          style={{ minWidth: 300 }}
+                          style={{ minWidth: 320 }}
                           value={chooseFolder}
                           onChange={handleChooseFolder}
                           label="Choose Folder"
@@ -1067,8 +1079,23 @@ export default function ProjectDetailsNew() {
                           form="form-upload"
                           type="submit"
                           onClick={handleUpload}
+                          color="primary"
+                          variant="contained"
+                          disabled={progressLoading}
                         >
                           Upload
+                          {progressLoading && (
+                            <CircularProgress
+                              size={24}
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                              }}
+                            />
+                          )}
                         </Button>
                       </DialogActions>
                     </Dialog>
