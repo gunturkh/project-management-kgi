@@ -29,8 +29,11 @@ import {
   Calendar as CalendarIcon,
   LogOut as LogOutIcon,
   Briefcase,
+  MapPin,
+  Trash2,
 } from 'react-feather'
 import NavItem from './NavItem'
+import PinItem from './PinItem'
 import { updateUserNotificationStatusById } from '../actions/actionCreators/userActions'
 
 const dummyUser = {
@@ -163,7 +166,94 @@ const DashboardSidebar = ({
       )}
       <Box sx={{ p: 2 }}>
         <List>
-          {items.map((item) => (
+          {user.role === 'ADMIN' && (
+            <>
+              {' '}
+              <NavItem
+                openMobile={openMobile}
+                href="/app/dashboard"
+                key="Dashboard"
+                title="Dashboard"
+                icon={BarChartIcon}
+              />
+              <NavItem
+                openMobile={openMobile}
+                href="/app/projects"
+                key="Projects"
+                title="Projects"
+                icon={CalendarIcon}
+              />
+              {user.pinned && user.pinned.length > 0
+                ? user.pinned.map((pin, i) => {
+                    return (
+                      <PinItem
+                        openMobile={openMobile}
+                        href={`/app/projects/details/${pin.id}`}
+                        key={`pin-${i}`}
+                        title={`${pin.projectName}`}
+                        id={pin.id}
+                        icon={MapPin}
+                      />
+                    )
+                  })
+                : null}
+              <NavItem
+                openMobile={openMobile}
+                href="/app/account"
+                key="User Manager"
+                title="User Manager"
+                icon={UserIcon}
+              />
+              <NavItem
+                openMobile={openMobile}
+                href="/app/company"
+                key="Company"
+                title="Company"
+                icon={Briefcase}
+              />
+              <NavItem
+                openMobile={openMobile}
+                href="/app/settings"
+                key="Settings"
+                title="Settings"
+                icon={SettingsIcon}
+              />
+            </>
+          )}
+          {(user.role === 'MEMBER' || user.role === 'CLIENT') && (
+            <>
+              <NavItem
+                openMobile={openMobile}
+                href="/app/projects"
+                key="Projects"
+                title="Projects"
+                icon={CalendarIcon}
+              />
+              {user.pinned && user.pinned.length > 0
+                ? user.pinned.map((pin, i) => {
+                    return (
+                      <Box display="flex">
+                        <PinItem
+                          openMobile={openMobile}
+                          href={`/app/projects/details/${pin.id}`}
+                          key={`pin-${i}`}
+                          title={`${pin.projectName}`}
+                          icon={MapPin}
+                        />
+                      </Box>
+                    )
+                  })
+                : null}
+              <NavItem
+                openMobile={openMobile}
+                href="/app/settings"
+                key="Settings"
+                title="Settings"
+                icon={SettingsIcon}
+              />
+            </>
+          )}
+          {/* {items.map((item) => (
             <NavItem
               openMobile={openMobile}
               href={item.href}
@@ -171,7 +261,7 @@ const DashboardSidebar = ({
               title={item.title}
               icon={item.icon}
             />
-          ))}
+          ))} */}
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />

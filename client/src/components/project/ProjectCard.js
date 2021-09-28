@@ -22,7 +22,10 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import { User, Edit, Trash2, MoreVertical } from 'react-feather'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
-import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
+import {
+  fetchAllUsersInfo,
+  updateUser,
+} from '../../actions/actionCreators/userActions'
 
 function rand() {
   return Math.round(Math.random() * 20) - 10
@@ -217,6 +220,26 @@ const ProjectCard = ({ board, ...rest }) => {
               to={`/app/projects/edit/${board._id}`}
             >
               Edit
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                const pin = {
+                  id: board._id,
+                  projectName: board.projectName,
+                }
+                const postUserReq = {
+                  ...user,
+                  pinned: [...user.pinned, pin],
+                }
+                // console.log('pin user:', postUserReq)
+                dispatch(updateUser(postUserReq)).then(() => {
+                  console.log('pin done!', user)
+                  // setLoading(false)
+                  // setEdit(false)
+                })
+              }}
+            >
+              Pin
             </MenuItem>
             {user.role === 'ADMIN' && (
               <MenuItem
