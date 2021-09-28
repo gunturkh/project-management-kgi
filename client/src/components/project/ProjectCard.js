@@ -15,10 +15,12 @@ import {
   Grid,
   Typography,
   Modal,
+  Menu,
+  MenuItem,
 } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import GetAppIcon from '@material-ui/icons/GetApp'
-import { User, Edit, Trash2 } from 'react-feather'
+import { User, Edit, Trash2, MoreVertical } from 'react-feather'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
 import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 
@@ -90,6 +92,13 @@ const ProjectCard = ({ board, ...rest }) => {
   const { isValid, token, users, user } = useSelector((state) => state.user)
   const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
   const navigate = useNavigate()
   console.log('board:', board)
   console.log('companies:', companies)
@@ -145,7 +154,7 @@ const ProjectCard = ({ board, ...rest }) => {
             pb: 3,
           }}
         >
-          <Button
+          {/* <Button
             component={RouterLink}
             disabled={disableButton()}
             sx={{
@@ -180,7 +189,46 @@ const ProjectCard = ({ board, ...rest }) => {
             }}
           >
             <Trash2 size="20" />
+          </Button> */}
+          <Button
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleMenuClick}
+          >
+            <MoreVertical size={20} />
           </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem
+              component={RouterLink}
+              to={`/app/projects/details/${board._id}`}
+              disabled={disableDetailsButton()}
+            >
+              Details
+            </MenuItem>
+            <MenuItem
+              // component={RouterLink} to={`/app/projects/edit/${id}`}
+              disabled={disableButton()}
+              to={`/app/projects/edit/${board._id}`}
+            >
+              Edit
+            </MenuItem>
+            {user.role === 'ADMIN' && (
+              <MenuItem
+                onClick={() => {
+                  setOpenModal(true)
+                }}
+                disabled={disableButton()}
+              >
+                Delete
+              </MenuItem>
+            )}
+          </Menu>
         </Box>
         <Typography align="left" color="textPrimary" gutterBottom variant="h4">
           {board?.projectName || 'No Project Name Filled'}
@@ -201,7 +249,7 @@ const ProjectCard = ({ board, ...rest }) => {
         >
           {board?.projectDescription || 'No Description Filled'}
         </Typography>
-        <Button
+        {/* <Button
           component={RouterLink}
           sx={{
             color: 'text.secondary',
@@ -218,7 +266,7 @@ const ProjectCard = ({ board, ...rest }) => {
           to={`/app/projects/details/${board._id}`}
         >
           See Details
-        </Button>
+        </Button> */}
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
