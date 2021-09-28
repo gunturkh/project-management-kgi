@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { Helmet } from 'react-helmet'
-import { Box, Container, Grid } from '@material-ui/core'
+import { Box, Container, Grid, TextField } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import ProjectListToolbar from '../components/project/ProjectListToolbar'
 import ProjectCard from '../components/project/ProjectCard'
@@ -14,6 +14,8 @@ const ProjectList = () => {
   const { boards, loading } = useSelector((state) => state.boards)
   const { token, isValid, user } = useSelector((state) => state.user)
   const { companies } = useSelector((state) => state.company)
+  const [search, setSearch] = useState('')
+  const [foundBoards, setFoundBoards] = useState(boards)
   const dispatch = useDispatch()
   useEffect(() => {
     // if (isValid) {
@@ -37,7 +39,25 @@ const ProjectList = () => {
   console.log('userPartOfCompany', userPartOfCompany)
   console.log('companyFromUser', companyFromUser)
   console.log('mappedBoardsForUser', mappedBoardsForUser)
+  console.log('foundBoards:', foundBoards)
   console.groupEnd('projectList')
+
+  const filter = (e) => {
+    const keyword = e.target.value
+
+    if (keyword !== '') {
+      const results = boards.filter((board) => {
+        return board.projectName.toLowerCase().startsWith(keyword.toLowerCase())
+        // Use the toLowerCase() method to make it case-insensitive
+      })
+      setFoundBoards(results)
+    } else {
+      setFoundBoards(boards)
+      // If the text field is empty, show all users
+    }
+
+    setSearch(keyword)
+  }
 
   // const filteredBoardsByCompany = []
   // filteredBoardsByCompany = boards.filter(board=>{
@@ -60,19 +80,42 @@ const ProjectList = () => {
         ) : (
           <Container maxWidth={false}>
             {user.role === 'ADMIN' && <ProjectListToolbar />}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginTop: 5,
+              }}
+            >
+              <TextField
+                id="search-projects"
+                value={search}
+                onChange={filter}
+                label="Search"
+                variant="outlined"
+              />
+            </Box>
             <Box sx={{ pt: 3 }}>
               <Grid container spacing={3}>
-                {user.role === 'ADMIN'
-                  ? boards.map((board) => (
+                {user.role === 'ADMIN' ? (
+                  foundBoards && foundBoards.length > 0 ? (
+                    foundBoards.map((board) => (
                       <Grid item key={board.id} lg={4} md={6} xs={12}>
                         <ProjectCard board={board} />
                       </Grid>
                     ))
-                  : mappedBoardsForUser.map((board) => (
-                      <Grid item key={board.id} lg={4} md={6} xs={12}>
-                        <ProjectCard board={board} />
-                      </Grid>
-                    ))}
+                  ) : (
+                    <Grid item lg={4} md={6} xs={12}>
+                      <p>No boards found</p>
+                    </Grid>
+                  )
+                ) : (
+                  mappedBoardsForUser.map((board) => (
+                    <Grid item key={board.id} lg={4} md={6} xs={12}>
+                      <ProjectCard board={board} />
+                    </Grid>
+                  ))
+                )}
               </Grid>
             </Box>
             <Box
