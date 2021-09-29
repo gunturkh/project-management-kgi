@@ -91,7 +91,8 @@ router.post("/", (req, res) => {
           {
             resource: fileMetaData,
             media: media,
-            fields: "id, webContentLink, webViewLink, name",
+            fields:
+              "id, webContentLink, webViewLink, name, size, mimeType, modifiedTime",
           },
           (err, file) => {
             if (err) {

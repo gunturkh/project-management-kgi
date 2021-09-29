@@ -720,21 +720,18 @@ export default function ProjectDetailsNew() {
         })
       : []
 
-  const dataFileRow =
-    listFile.length > 0
-      ? listFile
-          ?.filter((w) => w.name.includes('mechanical-drawing'))
-          .map((item, index) => {
-            return {
-              id: index,
-              fileName: item.name,
-              date: item.modifiedTime,
-              fileType: item.mimeType,
-              webContentLink: item.webContentLink,
-              webViewLink: item.webViewLink,
-            }
-          })
-      : []
+  const dataFileRow = currBoard?.files
+    ?.filter((w) => w.folder.includes(selectedFolderIndex))
+    .map((item, index) => {
+      return {
+        id: index,
+        fileName: item.name,
+        date: item.modifiedTime,
+        fileType: item.mimeType,
+        webContentLink: item.webContentLink,
+        webViewLink: item.webViewLink,
+      }
+    })
 
   // Handle File Upload
 
@@ -1263,52 +1260,16 @@ export default function ProjectDetailsNew() {
                         </Button>
                       </DialogActions>
                     </Dialog>
-                    {selectedFolderIndex === 0 && (
-                      <Box>
-                        <Table>
-                          <TableBody>
-                            {listFile?.map((item, index) => (
-                              <>
-                                <TableRow hover key={index}>
-                                  <TableCell color="textSecondary">
-                                    <a
-                                      href={item.webViewLink}
-                                      style={{
-                                        color: 'black',
-                                        textDecoration: 'none',
-                                        fontWeight: '500',
-                                      }}
-                                      target="_blank"
-                                    >
-                                      {item.name}
-                                    </a>
-                                  </TableCell>
-                                  {/* <SimpleMenu
-                                    id={item._id}
-                                    projectName={item.name}
-                                    setOpenModal={setOpenModal}
-                                    setDeleteItem={setDeleteItem}
-                                  /> */}
-                                </TableRow>
-                              </>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </Box>
-                    )}
-                    {/* {selectedFolderIndex === 1 && (
-                      <Box width="100%" height={450}>
-                        <DataGrid
-                          rows={dataFileRow}
-                          columns={dataFileColumn}
-                          disableSelectionOnClick
-                          onCellClick={handleCellClick}
-                          onRowClick={handleRowClick}
-                        />
-                      </Box>
-                    )} */}
-                    {/* {selectedFolderIndex === 'plc-program' && ( */}
-                    <Box>
+                    <Box width="100%" height={450}>
+                      <DataGrid
+                        rows={dataFileRow}
+                        columns={dataFileColumn}
+                        disableSelectionOnClick
+                        onCellClick={handleCellClick}
+                        onRowClick={handleRowClick}
+                      />
+                    </Box>
+                    {/* <Box>
                       <Table>
                         <TableBody>
                           {currBoard?.files
@@ -1331,77 +1292,12 @@ export default function ProjectDetailsNew() {
                                       {item.name}
                                     </a>
                                   </TableCell>
-                                  {/* <SimpleMenu
-                                    id={item._id}
-                                    projectName={item.name}
-                                    setOpenModal={setOpenModal}
-                                    setDeleteItem={setDeleteItem}
-                                  /> */}
                                 </TableRow>
                               </>
                             ))}
                         </TableBody>
                       </Table>
-                    </Box>
-                    {/* )} */}
-                    {/* {selectedFolderIndex === 11 && (
-                      <Box>
-                        <Table>
-                          <TableBody>
-                            {listFile
-                              ?.filter((w) => w.name.includes('others'))
-                              .map((item, index) => (
-                                <>
-                                  <TableRow hover key={index}>
-                                    <TableCell color="textSecondary">
-                                      <a
-                                        href={item.webViewLink}
-                                        style={{
-                                          color: 'black',
-                                          textDecoration: 'none',
-                                          fontWeight: '500',
-                                        }}
-                                        target="_blank"
-                                      >
-                                        {item.name}
-                                      </a>
-                                    </TableCell>
-                                  </TableRow>
-                                </>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </Box>
-                    )} */}
-                    {/* {selectedFolderIndex === 6 && (
-                      <Box>
-                        <Table>
-                          <TableBody>
-                            {listFile
-                              ?.filter((w) => w.name.includes('hmi-program'))
-                              .map((item, index) => (
-                                <>
-                                  <TableRow hover key={index}>
-                                    <TableCell color="textSecondary">
-                                      <a
-                                        href={item.webViewLink}
-                                        style={{
-                                          color: 'black',
-                                          textDecoration: 'none',
-                                          fontWeight: '500',
-                                        }}
-                                        target="_blank"
-                                      >
-                                        {item.name}
-                                      </a>
-                                    </TableCell>
-                                  </TableRow>
-                                </>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </Box>
-                    )} */}
+                    </Box>*/}
                   </Grid>
                 </Grid>
               </Box>
