@@ -210,14 +210,14 @@ export default function ProjectDetailsNew() {
   //   name = currBoard.name
   // else if (name === undefined) name = ''
   // let fetchList;
-  useEffect(() => {
-    axios.get('/files').then((res) => {
-      setListFile(res.data)
-      console.log('GET files response:', listFile)
-      // setRefreshList(true)
-      setRefreshList(false)
-    })
-  }, [refreshList])
+  // useEffect(() => {
+  //   axios.get('/files').then((res) => {
+  //     setListFile(res.data)
+  //     console.log('GET files response:', listFile)
+  //     // setRefreshList(true)
+  //     setRefreshList(false)
+  //   })
+  // }, [refreshList])
 
   useEffect(() => {
     console.log('initialData', initialData)
@@ -765,7 +765,24 @@ export default function ProjectDetailsNew() {
           setOpenUploadModal(false)
           setProgressLoading(false)
           console.log('data res: ', data)
-          // dispatch(updateBoardById(id, { name: text }, token))
+          console.log('currBoard: ', currBoard)
+          console.log('chooseFolder: ', chooseFolder)
+          const uploadedFiles = data.data.map((d) => {
+            return { ...d, folder: chooseFolder, boardId: currBoard._id }
+          })
+          console.log('uploadedFiles: ', uploadedFiles)
+          const params = {
+            userId: currBoard.userId,
+            projectName: currBoard.projectName,
+            projectDescription: currBoard.projectDescription,
+            startDate: currBoard.startDate,
+            endDate: currBoard.endDate,
+            company: currBoard.company,
+            pic: currBoard.pic,
+            status: currBoard.status,
+            files: [...uploadedFiles, ...currBoard.files],
+          }
+          dispatch(updateBoardById(id, params, token))
         })
       }
     } catch (err) {
@@ -781,7 +798,7 @@ export default function ProjectDetailsNew() {
     console.log('Choosen Folder: ', e.target.value)
   }
 
-  let filteredValue = listFile.filter((w) => w.name.includes('others'))
+  // let filteredValue = listFile.filter((w) => w.name.includes('others'))
 
   // const handleAddition = () => {
   //   setAddListFlag(true)
@@ -1041,76 +1058,108 @@ export default function ProjectDetailsNew() {
                   <Grid item xs={3} md={3}>
                     <List component="nav">
                       <ListItemButton
-                        selected={selectedFolderIndex === 0}
-                        onClick={(event) => handleListItemClick(event, 0)}
+                        selected={selectedFolderIndex === ''}
+                        onClick={(event) => handleListItemClick(event, '')}
                       >
                         <ListItemText primary="All Files" />
                       </ListItemButton>
                       <Divider />
                       <List dense paddingLeft={24}>
                         <ListItemButton
-                          selected={selectedFolderIndex === 1}
-                          onClick={(event) => handleListItemClick(event, 1)}
+                          selected={
+                            selectedFolderIndex === 'mechanical-drawing'
+                          }
+                          onClick={(event) =>
+                            handleListItemClick(event, 'mechanical-drawing')
+                          }
                         >
                           <ListItemText primary="Mechanical Assembly Drawing" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 2}
-                          onClick={(event) => handleListItemClick(event, 2)}
+                          selected={
+                            selectedFolderIndex === 'electrical-drawing'
+                          }
+                          onClick={(event) =>
+                            handleListItemClick(event, 'electrical-drawing')
+                          }
                         >
                           <ListItemText primary="Electrical Wiring Diagram" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 3}
-                          onClick={(event) => handleListItemClick(event, 3)}
+                          selected={selectedFolderIndex === 'pneumatic-diagram'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'pneumatic-diagram')
+                          }
                         >
                           <ListItemText primary="Pneumatic Diagram" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 4}
-                          onClick={(event) => handleListItemClick(event, 4)}
+                          selected={selectedFolderIndex === 'io-list'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'io-list')
+                          }
                         >
                           <ListItemText primary="I/O List" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 5}
-                          onClick={(event) => handleListItemClick(event, 5)}
+                          selected={selectedFolderIndex === 'plc-program'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'plc-program')
+                          }
                         >
                           <ListItemText primary="PLC Program" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 6}
-                          onClick={(event) => handleListItemClick(event, 6)}
+                          selected={selectedFolderIndex === 'hmi-program'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'hmi-program')
+                          }
                         >
                           <ListItemText primary="HMI Program" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 7}
-                          onClick={(event) => handleListItemClick(event, 7)}
+                          selected={selectedFolderIndex === 'vb-srccode'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'vb-srccode')
+                          }
                         >
                           <ListItemText primary="VB Source Code Program" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 8}
-                          onClick={(event) => handleListItemClick(event, 8)}
+                          selected={
+                            selectedFolderIndex === 'electrical-partlist'
+                          }
+                          onClick={(event) =>
+                            handleListItemClick(event, 'electrical-partlist')
+                          }
                         >
                           <ListItemText primary="Electrical Part List" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 9}
-                          onClick={(event) => handleListItemClick(event, 9)}
+                          selected={
+                            selectedFolderIndex === 'mechanical-partlist'
+                          }
+                          onClick={(event) =>
+                            handleListItemClick(event, 'mechanical-partlist')
+                          }
                         >
                           <ListItemText primary="Mechanical Part List" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 10}
-                          onClick={(event) => handleListItemClick(event, 10)}
+                          selected={
+                            selectedFolderIndex === 'pneumatic-partlist'
+                          }
+                          onClick={(event) =>
+                            handleListItemClick(event, 'pneumatic-partlist')
+                          }
                         >
                           <ListItemText primary="Pneumatic Part List" />
                         </ListItemButton>
                         <ListItemButton
-                          selected={selectedFolderIndex === 11}
-                          onClick={(event) => handleListItemClick(event, 11)}
+                          selected={selectedFolderIndex === 'others'}
+                          onClick={(event) =>
+                            handleListItemClick(event, 'others')
+                          }
                         >
                           <ListItemText primary="Others" />
                         </ListItemButton>
@@ -1247,7 +1296,7 @@ export default function ProjectDetailsNew() {
                         </Table>
                       </Box>
                     )}
-                    {selectedFolderIndex === 1 && (
+                    {/* {selectedFolderIndex === 1 && (
                       <Box width="100%" height={450}>
                         <DataGrid
                           rows={dataFileRow}
@@ -1257,8 +1306,45 @@ export default function ProjectDetailsNew() {
                           onRowClick={handleRowClick}
                         />
                       </Box>
-                    )}
-                    {selectedFolderIndex === 11 && (
+                    )} */}
+                    {/* {selectedFolderIndex === 'plc-program' && ( */}
+                    <Box>
+                      <Table>
+                        <TableBody>
+                          {currBoard?.files
+                            ?.filter((w) =>
+                              w.folder.includes(selectedFolderIndex),
+                            )
+                            .map((item, index) => (
+                              <>
+                                <TableRow hover key={index}>
+                                  <TableCell color="textSecondary">
+                                    <a
+                                      href={item.webViewLink}
+                                      style={{
+                                        color: 'black',
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
+                                      }}
+                                      target="_blank"
+                                    >
+                                      {item.name}
+                                    </a>
+                                  </TableCell>
+                                  {/* <SimpleMenu
+                                    id={item._id}
+                                    projectName={item.name}
+                                    setOpenModal={setOpenModal}
+                                    setDeleteItem={setDeleteItem}
+                                  /> */}
+                                </TableRow>
+                              </>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </Box>
+                    {/* )} */}
+                    {/* {selectedFolderIndex === 11 && (
                       <Box>
                         <Table>
                           <TableBody>
@@ -1280,20 +1366,14 @@ export default function ProjectDetailsNew() {
                                         {item.name}
                                       </a>
                                     </TableCell>
-                                    {/* <SimpleMenu
-                                    id={item._id}
-                                    projectName={item.name}
-                                    setOpenModal={setOpenModal}
-                                    setDeleteItem={setDeleteItem}
-                                  /> */}
                                   </TableRow>
                                 </>
                               ))}
                           </TableBody>
                         </Table>
                       </Box>
-                    )}
-                    {selectedFolderIndex === 6 && (
+                    )} */}
+                    {/* {selectedFolderIndex === 6 && (
                       <Box>
                         <Table>
                           <TableBody>
@@ -1315,19 +1395,13 @@ export default function ProjectDetailsNew() {
                                         {item.name}
                                       </a>
                                     </TableCell>
-                                    {/* <SimpleMenu
-                                    id={item._id}
-                                    projectName={item.name}
-                                    setOpenModal={setOpenModal}
-                                    setDeleteItem={setDeleteItem}
-                                  /> */}
                                   </TableRow>
                                 </>
                               ))}
                           </TableBody>
                         </Table>
                       </Box>
-                    )}
+                    )} */}
                   </Grid>
                 </Grid>
               </Box>

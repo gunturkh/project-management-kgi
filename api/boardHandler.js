@@ -104,6 +104,7 @@ router.patch("/:id", auth, async (req, res, next) => {
     "company",
     "pic",
     "status",
+    "files",
   ];
   console.log("updates:", updates);
   const isValidOperation = updates.every((update) => {
