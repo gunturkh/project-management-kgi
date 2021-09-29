@@ -25,6 +25,7 @@ import {
   TableRow,
   Table,
   TableCell,
+  Link,
 } from '@material-ui/core'
 import {
   List,
@@ -38,10 +39,12 @@ import {
   DialogContentText,
   DialogTitle,
   MenuItem,
+  Menu,
   InputLabel,
   CircularProgress,
 } from '@mui/material'
 import AddIcon from '@material-ui/icons/Add'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
 import moment from 'moment'
@@ -75,6 +78,7 @@ import { makeid } from '../../utils/randomString'
 import { DataGrid } from '@mui/x-data-grid'
 import axios from 'axios'
 import { DropzoneDialog, DropzoneArea } from 'material-ui-dropzone'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -582,6 +586,14 @@ export default function ProjectDetailsNew() {
     console.log('selected file: ', index)
   }
 
+  const handleCellClick = (param, event) => {
+    event.stopPropagation()
+  }
+
+  const handleRowClick = (param, event) => {
+    event.stopPropagation()
+  }
+
   const dataGridColumn = [
     {
       field: 'taskName',
@@ -604,6 +616,91 @@ export default function ProjectDetailsNew() {
       sortable: true,
     },
   ]
+
+  const dataFileColumn = [
+    {
+      field: 'fileName',
+      headerName: 'File Name',
+      headerAlign: 'center',
+      flex: 1,
+    },
+    {
+      field: 'date',
+      headerName: 'Date',
+      headerAlign: 'center',
+      flex: 0.5,
+    },
+    {
+      field: 'fileType',
+      headerName: 'File Type',
+      headerAlign: 'center',
+      flex: 0.35,
+      sortable: true,
+    },
+    {
+      field: '',
+      headerName: '',
+      headerAlign: 'center',
+      flex: 0.2,
+      sortable: false,
+      disableClickEventBubbling: true,
+      renderCell: (params) => {
+        const SimpleMenu = () => {
+          const [anchorEl, setAnchorEl] = React.useState(null)
+
+          const handleClick = (event) => {
+            setAnchorEl(event.currentTarget)
+          }
+
+          const handleClose = () => {
+            setAnchorEl(null)
+          }
+
+          const handleDownload = (event, params) => {
+            console.log('CellValues Clicked: ', params)
+          }
+
+          return (
+            <div>
+              <Button
+                aria-controls="simple-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+              >
+                <MoreVertIcon />
+              </Button>
+              <Menu
+                id="action-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <Link
+                  href={params.row.webContentLink}
+                  style={{ textDecoration: 'none', color: 'black' }}
+                >
+                  <MenuItem
+                    onClick={(event) => {
+                      handleDownload(event, params)
+                    }}
+                  >
+                    Download
+                  </MenuItem>
+                </Link>
+                <MenuItem>Delete</MenuItem>
+              </Menu>
+            </div>
+          )
+        }
+        return (
+          <div>
+            <SimpleMenu />
+          </div>
+        )
+      },
+    },
+  ]
   const dataGridRow =
     cards.length > 0
       ? cards.map((card, i) => {
@@ -621,6 +718,22 @@ export default function ProjectDetailsNew() {
                 : '',
           }
         })
+      : []
+
+  const dataFileRow =
+    listFile.length > 0
+      ? listFile
+          ?.filter((w) => w.name.includes('mechanical-drawing'))
+          .map((item, index) => {
+            return {
+              id: index,
+              fileName: item.name,
+              date: item.modifiedTime,
+              fileType: item.mimeType,
+              webContentLink: item.webContentLink,
+              webViewLink: item.webViewLink,
+            }
+          })
       : []
 
   // Handle File Upload
@@ -667,6 +780,8 @@ export default function ProjectDetailsNew() {
     setChooseFolder(e.target.value)
     console.log('Choosen Folder: ', e.target.value)
   }
+
+  let filteredValue = listFile.filter((w) => w.name.includes('others'))
 
   // const handleAddition = () => {
   //   setAddListFlag(true)
@@ -1132,7 +1247,87 @@ export default function ProjectDetailsNew() {
                         </Table>
                       </Box>
                     )}
-                    {/* {selectedFolderIndex === 0 && <div>Div 0</div>} */}
+                    {selectedFolderIndex === 1 && (
+                      <Box width="100%" height={450}>
+                        <DataGrid
+                          rows={dataFileRow}
+                          columns={dataFileColumn}
+                          disableSelectionOnClick
+                          onCellClick={handleCellClick}
+                          onRowClick={handleRowClick}
+                        />
+                      </Box>
+                    )}
+                    {selectedFolderIndex === 11 && (
+                      <Box>
+                        <Table>
+                          <TableBody>
+                            {listFile
+                              ?.filter((w) => w.name.includes('others'))
+                              .map((item, index) => (
+                                <>
+                                  <TableRow hover key={index}>
+                                    <TableCell color="textSecondary">
+                                      <a
+                                        href={item.webViewLink}
+                                        style={{
+                                          color: 'black',
+                                          textDecoration: 'none',
+                                          fontWeight: '500',
+                                        }}
+                                        target="_blank"
+                                      >
+                                        {item.name}
+                                      </a>
+                                    </TableCell>
+                                    {/* <SimpleMenu
+                                    id={item._id}
+                                    projectName={item.name}
+                                    setOpenModal={setOpenModal}
+                                    setDeleteItem={setDeleteItem}
+                                  /> */}
+                                  </TableRow>
+                                </>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    )}
+                    {selectedFolderIndex === 6 && (
+                      <Box>
+                        <Table>
+                          <TableBody>
+                            {listFile
+                              ?.filter((w) => w.name.includes('hmi-program'))
+                              .map((item, index) => (
+                                <>
+                                  <TableRow hover key={index}>
+                                    <TableCell color="textSecondary">
+                                      <a
+                                        href={item.webViewLink}
+                                        style={{
+                                          color: 'black',
+                                          textDecoration: 'none',
+                                          fontWeight: '500',
+                                        }}
+                                        target="_blank"
+                                      >
+                                        {item.name}
+                                      </a>
+                                    </TableCell>
+                                    {/* <SimpleMenu
+                                    id={item._id}
+                                    projectName={item.name}
+                                    setOpenModal={setOpenModal}
+                                    setDeleteItem={setDeleteItem}
+                                  /> */}
+                                  </TableRow>
+                                </>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    )}
                   </Grid>
                 </Grid>
               </Box>
