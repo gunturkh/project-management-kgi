@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { Helmet } from 'react-helmet'
-import { Box, Container, Grid, TextField } from '@material-ui/core'
+import { Box, Container, Grid, TextField, Pagination } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import ProjectListToolbar from '../components/project/ProjectListToolbar'
 import ProjectCard from '../components/project/ProjectCard'
@@ -16,6 +16,10 @@ const ProjectList = () => {
   const { companies } = useSelector((state) => state.company)
   const [search, setSearch] = useState('')
   const [foundBoards, setFoundBoards] = useState(boards)
+  const [page, setPage] = React.useState(1)
+  const handleChange = (event, value) => {
+    setPage(value)
+  }
   const dispatch = useDispatch()
   useEffect(() => {
     // if (isValid) {
@@ -63,6 +67,12 @@ const ProjectList = () => {
   // filteredBoardsByCompany = boards.filter(board=>{
   //   return board.
   // })
+  const paginateGood = (array, page_size, page_number) => {
+    return array.slice(
+      page_number * page_size,
+      page_number * page_size + page_size,
+    )
+  }
   return (
     <>
       <Helmet>
@@ -99,7 +109,7 @@ const ProjectList = () => {
               <Grid container spacing={3}>
                 {user.role === 'ADMIN' ? (
                   foundBoards && foundBoards.length > 0 ? (
-                    foundBoards.map((board) => (
+                    paginateGood(foundBoards, 9, page - 1).map((board) => (
                       <Grid item key={board.id} lg={4} md={6} xs={12}>
                         <ProjectCard board={board} />
                       </Grid>
@@ -117,6 +127,19 @@ const ProjectList = () => {
                   ))
                 )}
               </Grid>
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Pagination
+                  count={
+                    user.role === 'ADMIN'
+                      ? Math.ceil(foundBoards.length / 9)
+                      : Math.ceil(mappedBoardsForUser.length / 9)
+                  }
+                  color="primary"
+                  page={page}
+                  onChange={handleChange}
+                  sx={{ marginTop: 10 }}
+                />
+              </Box>
             </Box>
             <Box
               sx={{
