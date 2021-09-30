@@ -253,26 +253,32 @@ const ProjectCard = ({ board, ...rest }) => {
             )}
           </Menu>
         </Box>
-        <Typography align="left" color="textPrimary" gutterBottom variant="h4">
-          {board?.projectName || 'No Project Name Filled'}
-        </Typography>
-        <Typography
-          align="left"
-          color="textSecondary"
-          gutterBottom
-          variant="h6"
-        >
-          {mappedCompany || 'No Company Assigned'}
-        </Typography>
-        <Typography
-          align="left"
-          color="textPrimary"
-          variant="body2"
-          style={{ paddingTop: 10 }}
-        >
-          {board?.projectDescription || 'No Description Filled'}
-        </Typography>
-        {/* <Button
+        <Box component={RouterLink} to={`/app/projects/details/${board._id}`}>
+          <Typography
+            align="left"
+            color="textPrimary"
+            gutterBottom
+            variant="h4"
+          >
+            {board?.projectName || 'No Project Name Filled'}
+          </Typography>
+          <Typography
+            align="left"
+            color="textSecondary"
+            gutterBottom
+            variant="h6"
+          >
+            {mappedCompany || 'No Company Assigned'}
+          </Typography>
+          <Typography
+            align="left"
+            color="textPrimary"
+            variant="body2"
+            style={{ paddingTop: 10 }}
+          >
+            {board?.projectDescription || 'No Description Filled'}
+          </Typography>
+          {/* <Button
           component={RouterLink}
           sx={{
             color: 'text.secondary',
@@ -289,11 +295,16 @@ const ProjectCard = ({ board, ...rest }) => {
           to={`/app/projects/details/${board._id}`}
         >
           See Details
-        </Button> */}
+        </But</Box>ton> */}
+        </Box>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
-      <Box sx={{ p: 2 }}>
+      <Box
+        sx={{ p: 2 }}
+        component={RouterLink}
+        to={`/app/projects/details/${board._id}`}
+      >
         <Grid container spacing={2} sx={{ justifyContent: 'space-between' }}>
           <Grid
             item
@@ -378,6 +389,8 @@ const ProjectCard = ({ board, ...rest }) => {
           p: 2,
           backgroundColor: projectStatusColor(board?.status)[1],
         }}
+        component={RouterLink}
+        to={`/app/projects/details/${board._id}`}
       >
         <Typography
           align="center"
