@@ -198,7 +198,7 @@ export default function ProjectDetailsNew() {
   let mappedPic = []
   let mappedCompany = []
 
-  const [selectedFolderIndex, setSelectedFolderIndex] = useState(0)
+  const [selectedFolderIndex, setSelectedFolderIndex] = useState('')
   const [openUploadModal, setOpenUploadModal] = useState(false)
   const [addFile, setAddFile] = useState([])
   const [chooseFolder, setChooseFolder] = useState('')
@@ -629,16 +629,17 @@ export default function ProjectDetailsNew() {
       headerName: 'Date',
       headerAlign: 'center',
       flex: 0.5,
+      align: 'center',
     },
     {
       field: 'fileType',
-      headerName: 'File Type',
+      headerName: 'Type',
       headerAlign: 'center',
-      flex: 0.35,
-      sortable: true,
+      flex: 0.25,
+      align: 'center',
     },
     {
-      field: '',
+      field: 'Action',
       headerName: '',
       headerAlign: 'center',
       flex: 0.2,
@@ -658,6 +659,28 @@ export default function ProjectDetailsNew() {
 
           const handleDownload = (event, params) => {
             console.log('CellValues Clicked: ', params)
+          }
+
+          const handleDeleteFile = (params) => {
+            const _id = params.row.id
+            const filteredFiles = currBoard?.files
+              ?.filter((d) => d.id !== _id)
+              .map((item) => {
+                return { ...item }
+              })
+            console.log('filteredFiles: ', filteredFiles)
+            const param = {
+              userId: currBoard.userId,
+              projectName: currBoard.projectName,
+              projectDescription: currBoard.projectDescription,
+              startDate: currBoard.startDate,
+              endDate: currBoard.endDate,
+              company: currBoard.company,
+              pic: currBoard.pic,
+              status: currBoard.status,
+              files: [...filteredFiles],
+            }
+            dispatch(updateBoardById(id, param, token))
           }
 
           return (
@@ -688,7 +711,13 @@ export default function ProjectDetailsNew() {
                     Download
                   </MenuItem>
                 </Link>
-                <MenuItem>Delete</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleDeleteFile(params)
+                  }}
+                >
+                  Delete
+                </MenuItem>
               </Menu>
             </div>
           )
@@ -723,11 +752,14 @@ export default function ProjectDetailsNew() {
   const dataFileRow = currBoard?.files
     ?.filter((w) => w.folder.includes(selectedFolderIndex))
     .map((item, index) => {
+      console.log('filtered File:', item)
+      const type = item.mimeType?.split('/') || ''
+      const date = moment(item.modifiedTime).format('DD MMMM YYYY hh:mm:ss')
       return {
-        id: index,
+        id: item.id,
         fileName: item.name,
-        date: item.modifiedTime,
-        fileType: item.mimeType,
+        date: date,
+        fileType: type[1],
         webContentLink: item.webContentLink,
         webViewLink: item.webViewLink,
       }
