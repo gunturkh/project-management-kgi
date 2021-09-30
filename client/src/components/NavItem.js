@@ -3,7 +3,14 @@ import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Button, ListItem } from '@material-ui/core'
 
-const NavItem = ({ href, icon: Icon, title, openMobile, ...rest }) => {
+const NavItem = ({
+  href,
+  icon: Icon,
+  title,
+  openMobile,
+  children,
+  ...rest
+}) => {
   const location = useLocation()
 
   const active = href

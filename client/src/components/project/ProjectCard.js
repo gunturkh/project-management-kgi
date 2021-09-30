@@ -15,12 +15,17 @@ import {
   Grid,
   Typography,
   Modal,
+  Menu,
+  MenuItem,
 } from '@material-ui/core'
 import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import GetAppIcon from '@material-ui/icons/GetApp'
-import { User, Edit, Trash2 } from 'react-feather'
+import { User, Edit, Trash2, MoreVertical } from 'react-feather'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
-import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
+import {
+  fetchAllUsersInfo,
+  updateUser,
+} from '../../actions/actionCreators/userActions'
 
 function rand() {
   return Math.round(Math.random() * 20) - 10
@@ -90,6 +95,13 @@ const ProjectCard = ({ board, ...rest }) => {
   const { isValid, token, users, user } = useSelector((state) => state.user)
   const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
   const navigate = useNavigate()
   console.log('board:', board)
   console.log('companies:', companies)
@@ -145,7 +157,7 @@ const ProjectCard = ({ board, ...rest }) => {
             pb: 3,
           }}
         >
-          <Button
+          {/* <Button
             component={RouterLink}
             disabled={disableButton()}
             sx={{
@@ -180,28 +192,93 @@ const ProjectCard = ({ board, ...rest }) => {
             }}
           >
             <Trash2 size="20" />
+          </Button> */}
+          <Button
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleMenuClick}
+          >
+            <MoreVertical size={20} />
           </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem
+              component={RouterLink}
+              to={`/app/projects/details/${board._id}`}
+              disabled={disableDetailsButton()}
+            >
+              Details
+            </MenuItem>
+            <MenuItem
+              // component={RouterLink} to={`/app/projects/edit/${id}`}
+              disabled={disableButton()}
+              to={`/app/projects/edit/${board._id}`}
+            >
+              Edit
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                const pin = {
+                  id: board._id,
+                  projectName: board.projectName,
+                }
+                const postUserReq = {
+                  ...user,
+                  pinned: [...user.pinned, pin],
+                }
+                // console.log('pin user:', postUserReq)
+                dispatch(updateUser(postUserReq)).then(() => {
+                  console.log('pin done!', user)
+                  // setLoading(false)
+                  // setEdit(false)
+                })
+              }}
+            >
+              Pin
+            </MenuItem>
+            {user.role === 'ADMIN' && (
+              <MenuItem
+                onClick={() => {
+                  setOpenModal(true)
+                }}
+                disabled={disableButton()}
+              >
+                Delete
+              </MenuItem>
+            )}
+          </Menu>
         </Box>
-        <Typography align="left" color="textPrimary" gutterBottom variant="h4">
-          {board?.projectName || 'No Project Name Filled'}
-        </Typography>
-        <Typography
-          align="left"
-          color="textSecondary"
-          gutterBottom
-          variant="h6"
-        >
-          {mappedCompany || 'No Company Assigned'}
-        </Typography>
-        <Typography
-          align="left"
-          color="textPrimary"
-          variant="body2"
-          style={{ paddingTop: 10 }}
-        >
-          {board?.projectDescription || 'No Description Filled'}
-        </Typography>
-        <Button
+        <Box component={RouterLink} to={`/app/projects/details/${board._id}`}>
+          <Typography
+            align="left"
+            color="textPrimary"
+            gutterBottom
+            variant="h4"
+          >
+            {board?.projectName || 'No Project Name Filled'}
+          </Typography>
+          <Typography
+            align="left"
+            color="textSecondary"
+            gutterBottom
+            variant="h6"
+          >
+            {mappedCompany || 'No Company Assigned'}
+          </Typography>
+          <Typography
+            align="left"
+            color="textPrimary"
+            variant="body2"
+            style={{ paddingTop: 10 }}
+          >
+            {board?.projectDescription || 'No Description Filled'}
+          </Typography>
+          {/* <Button
           component={RouterLink}
           sx={{
             color: 'text.secondary',
@@ -218,11 +295,16 @@ const ProjectCard = ({ board, ...rest }) => {
           to={`/app/projects/details/${board._id}`}
         >
           See Details
-        </Button>
+        </But</Box>ton> */}
+        </Box>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
-      <Box sx={{ p: 2 }}>
+      <Box
+        sx={{ p: 2 }}
+        component={RouterLink}
+        to={`/app/projects/details/${board._id}`}
+      >
         <Grid container spacing={2} sx={{ justifyContent: 'space-between' }}>
           <Grid
             item
@@ -307,6 +389,8 @@ const ProjectCard = ({ board, ...rest }) => {
           p: 2,
           backgroundColor: projectStatusColor(board?.status)[1],
         }}
+        component={RouterLink}
+        to={`/app/projects/details/${board._id}`}
       >
         <Typography
           align="center"
