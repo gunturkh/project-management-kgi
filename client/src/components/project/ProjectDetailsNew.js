@@ -623,6 +623,19 @@ export default function ProjectDetailsNew() {
       headerName: 'File Name',
       headerAlign: 'center',
       flex: 1,
+      renderCell: (params) => {
+        const filename = params.row.fileName.replace(/\.[^/.]+$/, '')
+        // console.log('file Name: ', name)
+        return (
+          <a
+            href={params.row.webViewLink}
+            style={{ textDecoration: 'none', color: 'black' }}
+            target="_blank"
+          >
+            {filename}
+          </a>
+        )
+      },
     },
     {
       field: 'date',
@@ -668,7 +681,7 @@ export default function ProjectDetailsNew() {
               .map((item) => {
                 return { ...item }
               })
-            console.log('filteredFiles: ', filteredFiles)
+            // console.log('filteredFiles: ', filteredFiles)
             const param = {
               userId: currBoard.userId,
               projectName: currBoard.projectName,
@@ -752,7 +765,7 @@ export default function ProjectDetailsNew() {
   const dataFileRow = currBoard?.files
     ?.filter((w) => w.folder.includes(selectedFolderIndex))
     .map((item, index) => {
-      console.log('filtered File:', item)
+      // console.log('filtered File:', item)
       const type = item.mimeType?.split('/') || ''
       const date = moment(item.modifiedTime).format('DD MMMM YYYY hh:mm:ss')
       return {
