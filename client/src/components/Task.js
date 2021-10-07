@@ -79,6 +79,8 @@ export default function Task() {
     description: '',
     priority: [],
     pic: [],
+    modifyDate: '',
+    modifyBy: '',
     dueDate: '',
   })
   const [editTaskValue, setEditTaskValue] = useState(taskValue)
@@ -213,7 +215,12 @@ export default function Task() {
           initialData.tasks[column.taskIds[destination.index + 1]].order,
         )
 
-      dispatch(updateCardById(draggableId, { order: newOrder }))
+      dispatch(
+        updateCardById(draggableId, {
+          order: newOrder,
+          modifyBy: user.username,
+        }),
+      )
       const newTaskIds = Array.from(column.taskIds)
       newTaskIds.splice(source.index, 1)
       newTaskIds.splice(destination.index, 0, draggableId)
@@ -253,7 +260,11 @@ export default function Task() {
         initialData.tasks[endList.taskIds[destination.index]].order,
       )
     dispatch(
-      updateCardById(draggableId, { order: newOrder, listId: endList._id }),
+      updateCardById(draggableId, {
+        order: newOrder,
+        listId: endList._id,
+        modifyBy: user.username,
+      }),
     )
     const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name}`
     const recentActivity = activities[activities.length - 1]
@@ -317,7 +328,11 @@ export default function Task() {
       description: taskValue.description,
       priority: taskValue.priority,
       pic: taskValue.pic,
+      startDate: taskValue.startDate,
       dueDate: taskValue.dueDate,
+      list: taskValue.list,
+      modifyBy: user.name,
+      modifyDate: Date.now(),
       boardId: currBoard._id,
       order:
         totalLists === 0
@@ -343,6 +358,11 @@ export default function Task() {
       description: '',
       priority: [],
       pic: [],
+      startDate: '',
+      dueDate: '',
+      list: [],
+      modifyBy: '',
+      modifyDate: '',
     })
   }
 
@@ -377,6 +397,10 @@ export default function Task() {
       priority: [],
       pic: [],
       dueDate: '',
+      list: [],
+      startDate: '',
+      modifyBy: '',
+      modifyDate: '',
     })
   }
 

@@ -53,6 +53,10 @@ router.patch("/:id", async (req, res, next) => {
     "priority",
     "pic",
     "dueDate",
+    "startDate",
+    "list",
+    "modifyBy",
+    "modifyDate",
   ];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)

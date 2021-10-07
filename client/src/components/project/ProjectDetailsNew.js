@@ -429,7 +429,11 @@ export default function ProjectDetailsNew() {
         initialData.tasks[endList.taskIds[destination.index]].order,
       )
     dispatch(
-      updateCardById(draggableId, { order: newOrder, listId: endList._id }),
+      updateCardById(draggableId, {
+        order: newOrder,
+        listId: endList._id,
+        modifyBy: user.username,
+      }),
     )
     // const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name}`
     const text = `${user.username} moved ${initialData.tasks[draggableId].name} from ${startList.name} to ${endList.name} on project ${currBoard.projectName}`

@@ -67,12 +67,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Column({ column, tasks, index }) {
   const classes = useStyles()
+  const { token, user, users } = useSelector((state) => state.user)
   const [taskValue, setTaskValue] = useState({
     name: '',
     description: '',
     priority: [],
     pic: [],
+    startDate: '',
     dueDate: '',
+    list: [],
+    modifyBy: user.username,
+    modifyDate: '',
   })
   const [editTaskValue, setEditTaskValue] = useState(taskValue)
   const [listTitle, setListTitle] = useState(column.name)
@@ -80,22 +85,29 @@ export default function Column({ column, tasks, index }) {
   const [editable, setEditable] = useState(false)
   const [list, setList] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
-  const { token, user, users } = useSelector((state) => state.user)
   const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
 
   const handleChange = (e, target) => {
-    const noPersistChange = ['priority', 'pic']
+    const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setTaskValue((prevState) => {
         return { ...prevState, dueDate: e }
+      })
+    } else if (target === 'startDate') {
+      setTaskValue((prevState) => {
+        return { ...prevState, startDate: e }
       })
     } else {
       if (noPersistChange.includes(e.target.name)) e.persist = () => {}
       else e.persist()
 
       setTaskValue((prevState) => {
-        return { ...prevState, [e.target.name]: e.target.value }
+        return {
+          ...prevState,
+          [e.target.name]: e.target.value,
+          modifyBy: user.username,
+        }
       })
     }
   }
@@ -112,12 +124,15 @@ export default function Column({ column, tasks, index }) {
       priority: taskValue.priority,
       pic: taskValue.pic,
       dueDate: taskValue.dueDate,
+      list: taskValue.list,
       boardId: column.boardId,
       listId: column._id,
       order:
         totalTasks === 0 ? 'n' : midString(tasks[totalTasks - 1].order, ''),
     }
-    dispatch(createNewCard(postCardReq, token))
+    dispatch(createNewCard(postCardReq, token)).then(() =>
+      console.log('create card success'),
+    )
     if (currBoard?.pic.length > 0) {
       await currBoard.pic.map(async (pic) => {
         const picData = await users.filter((user) => user._id === pic)[0]
@@ -157,6 +172,8 @@ export default function Column({ column, tasks, index }) {
       priority: [],
       pic: [],
       dueDate: '',
+      list: [],
+      modifyBy: '',
     })
     setAddCardFlag(false)
   }
@@ -171,6 +188,8 @@ export default function Column({ column, tasks, index }) {
       priority: [],
       pic: [],
       dueDate: '',
+      list: [],
+      modifyBy: '',
     })
   }
   const changedHandler = (e) => {

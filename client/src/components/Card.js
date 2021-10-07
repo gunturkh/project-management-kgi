@@ -37,7 +37,9 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Card({ task, index }) {
+  console.log('Card task:', task)
   const { token, user, users } = useSelector((state) => state.user)
+  const { timelines } = useSelector((state) => state.timeline)
   const [editable, setEditable] = useState(false)
   const [title, setTitle] = useState(task.name)
   const [editTaskValue, setEditTaskValue] = useState({
@@ -45,7 +47,11 @@ export default function Card({ task, index }) {
     description: task.description ? task.description : '',
     priority: task.priority,
     pic: task.pic,
+    startDate: task.startDate,
     dueDate: task.dueDate,
+    modifyDate: task.updatedAt,
+    modifyBy: task.modifyBy,
+    list: task?.list,
     // priority: task.priority ? [{label: task.priority, value: task.priority}] : [],
     // pic: task.pic ? task?.pic?.map(t=>{return {label: t, value: t}}) : []
   })
@@ -55,20 +61,40 @@ export default function Card({ task, index }) {
   const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
   let mappedPic = []
+  let mappedList = []
   mappedPic = task?.pic?.map((pic) => {
     return users.find((user) => user._id === pic)?.username
   })
+  mappedList = task?.list?.map((list) => {
+    console.log('list', list)
+    console.log('timelines', timelines)
+    return timelines.find((t) => t._id === list)
+  })
+  console.log('mappedList', mappedList)
   const handleChange = (e, target) => {
-    const noPersistChange = ['priority', 'pic']
+    console.log('handleChange card:', { e, target })
+    const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setEditTaskValue((prevState) => {
         return { ...prevState, dueDate: e }
       })
+    } else if (target === 'startDate') {
+      setEditTaskValue((prevState) => {
+        return { ...prevState, startDate: e }
+      })
     } else {
       if (noPersistChange.includes(e.target.name)) e.persist = () => {}
       else e.persist()
+      console.log('setState card: ', {
+        name: e.target.name,
+        value: e.target.value,
+      })
       setEditTaskValue((prevState) => {
-        return { ...prevState, [e.target.name]: e.target.value }
+        return {
+          ...prevState,
+          [e.target.name]: e.target.value,
+          modifyBy: user.username,
+        }
       })
     }
   }
@@ -93,8 +119,8 @@ export default function Card({ task, index }) {
         }
         const userParams = {
           ...picData,
-          notification: picData.notification.length
-            ? [...picData.notification, notifMessage]
+          notification: picData?.notification?.length
+            ? [...picData?.notification, notifMessage]
             : [notifMessage],
         }
         dispatch(updateUserNotification(userParams))
@@ -111,7 +137,11 @@ export default function Card({ task, index }) {
       description: task.description ? task.description : '',
       priority: task.priority,
       pic: task.pic,
+      startDate: task.startDate,
+      modifyDate: task.updatedAt,
+      modifyBy: task.modifyBy,
       dueDate: task.dueDate,
+      list: task?.list ?? [],
     })
     // addListFlagHandler(false)
     // addFlag.current = true
@@ -234,8 +264,8 @@ export default function Card({ task, index }) {
                               }
                               const userParams = {
                                 ...picData,
-                                notification: picData.notification.length
-                                  ? [...picData.notification, notifMessage]
+                                notification: picData?.notification?.length
+                                  ? [...picData?.notification, notifMessage]
                                   : [notifMessage],
                               }
                               dispatch(updateUserNotification(userParams))
@@ -289,8 +319,18 @@ export default function Card({ task, index }) {
                   <div
                     style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}
                   >
-                    {task?.description}
+                    Desc: {task?.description}
                   </div>
+                  {/* <div
+                    style={{
+                      textAlign: 'left',
+                      fontWeight: 600,
+                      padding: 5,
+                      color: 'gray',
+                    }}
+                  >
+                    Start Date: {moment(task?.startDate).format('DD/MM/YYYY')}
+                  </div> */}
                   <div
                     style={{
                       textAlign: 'left',
@@ -299,12 +339,28 @@ export default function Card({ task, index }) {
                       color: 'gray',
                     }}
                   >
-                    {moment(task?.dueDate).format('DD/MM/YYYY')}
+                    End Date: {moment(task?.dueDate).format('DD/MM/YYYY')}
                   </div>
                   <div
                     style={{ textAlign: 'left', padding: 5, fontWeight: 600 }}
                   >
-                    {mappedPic?.join(', ') || ''}
+                    Assigned To: {mappedPic?.join(', ') || ''}
+                  </div>
+                  <div
+                    style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}
+                  >
+                    List: {mappedList[0]?.title ?? ''}
+                  </div>
+                  <div
+                    style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}
+                  >
+                    Modify By: {task?.modifyBy ?? ''}
+                  </div>
+                  <div
+                    style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}
+                  >
+                    Modify Date:{' '}
+                    {moment(task.updatedAt).format('DD/MM/YYYY hh:mm') ?? ''}
                   </div>
                 </div>
               )}

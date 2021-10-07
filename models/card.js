@@ -36,6 +36,15 @@ const cardSchema = new Schema(
       type: Date,
       required: true,
     },
+    list: {
+      type: Array,
+    },
+    modifyBy: {
+      type: String,
+    },
+    modifyDate: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

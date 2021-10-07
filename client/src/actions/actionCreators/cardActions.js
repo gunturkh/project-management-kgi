@@ -18,6 +18,7 @@ export const createNewCard = (params, token) => (dispatch) => {
       else if (e.response.status === 422)
         dispatch({ type: ACTIONS.VALIDATION_ERROR_CARD })
     })
+  return Promise.resolve()
 }
 
 export const updateCardById = (id, params) => (dispatch) => {

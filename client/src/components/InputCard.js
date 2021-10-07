@@ -94,10 +94,11 @@ export default function InputItem({
   const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
   )
-  const { name, description, priority, pic, dueDate } = value
+  const { name, description, priority, pic, startDate, dueDate, list } = value
   const theme = useTheme()
   const classes = useStyles({ type, width, marginLeft })
   const divRef = useRef(null)
+  const { timelines } = useSelector((state) => state.timeline)
   function getStyles() {
     return {
       fontWeight: theme.typography.fontWeightRegular,
@@ -206,6 +207,25 @@ export default function InputItem({
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               views={['day', 'month', 'year']}
+              label="Project start date"
+              value={startDate}
+              onChange={(e) => changedHandler(e, 'startDate')}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  required
+                  helperText="Please fill project start date"
+                  variant="standard"
+                />
+              )}
+            />
+          </LocalizationProvider>
+        </FormControl>
+        <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              views={['day', 'month', 'year']}
               label="Project due date"
               value={dueDate}
               onChange={(e) => changedHandler(e, 'dueDate')}
@@ -220,6 +240,35 @@ export default function InputItem({
               )}
             />
           </LocalizationProvider>
+        </FormControl>
+        <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
+          <InputLabel
+            id="demo-mutiple-pic-label"
+            style={{ marginLeft: '-15px' }}
+          >
+            List
+          </InputLabel>
+          <Select
+            // multiple
+            value={list}
+            onChange={changedHandler}
+            name="list"
+            // input={<Input label="PIC" />}
+            variant="standard"
+            MenuProps={MenuProps}
+            // style={{ maxWidth: '100%' }}
+            required
+          >
+            {timelines.map((t) => (
+              <MenuItem
+                key={`${t.title}-${t._id}`}
+                value={t._id}
+                style={getStyles()}
+              >
+                {t.title}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
       </Paper>
       <Button

@@ -178,7 +178,7 @@ const Timeline = (props) => {
               // onClick={() => navigate(`/app/projects/new`, { replace: true })}
               onClick={handleClickOpen}
             >
-              Create Timeline
+              Add List
             </Button>
           )}
           <Dialog open={openModal} onClose={handleModalClose}>
