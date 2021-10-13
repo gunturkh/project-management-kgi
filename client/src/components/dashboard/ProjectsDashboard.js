@@ -23,6 +23,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  LinearProgress,
 } from '@material-ui/core'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
@@ -45,6 +46,20 @@ import Loading from '../Loading'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { makeid } from '../../utils/randomString'
 
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  )
+}
 // fake data generator
 const getItems = (count, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map((k) => ({
@@ -219,6 +234,8 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
   }
   const { boards, currBoard } = useSelector((state) => state.boards)
   const { user, users, token } = useSelector((state) => state.user)
+  const { cards } = useSelector((state) => state.cards)
+  const { lists } = useSelector((state) => state.lists)
   const [state, setState] = useState([
     getBoards(boards, 'Kick Off'),
     getBoards(boards, 'In Progress'),
@@ -440,7 +457,38 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                                 <div>{index}</div>
                                 <div>{item.projectName}</div>
                                 <div>{item.projectDescription}</div>
-                                <div>{0}</div>
+                                <div>
+                                  {/* {cards
+                                    .filter((c) => c.boardId === item._id)
+                                    .map((i) => {
+                                      const res = lists.filter(
+                                        (l) => i.listId === l._id,
+                                      )[0]
+                                      return <p>{res.name}</p>
+                                    })} */}
+                                  <LinearProgressWithLabel
+                                    variant="determinate"
+                                    value={
+                                      (cards
+                                        .filter((c) => c.boardId === item._id)
+                                        .map((i) => {
+                                          const res = lists.filter(
+                                            (l) => i.listId === l._id,
+                                          )[0]
+                                          return res.name
+                                        })
+                                        .reduce((acc, curVal) => {
+                                          curVal === 'Checked' ||
+                                          curVal === 'Done'
+                                            ? (acc += 1)
+                                            : (acc = acc)
+                                          return acc
+                                        }, 0) /
+                                        cards.length) *
+                                      100
+                                    }
+                                  />
+                                </div>
                                 <div>
                                   {moment(item.startDate).format(
                                     'DD MMMM YYYY',
