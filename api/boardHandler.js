@@ -2,7 +2,7 @@ const { Router } = require("express");
 const Board = require("../models/board");
 const List = require("../models/list");
 const Card = require("../models/card");
-const Timeline = require("../models/timeline");
+// const Timeline = require("../models/timeline");
 const Activity = require("../models/activity");
 const { auth } = require("../middleware");
 const router = Router();
@@ -84,9 +84,9 @@ router.get("/:id/projectCards", auth, async (req, res, next) => {
     // const timelinesId = [];
     let uniqueTimelines = [];
     let timelineWithList = [];
-    let resultTimeline = null;
+    // let resultTimeline = null;
     await cards.forEach((card) => {
-      if (card?.list) {
+      if (card.list) {
         timelines.push({
           title: card.list.title,
           _id: card.list._id,
