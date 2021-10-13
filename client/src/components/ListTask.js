@@ -75,7 +75,7 @@ export default function Column({ column, tasks, index }) {
     pic: [],
     startDate: '',
     dueDate: '',
-    list: [],
+    list: null,
     modifyBy: user.username,
     modifyDate: '',
   })
@@ -172,7 +172,7 @@ export default function Column({ column, tasks, index }) {
       priority: [],
       pic: [],
       dueDate: '',
-      list: [],
+      list: null,
       modifyBy: '',
     })
     setAddCardFlag(false)
@@ -188,7 +188,7 @@ export default function Column({ column, tasks, index }) {
       priority: [],
       pic: [],
       dueDate: '',
-      list: [],
+      list: null,
       modifyBy: '',
     })
   }

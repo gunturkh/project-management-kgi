@@ -2,6 +2,7 @@ const { Router } = require("express");
 const Board = require("../models/board");
 const List = require("../models/list");
 const Card = require("../models/card");
+const Timeline = require("../models/timeline");
 const Activity = require("../models/activity");
 const { auth } = require("../middleware");
 const router = Router();
@@ -61,8 +62,112 @@ router.get("/:id/cards", auth, async (req, res, next) => {
     const board = await Board.findOne({ _id });
     if (!board) return res.status(404).send();
     const cards = await Card.find({ boardId: _id });
-    // .populate("List");
     res.send(cards);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id/projectCards", auth, async (req, res, next) => {
+  const _id = req.params.id;
+  try {
+    const board = await Board.findOne({ _id });
+    if (!board) return res.status(404).send();
+    const cards = await Card.find({ boardId: _id }).populate(
+      "listId list"
+      // "name description pic boardId"
+    );
+    const onlyUnique = (value, index, self) => {
+      return self.indexOf(value) === index;
+    };
+    const timelines = [];
+    // const timelinesId = [];
+    let uniqueTimelines = [];
+    let timelineWithList = [];
+    let resultTimeline = null;
+    await cards.forEach((card) => {
+      if (card?.list) {
+        timelines.push({
+          title: card.list.title,
+          _id: card.list._id,
+          progress: card.list.progress,
+        });
+        // timelinesId.push(card.list._id);
+      }
+    });
+
+    if (timelines.length > 0) {
+      uniqueTimelines = timelines.map((i) => i._id).filter(onlyUnique);
+    }
+
+    const checkUniqueTimelines = uniqueTimelines.length > 0 && {
+      uniqueTimelines,
+    };
+
+    if (uniqueTimelines.length > 0) {
+      timelineWithList = uniqueTimelines.map((t) => {
+        let listArr = [];
+        let count = 0;
+        let timelineParam = [];
+        cards.forEach((c) => {
+          if (c.listId && t === c?.list?._id) {
+            listArr.push(c.listId.name);
+            const { title, progress, url, start, end, order } = c.list;
+            // delete c.list.__v;
+            if (timelineParam.length < 1)
+              timelineParam.push({
+                title,
+                progress,
+                url,
+                start,
+                end,
+                order,
+              });
+            const name = c.listId.name;
+            if (name === "Done" || name === "Checked") count += 1;
+          }
+        });
+        // const timeline = await Timeline.findOneAndUpdate(
+        //   { _id, t },
+        //   timelineParam[0],
+        //   {
+        //     new: true,
+        //     runValidators: true,
+        //   }
+        // );
+        // if (!timeline)
+        //   return res.status(404).send({ error: "Timeline not found!" });
+        return {
+          timeline: t,
+          timelineParam,
+          listArr,
+          progress: (count / listArr.length) * 100,
+        };
+      });
+    }
+
+    // if (timelineWithList.length > 0) {
+    //   timelineWithList.forEach(async (t) => {
+    //     const timelineFound = await Timeline.findOneAndUpdate(
+    //       { boardId: _id, _id: t.timelineParam[0]._id },
+    //       { ...t.timelineParam[0], progress: t.progress },
+    //       {
+    //         new: true,
+    //         runValidators: true,
+    //       }
+    //     );
+    //     if (!timelineFound)
+    //       return { error: "Timeline not found!" };
+    //     else return timelineFound;
+    //   });
+    // }
+
+    res.send({
+      cards,
+      timelines,
+      timelineWithList,
+      ...checkUniqueTimelines,
+    });
   } catch (error) {
     next(error);
   }

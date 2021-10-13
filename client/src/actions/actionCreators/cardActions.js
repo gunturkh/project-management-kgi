@@ -30,6 +30,7 @@ export const updateCardById = (id, params) => (dispatch) => {
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_CARD, payload: { error: e.message } })
     })
+  return Promise.resolve()
 }
 
 export const deleteCardById = (id) => (dispatch) => {

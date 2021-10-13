@@ -55,6 +55,7 @@ import {
   fetchActivitiesFromBoard,
   updateBoardById,
 } from '../../actions/actionCreators/boardActions'
+import { updateTimelineByBoardId } from '../../actions/actionCreators/timelineActions'
 import { updateUserNotification } from '../../actions/actionCreators/userActions'
 import ListTask from '../ListTask'
 import midString from '../../ordering/ordering'
@@ -280,6 +281,22 @@ export default function ProjectDetailsNew() {
       setContent()
       setInitialData({ ...prevState })
       setInitDone(true)
+
+      axios
+        .get(`/api/boards/${currBoard._id}/projectCards`, {
+          headers: { 'x-auth-token': token },
+        })
+        .then((res) => {
+          console.log('projectCards', res.data)
+          res.data.timelineWithList.forEach((t) => {
+            dispatch(
+              updateTimelineByBoardId(`${currBoard._id}/${t.timeline}`, {
+                ...t.timelineParam[0],
+                progress: t.progress,
+              }),
+            )
+          })
+        })
     }
   }, [setInitDone, listLoading, cardLoading, setInitialData, cards, lists])
 

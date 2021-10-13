@@ -37,7 +37,10 @@ const cardSchema = new Schema(
       required: true,
     },
     list: {
-      type: Array,
+      // type: Array,
+      type: Schema.Types.ObjectId,
+      ref: "timeline",
+      // required: true,
     },
     modifyBy: {
       type: String,

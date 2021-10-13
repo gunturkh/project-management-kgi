@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import { Paper, makeStyles, InputBase, IconButton } from '@material-ui/core'
 import InputCard from './InputCard'
@@ -15,6 +15,7 @@ import { capitalizeFirstLetter } from '../utils/capitalizeFirstLetter'
 import moment from 'moment'
 import { makeid } from '../utils/randomString'
 import { updateUserNotification } from '../actions/actionCreators/userActions'
+import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -39,8 +40,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Card({ task, index }) {
   console.log('Card task:', task)
   const { token, user, users } = useSelector((state) => state.user)
+  const { cards } = useSelector((state) => state.cards)
+  const { lists } = useSelector((state) => state.lists)
   const { timelines } = useSelector((state) => state.timeline)
   const [editable, setEditable] = useState(false)
+  const [submit, setSubmit] = useState(false)
   const [title, setTitle] = useState(task.name)
   const [editTaskValue, setEditTaskValue] = useState({
     name: task.name,
@@ -65,11 +69,16 @@ export default function Card({ task, index }) {
   mappedPic = task?.pic?.map((pic) => {
     return users.find((user) => user._id === pic)?.username
   })
-  mappedList = task?.list?.map((list) => {
-    console.log('list', list)
-    console.log('timelines', timelines)
-    return timelines.find((t) => t._id === list)
-  })
+  console.log('task list', task?.list)
+  if (typeof task.list === 'array') {
+    mappedList = task?.list?.map((list) => {
+      console.log('list', list)
+      console.log('timelines', timelines)
+      return timelines.find((t) => t._id === list)
+    })
+  }
+  if (typeof task.list === 'string')
+    mappedList = timelines.find((t) => t._id === task.list)
   console.log('mappedList', mappedList)
   const handleChange = (e, target) => {
     console.log('handleChange card:', { e, target })
@@ -99,8 +108,113 @@ export default function Card({ task, index }) {
     }
   }
 
+  useEffect(() => {
+    console.log('cards changed:', cards)
+    console.log('lists changed:', lists)
+
+    // axios
+    //   .get(`/api/boards/${currBoard._id}/projectCards`, {
+    //     headers: { 'x-auth-token': token },
+    //   })
+    //   .then((res) => {
+    //     console.log('projectCards', res.data)
+    //   })
+    // const timelinesParamArr = []
+    // const filteredLists = []
+    // const filteredTimelines = []
+
+    // const onlyUnique = (value, index, self) => {
+    //   return self.indexOf(value) === index
+    // }
+    // cards.forEach((card) => {
+    //   const [filteredTimeline] = timelines.filter((timeline) => {
+    //     if (card?.list?.length > 0) {
+    //       return timeline._id === card.list[0]
+    //     } else return
+    //   })
+    //   const [filteredList] = lists.filter((list) => card.listId === list._id)
+    //   const params = { card, list: filteredList, timeline: filteredTimeline }
+    //   filteredLists.push(filteredList)
+    //   filteredTimelines.push(filteredTimeline)
+    //   timelinesParamArr.push(params)
+    // })
+    // const uniqueTimelines =
+    //   filteredTimelines.length > 0 ? filteredTimelines.filter(onlyUnique) : null
+
+    // const listsFromUniqueTimeline = uniqueTimelines
+    //   ? uniqueTimelines.map((i) => {
+    //       const [params] = lists.filter((list) => {
+    //         return list._id === i.listId
+    //       })
+    //       return params?.name
+    //     })
+    //   : null
+
+    //   const progress = listsFromTimelineId
+    //     ? (listsFromTimelineId.reduce((acc, curVal) => {
+    //         curVal === 'Checked' || curVal === 'Done' ? (acc += 1) : (acc = acc)
+    //         return acc
+    //       }, 0) /
+    //         listsFromTimelineId.length) *
+    //       100
+    //     : 0
+    // if (timelinesParamArr.length > 0) {
+    //   timelinesParamArr.forEach((item) => {
+    //   })
+    // }
+    // console.log('timelinesParamArr', timelinesParamArr)
+    // console.log('uniqueTimelines', uniqueTimelines)
+    // console.log('listsFromUniqueTimeline', listsFromUniqueTimeline)
+    // if (submit) {
+    //   console.log('submit?', submit)
+    //   const getTimeline =
+    //     timelines.length > 0
+    //       ? timelines.filter((t) => t._id === editTaskValue.list)
+    //       : null
+
+    //   const getCardsWithTimelineId =
+    //     cards.length > 0
+    //       ? cards.filter((c) => {
+    //           return c.list[0] === editTaskValue.list
+    //         })
+    //       : null
+
+    //   const listsFromTimelineId = getCardsWithTimelineId
+    //     ? getCardsWithTimelineId.map((i) => {
+    //         const [params] = lists.filter((list) => {
+    //           return list._id === i.listId
+    //         })
+    //         return params.name
+    //       })
+    //     : null
+
+    //   const progress = listsFromTimelineId
+    //     ? (listsFromTimelineId.reduce((acc, curVal) => {
+    //         curVal === 'Checked' || curVal === 'Done' ? (acc += 1) : (acc = acc)
+    //         return acc
+    //       }, 0) /
+    //         listsFromTimelineId.length) *
+    //       100
+    //     : 0
+
+    //   console.log('progress', progress)
+
+    //   const timelineParams = getTimeline.length ? getTimeline[0] : null
+
+    //   console.log('cards', cards)
+    //   getTimeline && console.log('getTimeline: ', getTimeline)
+    //   timelineParams && console.log('timelineParams: ', timelineParams)
+    //   getCardsWithTimelineId &&
+    //     console.log('getCardsWithTimelineId: ', getCardsWithTimelineId)
+    //   console.log('lenlistsFromTimelineIdth : ', listsFromTimelineId)
+    //   console.log('length timeline: ', listsFromTimelineId.length)
+    //   // setSubmit(false)
+    // }
+  }, [cards, lists])
+
   const submitHandlerUpdate = async () => {
     setEditable(false)
+    // setSubmit(true)
     setEditTaskValue(editTaskValue)
     dispatch(updateCardById(task._id, editTaskValue))
     if (currBoard?.pic.length > 0) {
@@ -141,7 +255,7 @@ export default function Card({ task, index }) {
       modifyDate: task.updatedAt,
       modifyBy: task.modifyBy,
       dueDate: task.dueDate,
-      list: task?.list ?? [],
+      list: task?.list ?? null,
     })
     // addListFlagHandler(false)
     // addFlag.current = true
@@ -178,7 +292,7 @@ export default function Card({ task, index }) {
     }
     return color
   }
-
+  console.log('submit status? ', submit)
   return (
     <Draggable draggableId={task._id} index={index}>
       {(provided) => (
@@ -349,7 +463,7 @@ export default function Card({ task, index }) {
                   <div
                     style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}
                   >
-                    List: {mappedList[0]?.title ?? ''}
+                    List: {mappedList?.title ?? ''}
                   </div>
                   <div
                     style={{ textAlign: 'left', fontWeight: 400, padding: 5 }}

@@ -24,8 +24,17 @@ export const cardsReducer = (state = initialState, action) => {
         (card) => card._id === action.payload.card._id,
       )
       cardsCopy[targetIndex] = action.payload.card
+      console.log('cardsCopy:', cardsCopy)
       return { ...state, cards: cardsCopy, cardLoading: false }
     }
+    // case ACTIONS.UPDATE_CARD_TIMELINE: {
+    //   const cardsCopy = [...state.cards]
+    //   const targetIndex = cardsCopy.findIndex(
+    //     (card) => card._id === action.payload.card._id,
+    //   )
+    //   cardsCopy[targetIndex] = action.payload.card
+    //   return { ...state, cards: action.payload, cardLoading: false }
+    // }
     case ACTIONS.DELETE_CARD: {
       const cardPrev = [...state.cards]
       const index = cardPrev.findIndex(
