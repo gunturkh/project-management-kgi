@@ -110,7 +110,7 @@ router.get("/:id/projectCards", auth, async (req, res, next) => {
         let count = 0;
         let timelineParam = [];
         cards.forEach((c) => {
-          if (c.listId && t === c?.list?._id) {
+          if (c.listId && t === c.list._id) {
             listArr.push(c.listId.name);
             const { title, progress, url, start, end, order } = c.list;
             // delete c.list.__v;
