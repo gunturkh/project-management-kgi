@@ -29,6 +29,7 @@ import {
   TextField,
   Dialog,
   DialogContent,
+  CircularProgress,
 } from '@material-ui/core'
 import FullCalendar from '@fullcalendar/react'
 // import { Calendar } from '@fullcalendar/core'
@@ -39,7 +40,29 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
 import { makeid } from '../utils/randomString'
 import './timeline.scss'
-
+function CircularProgressWithLabel(props) {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress variant="determinate" {...props} />
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography variant="caption" component="div" color="text.secondary">
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  )
+}
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -130,6 +153,7 @@ const Timeline = (props) => {
   const { token, isValid, user, users, tokenRequest } = useSelector(
     (state) => state.user,
   )
+  const { cards } = useSelector((state) => state.cards)
   // const { currTimeline } = useSelector((state) => state.timeline)
   const [timeline, setTimeline] = useState([])
   useEffect(() => {
@@ -294,15 +318,21 @@ const Timeline = (props) => {
                         <Trash2 size="20" />
                       </Button>
                     </Box>
+                    <Grid display="flex" justifyContent="center">
+                      <CircularProgressWithLabel
+                        variant="determinate"
+                        value={parseInt(timeline?.progress) || 0}
+                      />
+                    </Grid>
                     <Typography
                       align="left"
                       color="textPrimary"
                       gutterBottom
-                      variant="h4"
+                      variant="h2"
                     >
                       {timeline?.title}
                     </Typography>
-                    <Typography
+                    {/* <Typography
                       align="left"
                       color="textPrimary"
                       gutterBottom
@@ -311,7 +341,7 @@ const Timeline = (props) => {
                       Progress :{' '}
                       {timeline?.progress ? parseInt(timeline?.progress) : '-'}{' '}
                       %
-                    </Typography>
+                    </Typography> */}
                     {/* <Typography */}
                     {/*   align="left" */}
                     {/*   color="textPrimary" */}
@@ -334,7 +364,7 @@ const Timeline = (props) => {
                     {/*     ? moment(timeline.end).format('DD MMM YYYY') */}
                     {/*     : ''} */}
                     {/* </Typography> */}
-                    <Grid
+                    {/* <Grid
                       item
                       sx={{
                         alignItems: 'center',
@@ -356,6 +386,41 @@ const Timeline = (props) => {
                               .format('DD MMMM YYYY')}`
                           : ''}
                       </Typography>
+                    </Grid> */}
+                    <Grid
+                      item
+                      sx={{
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      Task:
+                      {cards
+                        .filter((c) => c.list === timeline.id)
+                        .map((c) => {
+                          return (
+                            <Box
+                              sx={{
+                                backgroundColor: 'lightgray',
+                                borderRadius: 5,
+                                // border: '1px solid blue',
+                                width: '100%',
+                                margin: '5px 0px',
+                              }}
+                            >
+                              <Typography
+                                align="center"
+                                color="textPrimary"
+                                gutterBottom
+                                variant="h4"
+                              >
+                                {c.name}
+                              </Typography>
+                            </Box>
+                          )
+                        })}
                     </Grid>
                   </CardContent>
                 </Card>

@@ -759,7 +759,7 @@ export default function ProjectDetailsNew() {
             taskName: card.name,
             priority:
               card.priority.charAt(0).toUpperCase() + card.priority.slice(1),
-            list: 'default',
+            list: timelines.filter((t) => t._id === card.list)[0]?.title,
             status:
               lists.length > 0
                 ? lists?.filter((list) => {
