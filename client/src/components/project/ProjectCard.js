@@ -93,6 +93,9 @@ const ProjectCard = ({ board, ...rest }) => {
   const [modalStyle] = useState(getModalStyle)
   const [openModal, setOpenModal] = useState(false)
   const { isValid, token, users, user } = useSelector((state) => state.user)
+  const { cards } = useSelector((state) => state.cards)
+  const { lists } = useSelector((state) => state.lists)
+  const { timelines } = useSelector((state) => state.timeline)
   const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -322,8 +325,8 @@ const ProjectCard = ({ board, ...rest }) => {
             >
               {board?.startDate && board?.endDate
                 ? `${moment(board.startDate).format('DD MMMM YYYY')} - ${moment(
-                    board.endDate,
-                  ).format('DD MMMM YYYY')}`
+                  board.endDate,
+                ).format('DD MMMM YYYY')}`
                 : 'No Start Date - End Date Filled'}
             </Typography>
           </Grid>
@@ -403,6 +406,27 @@ const ProjectCard = ({ board, ...rest }) => {
           }}
         >
           {board?.status || 'No Project Status Filled'}
+          {board?.status &&
+            ` 
+            ${(cards
+              .filter((c) => c.boardId === board._id)
+              .map((i) => {
+                const res = lists.filter(
+                  (l) => i.listId === l._id,
+                )[0]
+                return res.name
+              })
+              .reduce((acc, curVal) => {
+                curVal === 'Checked' ||
+                  curVal === 'Done'
+                  ? (acc += 1)
+                  : (acc = acc)
+                return acc
+              }, 0) /
+              cards.length) *
+            100
+            }%`
+          }
         </Typography>
       </Box>
     </Card>
