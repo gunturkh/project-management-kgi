@@ -457,7 +457,7 @@ export default function ProjectDetailsNew() {
     const recentActivity = activities[activities.length - 1]
     if (
       recentActivity.text ===
-        `${user.username} moved ${initialData.tasks[draggableId].name} from ${endList.name} to ${startList.name}` &&
+      `${user.username} moved ${initialData.tasks[draggableId].name} from ${endList.name} to ${startList.name}` &&
       moment(recentActivity.createdAt).fromNow().includes('second')
     ) {
       dispatch(deleteActivityById(recentActivity._id))
@@ -521,7 +521,7 @@ export default function ProjectDetailsNew() {
 
   const handleChange = (e) => {
     const noPersistChange = ['priority', 'pic']
-    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    if (noPersistChange.includes(e.target.name)) e.persist = () => { }
     else e.persist()
     setTaskValue((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value }
@@ -546,10 +546,10 @@ export default function ProjectDetailsNew() {
         totalLists === 0
           ? 'n'
           : midString(
-              initialData.columns[initialData.columnOrder[totalLists - 1]]
-                .order,
-              '',
-            ),
+            initialData.columns[initialData.columnOrder[totalLists - 1]]
+              .order,
+            '',
+          ),
     }
     dispatch(createNewList(postListReq, token))
     dispatch(
@@ -754,20 +754,20 @@ export default function ProjectDetailsNew() {
   const dataGridRow =
     cards.length > 0
       ? cards.map((card, i) => {
-          return {
-            id: i,
-            taskName: card.name,
-            priority:
-              card.priority.charAt(0).toUpperCase() + card.priority.slice(1),
-            list: timelines.filter((t) => t._id === card.list)[0]?.title,
-            status:
-              lists.length > 0
-                ? lists?.filter((list) => {
-                    return list?._id === card.listId
-                  })[0]?.name
-                : '',
-          }
-        })
+        return {
+          id: i,
+          taskName: card.name,
+          priority:
+            card.priority.charAt(0).toUpperCase() + card.priority.slice(1),
+          list: timelines.filter((t) => t._id === card.list)[0]?.title,
+          status:
+            lists.length > 0
+              ? lists?.filter((list) => {
+                return list?._id === card.listId
+              })[0]?.name
+              : '',
+        }
+      })
       : []
 
   const dataFileRow = currBoard?.files

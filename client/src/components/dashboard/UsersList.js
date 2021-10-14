@@ -179,8 +179,6 @@ const Timeline = (props) => {
                                     .then(() => {
                                       setOpenModal(false)
                                       handleClose()
-                                    })
-                                    .then(() => {
                                       navigate('/app/account', {
                                         replace: 'true',
                                       })

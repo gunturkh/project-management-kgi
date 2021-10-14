@@ -20,6 +20,7 @@ const initialState = {
   requestRegister: true,
   userRequest: true,
   tokenRequest: true,
+  error: null,
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -116,9 +117,11 @@ export const userReducer = (state = initialState, action) => {
         //   id: action.payload.user._id,
         //   username: action.payload.user.username,
         // },
+        users: [...state.users, action.payload.user],
         requestRegister: false,
         successRegister: true,
         tokenRequest: false,
+        error: null,
       }
     case ACTIONS.UPDATE_SUCCESS:
       return {
