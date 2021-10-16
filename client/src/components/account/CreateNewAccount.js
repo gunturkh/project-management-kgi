@@ -94,11 +94,11 @@ const CreateNewAccount = (props) => {
   const mappedCompanies =
     companies?.length > 0
       ? companies.map((item) => {
-        return {
-          value: item._id,
-          label: item.companyName,
-        }
-      })
+          return {
+            value: item._id,
+            label: item.companyName,
+          }
+        })
       : null
   mappedCompanies.unshift({ value: '', label: '' })
 
@@ -133,7 +133,7 @@ const CreateNewAccount = (props) => {
           company: Yup.string().max(255).required('Company is required'),
         })}
         onSubmit={(e) => {
-          console.log('register')
+          console.log('register', e)
           const registerReq = {
             username: e.username,
             password: e.password,
@@ -141,6 +141,8 @@ const CreateNewAccount = (props) => {
             role: e.role,
             position: e.position,
             userRole: 'ADMIN',
+            company: companies.find((company) => company._id === e.company)
+              ?.companyName,
           }
           setUserState(registerReq)
           setCompanyState(e.company)
@@ -154,26 +156,37 @@ const CreateNewAccount = (props) => {
               .then((res) => {
                 console.log('res register user:', res.data)
                 const newUser = res.data._id
-                const [companyFound] = companies.filter(c => c._id === e.company)
+                const [companyFound] = companies.filter(
+                  (c) => c._id === e.company,
+                )
                 console.log('companyFound:', companyFound)
                 if (companyFound) {
-
-                  const { companyName, companyEmail, companyAddress, companyLogo, companyTeam, } = companyFound
+                  const {
+                    companyName,
+                    companyEmail,
+                    companyAddress,
+                    companyLogo,
+                    companyTeam,
+                  } = companyFound
                   const params = {
-                    companyName, companyEmail, companyAddress, companyLogo,
-                    companyTeam: [...companyTeam, newUser]
+                    companyName,
+                    companyEmail,
+                    companyAddress,
+                    companyLogo,
+                    companyTeam: [...companyTeam, newUser],
                   }
                   console.log('company params:', params)
 
-                  dispatch(updateCompanyById(e.company, params, token)).then(() => {
-                    console.log('done update user')
-                    navigate('/app/user')
-                    // if (!error) {
-                    // } else {
-                    //   setAlertOpen(true)
-                    // }
-                  })
-
+                  dispatch(updateCompanyById(e.company, params, token)).then(
+                    () => {
+                      console.log('done update user')
+                      navigate('/app/account')
+                      // if (!error) {
+                      // } else {
+                      //   setAlertOpen(true)
+                      // }
+                    },
+                  )
                 }
               })
           }

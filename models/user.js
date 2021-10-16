@@ -33,6 +33,9 @@ const userSchema = new Schema({
   pinned: {
     type: Array,
   },
+  company: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

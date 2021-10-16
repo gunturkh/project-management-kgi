@@ -19,6 +19,7 @@ router.post("/register", async (req, res, next) => {
     position,
     notification,
     pinned,
+    company,
   } = req.body;
   try {
     if (!password || !passwordCheck || !username || !userRole || !role)
@@ -53,6 +54,7 @@ router.post("/register", async (req, res, next) => {
       position,
       notification,
       pinned,
+      company,
     });
     const response = await newUser.save();
     res.send({
@@ -64,6 +66,7 @@ router.post("/register", async (req, res, next) => {
       position: response.position,
       notification: response.notification,
       pinned: response.pinned,
+      company: response.company,
     });
   } catch (error) {
     if (error.name === "ValidationError") return res.status(422);
@@ -98,6 +101,7 @@ router.post("/login", async (req, res, next) => {
         avatar: user.avatar,
         notification: user.notification,
         pinned: user.pinned,
+        company: user.company,
       },
     });
   } catch (error) {
@@ -134,6 +138,7 @@ router.get("/", auth, async (req, res, next) => {
       name: user.name,
       position: user.position,
       pinned: user.pinned,
+      company: user.company,
     });
   } catch (error) {
     next(error);
