@@ -121,7 +121,11 @@ const Timeline = (props) => {
                             />
                           </TableCell>
                           <TableCell color="textSecondary">
-                            <Chip color="primary" label={'KGI'} size="small" />
+                            <Chip
+                              color="primary"
+                              label={item.company || 'KGI'}
+                              size="small"
+                            />
                           </TableCell>
                           {!props.widget ? (
                             <TableCell>
@@ -175,14 +179,13 @@ const Timeline = (props) => {
                                       { id: deleteItem.id },
                                       token,
                                     ),
-                                  )
-                                    .then(() => {
-                                      setOpenModal(false)
-                                      handleClose()
-                                      navigate('/app/account', {
-                                        replace: 'true',
-                                      })
+                                  ).then(() => {
+                                    setOpenModal(false)
+                                    handleClose()
+                                    navigate('/app/account', {
+                                      replace: 'true',
                                     })
+                                  })
                                 }
                               >
                                 Yes
