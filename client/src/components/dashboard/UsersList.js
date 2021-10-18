@@ -33,6 +33,10 @@ import { fetchAllUsersInfo } from '../../actions/actionCreators/userActions'
 import { deleteUserById } from '../../actions/actionCreators/userActions'
 import Fade from '@material-ui/core/Fade'
 import Loading from '../Loading'
+import {
+  fetchAllCompaniesInfo,
+  updateCompanyById,
+} from '../../actions/actionCreators/companyActions'
 
 function rand() {
   return Math.round(Math.random() * 20) - 10
@@ -63,6 +67,7 @@ const Timeline = (props) => {
   const { user, users, role, token, tokenRequest, userRequest } = useSelector(
     (state) => state.user,
   )
+  const { companies } = useSelector((state) => state.company)
   const [openModal, setOpenModal] = useState(false)
   const [deleteItem, setDeleteItem] = useState({})
   const [modalStyle] = useState(getModalStyle)
@@ -77,9 +82,51 @@ const Timeline = (props) => {
     }
   }, [])
   console.log('users:', users)
+  console.log('companies:', companies)
 
   const handleClose = () => {
     setOpenModal(false)
+  }
+
+  const deleteCompanyTeam = (id) => {
+    let updatedCompanyTeam = companies.map((c) => {
+      return { ...c, companyTeam: c.companyTeam.filter((team) => team !== id) }
+    })
+    let updatedCompanyId = companies.find((c) =>
+      c.companyTeam.find((team) => team === id),
+    )?._id
+
+    const [updatedCompany] = updatedCompanyTeam.filter(
+      (c) => c._id === updatedCompanyId,
+    )
+    if (updatedCompany) {
+      const {
+        companyName,
+        companyEmail,
+        companyAddress,
+        companyLogo,
+        companyTeam,
+      } = updatedCompany
+      const params = {
+        companyName,
+        companyEmail,
+        companyAddress,
+        companyLogo,
+        companyTeam,
+      }
+      console.log('update company params:', params)
+
+      dispatch(updateCompanyById(updatedCompanyId, params, token)).then(() => {
+        console.log('done update user')
+        // navigate('/app/account')
+      })
+    }
+
+    console.log('deleted id:', deleteItem.id)
+    console.log('companies:', companies)
+    console.log('updated company team:', updatedCompanyTeam)
+    console.log('updated Company ID:', updatedCompanyId)
+    console.log('Updated Company:', updatedCompany)
   }
 
   return (
@@ -173,7 +220,8 @@ const Timeline = (props) => {
                                 color="secondary"
                                 variant="contained"
                                 style={{ marginRight: 15 }}
-                                onClick={() =>
+                                onClick={() => {
+                                  deleteCompanyTeam(deleteItem.id)
                                   dispatch(
                                     deleteUserById(
                                       { id: deleteItem.id },
@@ -186,7 +234,7 @@ const Timeline = (props) => {
                                       replace: 'true',
                                     })
                                   })
-                                }
+                                }}
                               >
                                 Yes
                               </Button>
