@@ -218,9 +218,9 @@ const ProjectCard = ({ board, ...rest }) => {
               Details
             </MenuItem>
             <MenuItem
-              // component={RouterLink} to={`/app/projects/edit/${id}`}
-              disabled={disableButton()}
+              component={RouterLink}
               to={`/app/projects/edit/${board._id}`}
+              disabled={disableButton()}
             >
               Edit
             </MenuItem>
@@ -325,8 +325,8 @@ const ProjectCard = ({ board, ...rest }) => {
             >
               {board?.startDate && board?.endDate
                 ? `${moment(board.startDate).format('DD MMMM YYYY')} - ${moment(
-                  board.endDate,
-                ).format('DD MMMM YYYY')}`
+                    board.endDate,
+                  ).format('DD MMMM YYYY')}`
                 : 'No Start Date - End Date Filled'}
             </Typography>
           </Grid>
@@ -408,25 +408,22 @@ const ProjectCard = ({ board, ...rest }) => {
           {board?.status || 'No Project Status Filled'}
           {board?.status &&
             ` 
-            ${(cards
-              .filter((c) => c.boardId === board._id)
-              .map((i) => {
-                const res = lists.filter(
-                  (l) => i.listId === l._id,
-                )[0]
-                return res.name
-              })
-              .reduce((acc, curVal) => {
-                curVal === 'Checked' ||
-                  curVal === 'Done'
-                  ? (acc += 1)
-                  : (acc = acc)
-                return acc
-              }, 0) /
-              cards.length) *
-            100
-            }%`
-          }
+            ${
+              (cards
+                .filter((c) => c.boardId === board._id)
+                .map((i) => {
+                  const res = lists.filter((l) => i.listId === l._id)[0]
+                  return res.name
+                })
+                .reduce((acc, curVal) => {
+                  curVal === 'Checked' || curVal === 'Done'
+                    ? (acc += 1)
+                    : (acc = acc)
+                  return acc
+                }, 0) /
+                cards.length) *
+              100
+            }%`}
         </Typography>
       </Box>
     </Card>
