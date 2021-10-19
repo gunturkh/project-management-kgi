@@ -14,13 +14,14 @@ router.post("/register", async (req, res, next) => {
     username,
     userRole,
     role,
-    avatar,
     name,
     position,
     notification,
     pinned,
     company,
   } = req.body;
+  const avatar =
+    "https://res.cloudinary.com/dzl9cgxtk/image/upload/v1633498150/profile_picture_meeijw.png";
   try {
     if (!password || !passwordCheck || !username || !userRole || !role)
       return res
