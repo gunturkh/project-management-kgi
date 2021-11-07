@@ -227,7 +227,7 @@ const SettingsPassword = (props) => {
                   </>
                 ) : (
                   <Button
-                    color="primary"
+                    color="secondary"
                     variant="contained"
                     onClick={() => setEdit(true)}
                   >
@@ -406,7 +406,7 @@ const SettingsPassword = (props) => {
                   p: 2,
                 }}
               >
-                <Button color="primary" variant="contained" type="submit">
+                <Button color="secondary" variant="contained" type="submit">
                   Update
                 </Button>
                 <Snackbar

@@ -237,7 +237,7 @@ const CreateCompany = (props) => {
                 Cancel
               </Button>
               <Button
-                color="primary"
+                color="secondary"
                 variant="contained"
                 // disabled={isSubmitting}
                 type="submit"

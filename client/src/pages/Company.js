@@ -30,7 +30,7 @@ const Company = () => {
             }}
           >
             <Button
-              color="primary"
+              color="apple"
               variant="contained"
               onClick={() => navigate(`/app/company/new`, { replace: true })}
             >

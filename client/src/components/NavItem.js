@@ -15,12 +15,12 @@ const NavItem = ({
 
   const active = href
     ? !!matchPath(
-        {
-          path: href,
-          end: false,
-        },
-        location.pathname,
-      )
+      {
+        path: href,
+        end: false,
+      },
+      location.pathname,
+    )
     : false
 
   return (
@@ -35,7 +35,8 @@ const NavItem = ({
       <Button
         component={RouterLink}
         sx={{
-          color: 'text.secondary',
+          // color: 'text.secondary',
+          color: 'white',
           fontWeight: 'medium',
           justifyContent: 'flex-start',
           letterSpacing: 0,
@@ -43,7 +44,8 @@ const NavItem = ({
           textTransform: 'none',
           width: '100%',
           ...(active && {
-            color: 'primary.main',
+            // color: 'primary.main',
+            color: 'white',
           }),
           '& svg': {
             mr: 1,
@@ -51,8 +53,8 @@ const NavItem = ({
         }}
         to={href}
       >
-        {Icon && <Icon size="20" />}
-        {openMobile && <span>{title}</span>}
+        {Icon && <Icon color="white" size="20" />}
+        {openMobile && <span >{title}</span>}
       </Button>
     </ListItem>
   )

@@ -323,14 +323,14 @@ const CreateNewAccount = (props) => {
               >
                 <Button
                   as={RouterLink}
-                  color="primary"
+                  color="secoondary"
                   variant="contained"
                   to={'/app/account'}
                   sx={{ marginRight: 2 }}
                 >
                   Cancel
                 </Button>
-                <Button color="primary" variant="contained" type="submit">
+                <Button color="secondary" variant="contained" type="submit">
                   Create Account
                 </Button>
               </Box>

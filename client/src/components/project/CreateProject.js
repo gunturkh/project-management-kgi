@@ -444,7 +444,7 @@ const CreateProject = (props) => {
               }}
             >
               <Button
-                color="primary"
+                color="secondary"
                 variant="contained"
                 disabled={isSubmitting}
                 type="submit"

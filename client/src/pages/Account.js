@@ -30,7 +30,7 @@ const Account = () => {
             }}
           >
             <Button
-              color="primary"
+              color="apple"
               variant="contained"
               onClick={() => navigate(`/app/account/new`, { replace: true })}
             >

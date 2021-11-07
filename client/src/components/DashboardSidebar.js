@@ -155,10 +155,10 @@ const DashboardSidebar = ({
             }}
             to="/app/account"
           />
-          <Typography color="textPrimary" variant="h5">
+          <Typography color="white" variant="h5">
             {user.name}
           </Typography>
-          <Typography color="textSecondary" variant="body2">
+          <Typography color="white" variant="body2">
             {user.position}
           </Typography>
           <Divider />
@@ -185,17 +185,17 @@ const DashboardSidebar = ({
               />
               {user.pinned && user.pinned.length > 0
                 ? user.pinned.map((pin, i) => {
-                    return (
-                      <PinItem
-                        openMobile={openMobile}
-                        href={`/app/projects/details/${pin.id}`}
-                        key={`pin-${i}`}
-                        title={`${pin.projectName}`}
-                        id={pin.id}
-                        icon={MapPin}
-                      />
-                    )
-                  })
+                  return (
+                    <PinItem
+                      openMobile={openMobile}
+                      href={`/app/projects/details/${pin.id}`}
+                      key={`pin-${i}`}
+                      title={`${pin.projectName}`}
+                      id={pin.id}
+                      icon={MapPin}
+                    />
+                  )
+                })
                 : null}
               <NavItem
                 openMobile={openMobile}
@@ -231,18 +231,18 @@ const DashboardSidebar = ({
               />
               {user.pinned && user.pinned.length > 0
                 ? user.pinned.map((pin, i) => {
-                    return (
-                      <Box display="flex">
-                        <PinItem
-                          openMobile={openMobile}
-                          href={`/app/projects/details/${pin.id}`}
-                          key={`pin-${i}`}
-                          title={`${pin.projectName}`}
-                          icon={MapPin}
-                        />
-                      </Box>
-                    )
-                  })
+                  return (
+                    <Box display="flex">
+                      <PinItem
+                        openMobile={openMobile}
+                        href={`/app/projects/details/${pin.id}`}
+                        key={`pin-${i}`}
+                        title={`${pin.projectName}`}
+                        icon={MapPin}
+                      />
+                    </Box>
+                  )
+                })
                 : null}
               <NavItem
                 openMobile={openMobile}
@@ -320,7 +320,7 @@ const DashboardSidebar = ({
         sx={{
           marginTop: '64px',
           height: 'calc(100% - 64px)',
-          backgroundColor: 'white',
+          backgroundColor: '#38343C',
         }}
       >
         {content}
@@ -337,6 +337,7 @@ const DashboardSidebar = ({
             top: 64,
             height: 'calc(100% - 64px)',
             overflow: 'scroll',
+
           },
         }}
       >
@@ -405,7 +406,7 @@ DashboardSidebar.propTypes = {
 }
 
 DashboardSidebar.defaultProps = {
-  onMobileClose: () => {},
+  onMobileClose: () => { },
   openMobile: false,
 }
 

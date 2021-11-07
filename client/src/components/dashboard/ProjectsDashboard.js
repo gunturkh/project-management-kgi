@@ -23,8 +23,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  LinearProgress,
 } from '@material-ui/core'
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import ArrowRightIcon from '@material-ui/icons/ArrowRight'
 import { Trash2, MoreVertical } from 'react-feather'
@@ -50,7 +51,7 @@ function LinearProgressWithLabel(props) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
+        <LinearProgress color="apple" style={{ backgroundColor: 'black' }} variant="determinate" {...props} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
@@ -101,7 +102,8 @@ const getItemStyle = (isDragging, draggableStyle, color) => ({
 
   // change background colour if dragging
   background: isDragging ? 'lightgreen' : color,
-  border: '1px gray solid',
+  borderRadius: '15px',
+  border: '3px black solid',
 
   // styles we need to apply on draggables
   ...draggableStyle,
@@ -157,7 +159,9 @@ const SimpleMenu = ({ id, projectName, setOpenModal, setDeleteItem }) => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <MoreVertical size={20} />
+        <MoreVertical
+          color="black"
+          size={20} />
       </Button>
       <Menu
         id="simple-menu"
@@ -197,19 +201,19 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
     let color
     switch (status) {
       case 'Kick Off':
-        color = '#FFFFFF'
+        color = '#BFBFBF'
         break
       case 'In Progress':
-        color = '#FFDD71'
+        color = '#FFC635'
         break
       case 'Installation & Commissioning':
-        color = '#00FFFF'
+        color = '#4675CA'
         break
       case 'Validation':
-        color = '#85FF85'
+        color = '#00AF50'
         break
       case 'Closed':
-        color = '#E8E8E8'
+        color = '#757070'
         break
 
       default:
@@ -332,13 +336,12 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
               console.log('picData: ', { picData })
               const notifMessage = {
                 id: makeid(5),
-                message: `Project ${projectName}, created by: ${
-                  user.name
-                }, and you were assigned to it. Description: ${projectDescription}, status: ${status}, start date: ${moment(
-                  startDate,
-                ).format('DD/MM/YYYY')}, end date:${moment(endDate).format(
-                  'DD/MM/YYYY',
-                )} `,
+                message: `Project ${projectName}, created by: ${user.name
+                  }, and you were assigned to it. Description: ${projectDescription}, status: ${status}, start date: ${moment(
+                    startDate,
+                  ).format('DD/MM/YYYY')}, end date:${moment(endDate).format(
+                    'DD/MM/YYYY',
+                  )} `,
                 link: `/app/projects/details/${_id}`,
                 read: false,
               }
@@ -479,7 +482,7 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                                         })
                                         .reduce((acc, curVal) => {
                                           curVal === 'Checked' ||
-                                          curVal === 'Done'
+                                            curVal === 'Done'
                                             ? (acc += 1)
                                             : (acc = acc)
                                           return acc

@@ -49,7 +49,7 @@ const DashboardNavbar = ({ onMobileNavOpen, onNotificationClick, ...rest }) => {
   }
   console.log('user navbar: ', user)
   return (
-    <AppBar elevation={0} {...rest}>
+    <AppBar elevation={0} {...rest} color="secondary">
       <Toolbar>
         <IconButton color="inherit" onClick={onMobileNavOpen}>
           <MenuIcon />
