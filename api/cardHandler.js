@@ -4,15 +4,15 @@ const Card = require("../models/card");
 const { auth } = require("../middleware");
 const router = Router();
 
-// // fetch all the card entries from db /api/cards
-// router.get('/', async (req, res, next) => {
-//     try {
-//         const cardEntries = await Card.find()
-//         res.json(cardEntries)
-//     } catch (error) {
-//         next(error)
-//     }
-// })
+// fetch all the card entries from db /api/cards
+router.get('/', async (req, res, next) => {
+  try {
+    const cardEntries = await Card.find()
+    res.json(cardEntries)
+  } catch (error) {
+    next(error)
+  }
+})
 
 // create new card entry
 router.post("/", auth, async (req, res, next) => {

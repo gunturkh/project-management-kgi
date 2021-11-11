@@ -42,6 +42,7 @@ import {
   updateBoardById,
   deleteBoardById,
 } from '../../actions/actionCreators/boardActions'
+import { fetchAllCards } from '../../actions/actionCreators/cardActions'
 import Fade from '@material-ui/core/Fade'
 import Loading from '../Loading'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -192,11 +193,55 @@ const SimpleMenu = ({ id, projectName, setOpenModal, setDeleteItem }) => {
 }
 function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
   const dispatch = useDispatch()
+  const [allCards, setAllCards] = React.useState([])
+  const [allLists, setAllLists] = React.useState([])
   // const [state, setState] = useState([
   //   getItems(10),
   //   getItems(5, 10),
   //   getItems(10, 10),
   // ])
+  useEffect(() => {
+
+    const getAllBoardsCards = async () => {
+      await axios.get(`/api/cards`, { headers: { 'x-auth-token': token } })
+        .then((res) => {
+          // console.log("all cards: ", res.data)
+          setAllCards(res.data);
+          let cardsByBoardId = res.data.reduce((acc, curVal) => {
+            // acc[curVal.boardId] = acc[curVal.boardId].push(curVal) || acc[curVal.boardId]
+            (acc[curVal.boardId] = acc[curVal.boardId] || []).push(curVal)
+            // console.log("curVal.boardId", curVal.boardId)
+            // console.log("reduce curVal", acc[curVal.boardId])
+            return acc
+          }, [])
+          // console.log("cardsByBoardId: ", cardsByBoardId)
+          // console.log("typeof cardsByBoardId: ", typeof cardsByBoardId)
+          // setAllCards(cardsByBoardId);
+        })
+
+    }
+    const getAllBoardsLists = async () => {
+      await axios.get(`/api/lists`, { headers: { 'x-auth-token': token } })
+        .then((res) => {
+          // console.log("all lists: ", res.data)
+          setAllLists(res.data);
+          let listsByBoardId = res.data.reduce((acc, curVal) => {
+            // acc[curVal.boardId] = acc[curVal.boardId].push(curVal) || acc[curVal.boardId]
+            (acc[curVal._id] = acc[curVal._id] || []).push(curVal)
+            // console.log("curVal.boardId", curVal.boardId)
+            // console.log("reduce curVal", acc[curVal.boardId])
+            return acc
+          }, [])
+          // console.log("listsByBoardId: ", listsByBoardId)
+          // console.log("typeof listsByBoardId: ", typeof listsByBoardId)
+          // setAllLists(listsByBoardId);
+        })
+
+    }
+    getAllBoardsCards();
+    getAllBoardsLists();
+  }, [])
+
   const getBoardColor = (status) => {
     let color
     switch (status) {
@@ -236,10 +281,10 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
       return []
     }
   }
-  const { boards, currBoard } = useSelector((state) => state.boards)
+  const { boards } = useSelector((state) => state.boards)
   const { user, users, token } = useSelector((state) => state.user)
   const { cards } = useSelector((state) => state.cards)
-  const { lists } = useSelector((state) => state.lists)
+  // const { lists } = useSelector((state) => state.lists)
   const [state, setState] = useState([
     getBoards(boards, 'Kick Off'),
     getBoards(boards, 'In Progress'),
@@ -259,6 +304,7 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
   }, [boards])
 
   console.log('Kick Off Board:', getBoards(boards, 'Kick Off'))
+  console.log('Cards from store:', cards)
   function onDragEnd(result) {
     console.log('onDragEnd result:', result)
     const { source, destination, draggableId } = result
@@ -388,7 +434,7 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
         }}
       >
         <DragDropContext onDragEnd={onDragEnd}>
-          {state.map((el, ind) => (
+          {state?.map((el, ind) => (
             <Droppable key={ind} droppableId={`${ind}`}>
               {(provided, snapshot) => (
                 <>
@@ -472,22 +518,22 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                                   <LinearProgressWithLabel
                                     variant="determinate"
                                     value={
-                                      (cards
-                                        .filter((c) => c.boardId === item._id)
-                                        .map((i) => {
-                                          const res = lists.filter(
-                                            (l) => i.listId === l._id,
-                                          )[0]
-                                          return res.name
-                                        })
-                                        .reduce((acc, curVal) => {
-                                          curVal === 'Checked' ||
-                                            curVal === 'Done'
-                                            ? (acc += 1)
-                                            : (acc = acc)
-                                          return acc
-                                        }, 0) /
-                                        cards.length) *
+                                      (
+                                        allCards.filter((c) => c.boardId === item._id)
+                                          ?.map((i) => {
+                                            const res = allLists.filter(
+                                              (l) => i.listId === l._id,
+                                            )[0]
+                                            return res?.name
+                                          })
+                                          .reduce((acc, curVal) => {
+                                            curVal === 'Checked' ||
+                                              curVal === 'Done'
+                                              ? (acc += 1)
+                                              : (acc = acc)
+                                            return acc
+                                          }, 0) /
+                                        allCards.filter((c) => c.boardId === item._id).length) *
                                       100
                                     }
                                   />
@@ -547,6 +593,7 @@ const ProjectsDashboard = (props) => {
     if (token) {
       dispatch(fetchAllUsersInfo(token))
       dispatch(fetchAllBoards(token))
+      // dispatch(fetchAllCards(token))
     }
   }, [])
   useEffect(() => {

@@ -325,8 +325,8 @@ const ProjectCard = ({ board, ...rest }) => {
             >
               {board?.startDate && board?.endDate
                 ? `${moment(board.startDate).format('DD MMMM YYYY')} - ${moment(
-                    board.endDate,
-                  ).format('DD MMMM YYYY')}`
+                  board.endDate,
+                ).format('DD MMMM YYYY')}`
                 : 'No Start Date - End Date Filled'}
             </Typography>
           </Grid>
@@ -408,12 +408,12 @@ const ProjectCard = ({ board, ...rest }) => {
           {board?.status || 'No Project Status Filled'}
           {board?.status &&
             ` 
-            ${
+            ${(
               (cards
                 .filter((c) => c.boardId === board._id)
                 .map((i) => {
                   const res = lists.filter((l) => i.listId === l._id)[0]
-                  return res.name
+                  return res?.name
                 })
                 .reduce((acc, curVal) => {
                   curVal === 'Checked' || curVal === 'Done'
@@ -423,6 +423,7 @@ const ProjectCard = ({ board, ...rest }) => {
                 }, 0) /
                 cards.length) *
               100
+            ).toFixed(0)
             }%`}
         </Typography>
       </Box>

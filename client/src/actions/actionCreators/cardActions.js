@@ -3,6 +3,20 @@ import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/cards/'
 
+export const fetchAllCards = (token) => (dispatch) => {
+  dispatch({ type: ACTIONS.MAKE_REQUEST_CARD })
+  axios
+    .get(BASE_URL, {
+      headers: { 'x-auth-token': token },
+    })
+    .then((res) => {
+      dispatch({ type: ACTIONS.GET_CARDS, payload: { cards: res.data } })
+    })
+    .catch((e) => {
+      dispatch({ type: ACTIONS.ERROR_CARD, payload: { error: e } })
+    })
+}
+
 export const createNewCard = (params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.POST_REQUEST_CARD })
   axios

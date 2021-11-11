@@ -5,15 +5,15 @@ const Card = require("../models/card");
 const { auth } = require("../middleware");
 const router = Router();
 
-// // fetch all the list entries from the db
-// router.get('/', async (req, res, next) => {
-//     try {
-//         const listEntries = await List.find()
-//         res.json(listEntries)
-//     } catch (error) {
-//         next(error)
-//     }
-// })
+// fetch all the list entries from the db
+router.get('/', async (req, res, next) => {
+  try {
+    const listEntries = await List.find()
+    res.json(listEntries)
+  } catch (error) {
+    next(error)
+  }
+})
 
 // create new entry of list
 router.post("/", auth, async (req, res, next) => {
