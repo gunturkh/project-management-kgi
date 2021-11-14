@@ -3,6 +3,7 @@ import * as ACTIONS from '../actions/actions'
 const initialState = {
   cardLoading: true,
   cards: [],
+  allCards: [],
 }
 export const cardsReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -12,6 +13,8 @@ export const cardsReducer = (state = initialState, action) => {
       return { ...state, cardLoading: true }
     case ACTIONS.GET_CARDS:
       return { ...state, cardLoading: false, cards: action.payload.cards }
+    case ACTIONS.GET_ALL_CARDS:
+      return { ...state, cardLoading: false, allCards: action.payload.allCards }
     case ACTIONS.ADD_CARD:
       return {
         ...state,

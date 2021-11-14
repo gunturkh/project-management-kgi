@@ -22,6 +22,8 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import { User, Edit, Trash2, MoreVertical } from 'react-feather'
 import { fetchAllCompaniesInfo } from '../../actions/actionCreators/companyActions'
+import { fetchAllCardsV2 } from '../../actions/actionCreators/cardActions'
+import { fetchAllLists } from '../../actions/actionCreators/listActions'
 import {
   fetchAllUsersInfo,
   updateUser,
@@ -34,8 +36,6 @@ function rand() {
 const projectStatusColor = (status) => {
   let color
   let backgroundColor
-  console.log('projectStatusColor status: ', status)
-  console.log('status === Kick Off? ', status === 'Kick Off')
   switch (status) {
     case 'Kick Off':
       backgroundColor = 'white'
@@ -93,8 +93,8 @@ const ProjectCard = ({ board, ...rest }) => {
   const [modalStyle] = useState(getModalStyle)
   const [openModal, setOpenModal] = useState(false)
   const { isValid, token, users, user } = useSelector((state) => state.user)
-  const { cards } = useSelector((state) => state.cards)
-  const { lists } = useSelector((state) => state.lists)
+  const { allCards } = useSelector((state) => state.cards)
+  const { lists, allLists } = useSelector((state) => state.lists)
   const { timelines } = useSelector((state) => state.timeline)
   const { companies } = useSelector((state) => state.company)
   const { boardState = board } = useSelector((state) => state.boards)
@@ -106,8 +106,6 @@ const ProjectCard = ({ board, ...rest }) => {
     setAnchorEl(null)
   }
   const navigate = useNavigate()
-  console.log('board:', board)
-  console.log('companies:', companies)
   const dispatch = useDispatch()
 
   let mappedPic = []
@@ -117,6 +115,8 @@ const ProjectCard = ({ board, ...rest }) => {
     if (isValid) {
       dispatch(fetchAllCompaniesInfo(token))
       dispatch(fetchAllUsersInfo(token))
+      dispatch(fetchAllCardsV2(token))
+      dispatch(fetchAllLists(token))
     }
   }, [])
   mappedPic = board?.pic?.map((pic) => {
@@ -141,7 +141,6 @@ const ProjectCard = ({ board, ...rest }) => {
         ? board?.pic?.some((item) => item !== user.id)
         : true
   }
-  console.log('projectStatusColor: ', projectStatusColor(board?.status))
   return (
     <Card
       sx={{
@@ -234,12 +233,7 @@ const ProjectCard = ({ board, ...rest }) => {
                   ...user,
                   pinned: [...user.pinned, pin],
                 }
-                // console.log('pin user:', postUserReq)
-                dispatch(updateUser(postUserReq)).then(() => {
-                  console.log('pin done!', user)
-                  // setLoading(false)
-                  // setEdit(false)
-                })
+                dispatch(updateUser(postUserReq))
               }}
             >
               Pin
@@ -409,10 +403,10 @@ const ProjectCard = ({ board, ...rest }) => {
           {board?.status &&
             ` 
             ${(
-              (cards
-                .filter((c) => c.boardId === board._id)
-                .map((i) => {
-                  const res = lists.filter((l) => i.listId === l._id)[0]
+              (allCards
+                ?.filter((c) => c.boardId === board._id)
+                ?.map((i) => {
+                  const res = allLists?.filter((l) => i.listId === l._id)[0]
                   return res?.name
                 })
                 .reduce((acc, curVal) => {
@@ -421,7 +415,9 @@ const ProjectCard = ({ board, ...rest }) => {
                     : (acc = acc)
                   return acc
                 }, 0) /
-                cards.length) *
+                allCards?.filter((c) => c.boardId === board._id).length
+              ) *
+              // allCards.length
               100
             ).toFixed(0)
             }%`}

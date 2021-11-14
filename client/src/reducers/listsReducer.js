@@ -3,6 +3,7 @@ import * as ACTIONS from '../actions/actions'
 const initialState = {
   listLoading: true,
   lists: [],
+  allLists: [],
 }
 export const listsReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -10,6 +11,8 @@ export const listsReducer = (state = initialState, action) => {
       return { ...state, listLoading: true }
     case ACTIONS.GET_LISTS:
       return { ...state, listLoading: false, lists: action.payload.lists }
+    case ACTIONS.GET_ALL_LISTS:
+      return { ...state, listLoading: false, allLists: action.payload.allLists }
     case ACTIONS.ADD_LIST:
       return { ...state, lists: [...state.lists, action.payload.list] }
     case ACTIONS.UPDATE_LIST: {

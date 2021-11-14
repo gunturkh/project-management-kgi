@@ -17,6 +17,20 @@ export const fetchAllCards = (token) => (dispatch) => {
     })
 }
 
+export const fetchAllCardsV2 = (token) => (dispatch) => {
+  dispatch({ type: ACTIONS.MAKE_REQUEST_CARD })
+  axios
+    .get(BASE_URL, {
+      headers: { 'x-auth-token': token },
+    })
+    .then((res) => {
+      dispatch({ type: ACTIONS.GET_ALL_CARDS, payload: { allCards: res.data } })
+    })
+    .catch((e) => {
+      dispatch({ type: ACTIONS.ERROR_CARD, payload: { error: e } })
+    })
+}
+
 export const createNewCard = (params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.POST_REQUEST_CARD })
   axios

@@ -27,6 +27,7 @@ import AdapterDateFns from '@material-ui/lab/AdapterDateFns'
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
 import DatePicker from '@material-ui/lab/DatePicker'
 import { fetchAllBoards } from '../actions/actionCreators/boardActions'
+// import { fetchAllCardsV2 } from '../actions/actionCreators/cardActions'
 import { fetchAllCompaniesInfo } from '../actions/actionCreators/companyActions'
 // import { createNewActivity } from '../actions/actionCreators/activityActions'
 
@@ -323,9 +324,9 @@ const ProjectFilters = (props) => {
         <React.Fragment>
           <div
             className="dropdown filter pr-4"
-            // style={{
-            //   borderRight: '1px solid rgb(227, 118, 118)',
-            // }}
+          // style={{
+          //   borderRight: '1px solid rgb(227, 118, 118)',
+          // }}
           >
             {/* <button
               className="btn btn-secondary dropdown-toggle btn-dashboard"
@@ -713,6 +714,10 @@ const ProjectList = () => {
     // }
   }, [token, isValid, dispatch])
 
+  // useEffect(() => {
+  //   dispatch(fetchAllCardsV2(token))
+  // }, [])
+
   let userPartOfCompany = []
   let companyFromUser = ''
   userPartOfCompany = _.filter(companies, { companyTeam: [user.id] })
@@ -785,17 +790,17 @@ const ProjectList = () => {
     if (keyword !== '') {
       const results = boardsWithFilter.length
         ? boardsWithFilter.filter((board) => {
-            return board.projectName
-              .toLowerCase()
-              .startsWith(keyword.toLowerCase())
-            // Use the toLowerCase() method to make it case-insensitive
-          })
+          return board.projectName
+            .toLowerCase()
+            .startsWith(keyword.toLowerCase())
+          // Use the toLowerCase() method to make it case-insensitive
+        })
         : boards.filter((board) => {
-            return board.projectName
-              .toLowerCase()
-              .startsWith(keyword.toLowerCase())
-            // Use the toLowerCase() method to make it case-insensitive
-          })
+          return board.projectName
+            .toLowerCase()
+            .startsWith(keyword.toLowerCase())
+          // Use the toLowerCase() method to make it case-insensitive
+        })
       setFoundBoards(results)
     } else {
       boardsWithFilter.length

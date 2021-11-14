@@ -3,6 +3,20 @@ import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/lists/'
 
+export const fetchAllLists = (token) => (dispatch) => {
+  dispatch({ type: ACTIONS.MAKE_REQUEST_LIST })
+  axios
+    .get(BASE_URL, {
+      headers: { 'x-auth-token': token },
+    })
+    .then((res) => {
+      dispatch({ type: ACTIONS.GET_ALL_LISTS, payload: { allLists: res.data } })
+    })
+    .catch((e) => {
+      dispatch({ type: ACTIONS.ERROR_LIST, payload: { error: e } })
+    })
+}
+
 export const createNewList = (params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.POST_REQUEST_LIST })
   axios
