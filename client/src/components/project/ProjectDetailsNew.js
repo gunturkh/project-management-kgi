@@ -938,6 +938,57 @@ export default function ProjectDetailsNew() {
                     width: 800,
                   }}
                 >
+                  <Grid container spacing={3} justifyContent="center" alignContent="center" flexDirection="column">
+                    <Typography
+                      align="center"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h1"
+                    >
+                      {mappedCompany || ''}
+                    </Typography>
+                    <Typography
+                      align="center"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h2"
+                    >
+                      {currBoard?.projectName}
+                    </Typography>
+                    <Typography
+                      align="center"
+                      color="textPrimary"
+                      gutterBottom
+                      variant="h3"
+                    >
+                      {currBoard?.projectDescription}
+                    </Typography>
+                    <Grid
+                      item
+                      // md={6}
+                      // xs={12}
+                      // md={6}
+                      // xs={12}
+                      sx={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 5,
+                        pl: 0,
+                      }}
+                    >
+                      <User size="20" />
+                      <Typography
+                        align="center"
+                        color="textSecondary"
+                        // display="inline"
+                        // sx={{ pl: 1 }}
+                        variant="body2"
+                      >
+                        {mappedPic?.join(', ') || ''}
+                      </Typography>
+                    </Grid>
+                  </Grid>
                   <DataGrid
                     rows={dataGridRow}
                     columns={dataGridColumn}
@@ -947,87 +998,6 @@ export default function ProjectDetailsNew() {
                     disableSelectionOnClick
                   />
                 </div>
-                {/* <Grid container spacing={3}>
-                  <Grid item md={6} xs={12}>
-                    <Typography
-                      align="left"
-                      color="textPrimary"
-                      gutterBottom
-                      variant="h5"
-                    >
-                      Company: {mappedCompany || ''}
-                    </Typography>
-                  </Grid>
-                  <Grid item md={12} xs={12}>
-                    <Typography
-                      align="left"
-                      color="textPrimary"
-                      gutterBottom
-                      variant="h5"
-                    >
-                      Name: {currBoard?.projectName}
-                    </Typography>
-                  </Grid>
-                  <Grid item md={12} xs={12}>
-                    <Typography
-                      align="left"
-                      color="textPrimary"
-                      gutterBottom
-                      variant="h6"
-                    >
-                      Description: {currBoard?.projectDescription}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    md={6}
-                    xs={12}
-                    sx={{
-                      alignItems: 'center',
-                      display: 'flex',
-                    }}
-                  >
-                    <AccessTimeIcon color="action" />
-                    <Typography
-                      align="left"
-                      color="textSecondary"
-                      display="inline"
-                      sx={{
-                        pl: 1,
-                      }}
-                      variant="body2"
-                    >
-                      {currBoard?.startDate && currBoard?.endDate
-                        ? `${moment(currBoard.startDate).format(
-                            'DD MMMM YYYY',
-                          )} - ${moment(currBoard.endDate).format(
-                            'DD MMMM YYYY',
-                          )}`
-                        : ''}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    md={6}
-                    xs={12}
-                    md={6}
-                    xs={12}
-                    sx={{
-                      alignItems: 'center',
-                      display: 'flex',
-                    }}
-                  >
-                    <User size="20" />
-                    <Typography
-                      color="textSecondary"
-                      display="inline"
-                      sx={{ pl: 1 }}
-                      variant="body2"
-                    >
-                      PIC: {mappedPic?.join(', ') || ''}
-                    </Typography>
-                  </Grid>
-                </Grid> */}
               </CardContent>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
