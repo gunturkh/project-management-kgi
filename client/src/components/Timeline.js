@@ -456,7 +456,7 @@ const Timeline = (props) => {
                       // projectDescription: e.projectDescription,
                       start: e.start,
                       end: e.end,
-                      progress: e.progress,
+                      // progress: e.progress,
                       boardId: currBoard._id,
                       customClass: colorPickerState,
                     }
@@ -477,13 +477,12 @@ const Timeline = (props) => {
                         console.log('picData: ', { picData })
                         const notifMessage = {
                           id: makeid(5),
-                          message: `Timeline ${e.title}, created by: ${
-                            user.name
-                          }, start: ${moment(e.start).format(
-                            'DD/MM/YYYY',
-                          )}, end: ${moment(e.end).format(
-                            'DD/MM/YYYY',
-                          )}, progress: ${e.progress}%`,
+                          message: `Timeline ${e.title}, created by: ${user.name
+                            }, start: ${moment(e.start).format(
+                              'DD/MM/YYYY',
+                            )}, end: ${moment(e.end).format(
+                              'DD/MM/YYYY',
+                            )}, progress: ${e.progress}%`,
                           link: `/app/projects/details/${currBoard._id}`,
                           read: false,
                         }
@@ -543,23 +542,23 @@ const Timeline = (props) => {
                                 variant="outlined"
                               />
                             </Grid>
-                            <Grid item md={12} xs={12}>
-                              <TextField
-                                error={Boolean(
-                                  touched.progress && errors.progress,
-                                )}
-                                fullWidth
-                                helperText="Please fill project progress"
-                                label="Timeline progress"
-                                name="progress"
-                                type="number"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                required
-                                value={values.progress}
-                                variant="outlined"
-                              />
-                            </Grid>
+                            {/* <Grid item md={12} xs={12}> */}
+                            {/*   <TextField */}
+                            {/*     error={Boolean( */}
+                            {/*       touched.progress && errors.progress, */}
+                            {/*     )} */}
+                            {/*     fullWidth */}
+                            {/*     helperText="Please fill project progress" */}
+                            {/*     label="Timeline progress" */}
+                            {/*     name="progress" */}
+                            {/*     type="number" */}
+                            {/*     onBlur={handleBlur} */}
+                            {/*     onChange={handleChange} */}
+                            {/*     required */}
+                            {/*     value={values.progress} */}
+                            {/*     variant="outlined" */}
+                            {/*   /> */}
+                            {/* </Grid> */}
                             <Grid item md={12} sx={12}>
                               <Box
                                 md={12}
@@ -692,11 +691,11 @@ const Timeline = (props) => {
                     // projectDescription: '',
                     start: timeline?.start
                       ? // ? moment.utc(timeline.start).format('DD MMM YYYY')
-                        moment(timeline.start).format('DD MMM YYYY')
+                      moment(timeline.start).format('DD MMM YYYY')
                       : '',
                     end: timeline?.end
                       ? // ? moment.utc(timeline.end).format('DD MMM YYYY')
-                        moment(timeline.end).format('DD MMM YYYY')
+                      moment(timeline.end).format('DD MMM YYYY')
                       : '',
                     boardId: currBoard._id,
                     progress: parseInt(timeline?.progress) || 0,
@@ -725,7 +724,7 @@ const Timeline = (props) => {
                       title: e.title,
                       start: e.start,
                       end: endTime,
-                      progress: e.progress,
+                      // progress: e.progress,
                       boardId: currBoard._id,
                       customClass: colorPickerState,
                     }
@@ -791,23 +790,23 @@ const Timeline = (props) => {
                                 variant="outlined"
                               />
                             </Grid>
-                            <Grid item md={12} xs={12}>
-                              <TextField
-                                error={Boolean(
-                                  touched.progress && errors.progress,
-                                )}
-                                fullWidth
-                                helperText="Please fill project progress"
-                                label="Timeline progress"
-                                name="progress"
-                                type="number"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                required
-                                value={values.progress}
-                                variant="outlined"
-                              />
-                            </Grid>
+                            {/* <Grid item md={12} xs={12}> */}
+                            {/*   <TextField */}
+                            {/*     error={Boolean( */}
+                            {/*       touched.progress && errors.progress, */}
+                            {/*     )} */}
+                            {/*     fullWidth */}
+                            {/*     helperText="Please fill project progress" */}
+                            {/*     label="Timeline progress" */}
+                            {/*     name="progress" */}
+                            {/*     type="number" */}
+                            {/*     onBlur={handleBlur} */}
+                            {/*     onChange={handleChange} */}
+                            {/*     required */}
+                            {/*     value={values.progress} */}
+                            {/*     variant="outlined" */}
+                            {/*   /> */}
+                            {/* </Grid> */}
                             <Grid item md={12} sx={12}>
                               <Box
                                 md={12}
@@ -1086,13 +1085,11 @@ const Timeline = (props) => {
                   console.log('picData: ', { picData })
                   const notifMessage = {
                     id: makeid(5),
-                    message: `Timeline ${task.name}, edited by: ${
-                      user.name
-                    }, start: ${moment(start).format(
-                      'DD/MM/YYYY',
-                    )}, end: ${moment(end).format('DD/MM/YYYY')}, progress: ${
-                      task.progress
-                    }%`,
+                    message: `Timeline ${task.name}, edited by: ${user.name
+                      }, start: ${moment(start).format(
+                        'DD/MM/YYYY',
+                      )}, end: ${moment(end).format('DD/MM/YYYY')}, progress: ${task.progress
+                      }%`,
                     link: `/app/projects/details/${currBoard._id}`,
                     read: false,
                   }

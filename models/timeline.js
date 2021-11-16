@@ -9,7 +9,7 @@ const timelineSchema = new Schema(
     },
     progress: {
       type: String,
-      required: true,
+      // required: true,
     },
     groupId: {
       type: String,
