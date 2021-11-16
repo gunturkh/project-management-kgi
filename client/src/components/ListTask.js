@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '500px',
     overflow: 'auto',
     overflowX: 'hidden',
-    // overflowY: 'auto',
+    overflowY: 'auto',
     margin: 0,
     padding: 0,
     listStyle: 'none',
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   wrapper: {
-    marginTop: theme.spacing(10.3),
+    marginTop: theme.spacing(0.5),
   },
   editable: {
     marginLeft: theme.spacing(-1),
@@ -85,6 +85,7 @@ export default function Column({ column, tasks, index }) {
   const [editable, setEditable] = useState(false)
   const [list, setList] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
+  const [showAdd, setShowAdd] = useState(false)
   const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
 
@@ -99,7 +100,7 @@ export default function Column({ column, tasks, index }) {
         return { ...prevState, startDate: e }
       })
     } else {
-      if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+      if (noPersistChange.includes(e.target.name)) e.persist = () => { }
       else e.persist()
 
       setTaskValue((prevState) => {
@@ -139,11 +140,9 @@ export default function Column({ column, tasks, index }) {
         console.log('picData: ', { picData })
         const notifMessage = {
           id: makeid(5),
-          message: `Task ${taskValue.name}, created by: ${
-            user.name
-          }, description: ${taskValue.description}, priority: ${
-            taskValue.priority
-          }, due date: ${moment(taskValue.dueDate).format('DD/MM/YYYY')}`,
+          message: `Task ${taskValue.name}, created by: ${user.name
+            }, description: ${taskValue.description}, priority: ${taskValue.priority
+            }, due date: ${moment(taskValue.dueDate).format('DD/MM/YYYY')}`,
           link: `/app/projects/details/${currBoard._id}`,
           read: false,
         }
@@ -194,7 +193,7 @@ export default function Column({ column, tasks, index }) {
   }
   const changedHandler = (e) => {
     const noPersistChange = ['priority', 'pic']
-    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    if (noPersistChange.includes(e.target.name)) e.persist = () => { }
     else e.persist()
     setTaskValue((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value }
@@ -262,8 +261,10 @@ export default function Column({ column, tasks, index }) {
             <div {...provided.draggableProps} ref={provided.innerRef}>
               <Paper
                 elevation={0}
-                onMouseEnter={() => setShowDelete(true)}
-                onMouseLeave={() => setShowDelete(false)}
+                // onMouseEnter={() => setShowDelete(true)}
+                // onMouseLeave={() => setShowDelete(false)}
+                onMouseEnter={() => setShowAdd(true)}
+                onMouseLeave={() => setShowAdd(false)}
                 className={classes.root}
                 style={{
                   backgroundColor: `${borderColor(listTitle)}`,
@@ -286,7 +287,7 @@ export default function Column({ column, tasks, index }) {
                       >
                         {column.name}
                       </div>
-                      {showDelete && (
+                      {showAdd && (
                         <IconButton
                           size="small"
                           style={{
@@ -297,18 +298,19 @@ export default function Column({ column, tasks, index }) {
                             zIndex: 100,
                           }}
                           onClick={() => {
-                            setList(false)
-                            dispatch(deleteListById(column._id))
-                            const text = `${user.username} deleted list ${column.name}`
-                            dispatch(
-                              createNewActivity(
-                                { text, boardId: column.boardId },
-                                token,
-                              ),
-                            )
+                            handleAddition()
+                            // setList(false)
+                            // dispatch(deleteListById(column._id))
+                            // const text = `${user.username} deleted list ${column.name}`
+                            // dispatch(
+                            //   createNewActivity(
+                            //     { text, boardId: column.boardId },
+                            //     token,
+                            //   ),
+                            // )
                           }}
                         >
-                          <DeleteIcon
+                          <AddIcon
                             fontSize="small"
                             style={{ backgroundColor: '#EBECF0' }}
                           />
@@ -381,15 +383,15 @@ export default function Column({ column, tasks, index }) {
                           )}
                           {provided.placeholder}
                         </div>
-                        {!addCardFlag && (
-                          <AddItem
-                            handleClick={handleAddition}
-                            icon={<AddIcon />}
-                            btnText="Add another card"
-                            type="card"
-                            width="256px"
-                          />
-                        )}
+                        {/* {!addCardFlag && ( */}
+                        {/*   <AddItem */}
+                        {/*     handleClick={handleAddition} */}
+                        {/*     icon={<AddIcon />} */}
+                        {/*     btnText="Add another card" */}
+                        {/*     type="card" */}
+                        {/*     width="256px" */}
+                        {/*   /> */}
+                        {/* )} */}
                       </div>
                     )
                   }

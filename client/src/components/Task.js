@@ -270,7 +270,7 @@ export default function Task() {
     const recentActivity = activities[activities.length - 1]
     if (
       recentActivity.text ===
-        `${user.username} moved ${initialData.tasks[draggableId].name} from ${endList.name} to ${startList.name}` &&
+      `${user.username} moved ${initialData.tasks[draggableId].name} from ${endList.name} to ${startList.name}` &&
       moment(recentActivity.createdAt).fromNow().includes('second')
     ) {
       dispatch(deleteActivityById(recentActivity._id))
@@ -313,7 +313,7 @@ export default function Task() {
   // }
   const handleChange = (e) => {
     const noPersistChange = ['priority', 'pic']
-    if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    if (noPersistChange.includes(e.target.name)) e.persist = () => { }
     else e.persist()
     setTaskValue((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value }
@@ -338,10 +338,10 @@ export default function Task() {
         totalLists === 0
           ? 'n'
           : midString(
-              initialData.columns[initialData.columnOrder[totalLists - 1]]
-                .order,
-              '',
-            ),
+            initialData.columns[initialData.columnOrder[totalLists - 1]]
+              .order,
+            '',
+          ),
     }
     dispatch(createNewList(postListReq, token))
     dispatch(

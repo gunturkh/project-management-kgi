@@ -55,7 +55,7 @@ function LinearProgressWithLabel(props) {
         <LinearProgress color="apple" style={{ backgroundColor: 'black' }} variant="determinate" {...props} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
+        <Typography variant="body2" color="black">{`${Math.round(
           props.value,
         )}%`}</Typography>
       </Box>
@@ -114,6 +114,7 @@ const getListStyle = (isDraggingOver, color) => ({
   padding: grid,
   width: '100%',
   minWidth: '300px',
+  borderRadius: '15px',
 })
 
 function rand() {
@@ -443,6 +444,9 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                       backgroundColor: getBoardColor(el.title),
                       width: '100%',
                       margin: '10px 0px',
+                      border: '3px black solid',
+                      borderRadius: '15px',
+                      boxShadow: '0px 5px 5px 0px rgba(113,113,113,0.75)',
                     }}
                   >
                     <div
