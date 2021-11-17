@@ -7,11 +7,12 @@ import {
   IconButton,
   InputLabel,
   FormControl,
-  Select,
+  Select as SelectUI,
   Input,
   MenuItem,
   TextField,
 } from '@material-ui/core'
+import Select from 'react-select';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
 import DatePicker from '@material-ui/lab/DatePicker'
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns'
@@ -105,11 +106,11 @@ export default function InputItem({
     }
   }
 
-  useEffect(() => {
-    if (divRef.current != null) {
-      divRef.current.scrollIntoView({ behaviour: 'smooth' })
-    }
-  })
+  // useEffect(() => {
+  //   if (divRef.current != null) {
+  //     divRef.current.scrollIntoView({ behaviour: 'smooth' })
+  //   }
+  // })
   const handleBlur = () => {
     // closeHandler()
     // itemAdded()
@@ -124,7 +125,7 @@ export default function InputItem({
             multiline
             fullWidth
             value={name}
-            autoFocus
+            // autoFocus
             placeholder={'Title'}
             label={'Title'}
             // onBlur={handleBlur}
@@ -154,7 +155,7 @@ export default function InputItem({
           >
             Priority
           </InputLabel>
-          <Select
+          <SelectUI
             value={priority}
             onChange={changedHandler}
             name="priority"
@@ -172,35 +173,39 @@ export default function InputItem({
               >
                 Low
               </MenuItem> */}
-          </Select>
+          </SelectUI>
         </FormControl>
         <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
-          <InputLabel
-            id="demo-mutiple-pic-label"
-            style={{ marginLeft: '-15px' }}
-          >
+          {/* <InputLabel */}
+          {/*   id="demo-mutiple-pic-label" */}
+          {/*   style={{ marginLeft: '-15px' }} */}
+          {/* > */}
+          {/*   Assigned to */}
+          {/* </InputLabel> */}
+          <div style={{ marginLeft: '-15px' }}>
+
             Assigned to
-          </InputLabel>
+          </div>
           <Select
-            multiple
+            isMulti
             value={pic}
             onChange={changedHandler}
+            // onChange={(e) => console.log("react select on change", e)}
             name="pic"
             // input={<Input label="PIC" />}
             variant="standard"
-            MenuProps={MenuProps}
+            // MenuProps={MenuProps}
             // style={{ maxWidth: '100%' }}
             required
+            options={users.map((user) => {
+              return {
+                value: user._id,
+                label: user.username,
+              }
+            }
+            )}
+
           >
-            {users.map((user) => (
-              <MenuItem
-                key={`${user.username}-${user._id}`}
-                value={user._id}
-                style={getStyles()}
-              >
-                {user.username}
-              </MenuItem>
-            ))}
           </Select>
         </FormControl>
         <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
@@ -248,7 +253,7 @@ export default function InputItem({
           >
             List
           </InputLabel>
-          <Select
+          <SelectUI
             // multiple
             value={list}
             onChange={changedHandler}
@@ -268,7 +273,7 @@ export default function InputItem({
                 {t.title}
               </MenuItem>
             ))}
-          </Select>
+          </SelectUI>
         </FormControl>
       </Paper>
       <Button

@@ -67,8 +67,9 @@ export default function Card({ task, index }) {
   let mappedPic = []
   let mappedList = []
   mappedPic = task?.pic?.map((pic) => {
-    return users.find((user) => user._id === pic)?.username
+    return users.find((user) => user._id === pic || user._id === pic.value)?.username
   })
+  console.log("mappedPic", mappedPic)
   console.log('task list', task?.list)
   if (typeof task.list === 'array') {
     mappedList = task?.list?.map((list) => {
@@ -82,6 +83,7 @@ export default function Card({ task, index }) {
   console.log('mappedList', mappedList)
   const handleChange = (e, target) => {
     console.log('handleChange card:', { e, target })
+    console.log("card handleChange ", { e, target })
     const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setEditTaskValue((prevState) => {
@@ -91,8 +93,18 @@ export default function Card({ task, index }) {
       setEditTaskValue((prevState) => {
         return { ...prevState, startDate: e }
       })
-    } else {
-      if (noPersistChange.includes(e.target.name)) e.persist = () => {}
+    } else if (target?.name === 'pic') {
+      console.log("pic on change", e)
+      setEditTaskValue((prevState) => {
+        return {
+          ...prevState,
+          [target.name]: e,
+          modifyBy: user.username,
+        }
+      })
+    }
+    else {
+      if (noPersistChange.includes(e.target.name)) e.persist = () => { }
       else e.persist()
       console.log('setState card: ', {
         name: e.target.name,
@@ -223,11 +235,9 @@ export default function Card({ task, index }) {
         console.log('picData: ', { picData })
         const notifMessage = {
           id: makeid(5),
-          message: `Task ${editTaskValue.name}, edited by: ${
-            user.name
-          }, description: ${editTaskValue.description}, priority: ${
-            editTaskValue.priority
-          }, due date: ${moment(editTaskValue.dueDate).format('DD/MM/YYYY')}`,
+          message: `Task ${editTaskValue.name}, edited by: ${user.name
+            }, description: ${editTaskValue.description}, priority: ${editTaskValue.priority
+            }, due date: ${moment(editTaskValue.dueDate).format('DD/MM/YYYY')}`,
           link: `/app/projects/details/${currBoard._id}`,
           read: false,
         }

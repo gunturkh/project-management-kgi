@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     // overflowX: 'hidden',
     // overflowY: 'auto',
     margin: 0,
-    padding: 0,
+    paddingBottom: '20px',
     listStyle: 'none',
     height: '100%',
     '&::-webkit-scrollbar': {
@@ -90,6 +90,7 @@ export default function Column({ column, tasks, index }) {
   const dispatch = useDispatch()
 
   const handleChange = (e, target) => {
+    console.log("listTask handleChange ", { e, target })
     const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setTaskValue((prevState) => {
@@ -99,7 +100,17 @@ export default function Column({ column, tasks, index }) {
       setTaskValue((prevState) => {
         return { ...prevState, startDate: e }
       })
-    } else {
+    } else if (target?.name === 'pic') {
+      console.log("pic on change", e)
+      setTaskValue((prevState) => {
+        return {
+          ...prevState,
+          [target.name]: e,
+          modifyBy: user.username,
+        }
+      })
+    }
+    else {
       if (noPersistChange.includes(e.target.name)) e.persist = () => { }
       else e.persist()
 
@@ -326,7 +337,7 @@ export default function Column({ column, tasks, index }) {
                         fullWidth
                         value={listTitle}
                         style={{ fontWeight: 'bold' }}
-                        autoFocus
+                        // autoFocus
                         onFocus={(e) => {
                           const val = e.target.value
                           e.target.value = ''
