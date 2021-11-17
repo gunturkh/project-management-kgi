@@ -925,7 +925,9 @@ export default function ProjectDetailsNew() {
                 <Tab label="Files" {...a11yProps(3)} />
               </Tabs>
             </AppBar>
-            <TabPanel value={tabValue} index={0}>
+            <TabPanel value={tabValue} index={0}
+              style={{ height: '100vh' }}
+            >
               {/* TODO: Change TabPanel[0] content into task list with sorting feature*/}
 
               <CardContent
@@ -1001,38 +1003,36 @@ export default function ProjectDetailsNew() {
               </CardContent>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
-              <>
-                <Divider />
-                <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable
-                    droppableId="all-columns"
-                    direction="horizontal"
-                    type="list"
-                  >
-                    {(provided) => (
-                      <div
-                        className={classes.listContainer}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {initDone &&
-                          initialData.columnOrder.map((columnId, index) => {
-                            const column = initialData.columns[columnId]
-                            const tasks = column.taskIds.map(
-                              (taskId) => initialData.tasks[taskId],
-                            )
-                            return (
-                              <ListTask
-                                key={column._id}
-                                column={column}
-                                tasks={tasks}
-                                index={index}
-                                style={classes.wrapper}
-                              />
-                            )
-                          })}
-                        <div className={classes.wrapper}>
-                          {/* {addFlag.current && (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable
+                  droppableId="all-columns"
+                  direction="horizontal"
+                  type="list"
+                >
+                  {(provided) => (
+                    <div
+                      className={classes.listContainer}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {initDone &&
+                        initialData.columnOrder.map((columnId, index) => {
+                          const column = initialData.columns[columnId]
+                          const tasks = column.taskIds.map(
+                            (taskId) => initialData.tasks[taskId],
+                          )
+                          return (
+                            <ListTask
+                              key={column._id}
+                              column={column}
+                              tasks={tasks}
+                              index={index}
+                              style={classes.wrapper}
+                            />
+                          )
+                        })}
+                      <div className={classes.wrapper}>
+                        {/* {addFlag.current && (
                         <AddItem
                           handleClick={handleAddition}
                           btnText="Add another list"
@@ -1043,27 +1043,26 @@ export default function ProjectDetailsNew() {
                           noshadow
                         />
                       )} */}
-                          {addListFlag && (
-                            <InputCard
-                              value={listTitle}
-                              changedHandler={handleChange}
-                              itemAdded={submitHandler}
-                              closeHandler={closeButtonHandler}
-                              keyDownHandler={handleKeyDown}
-                              type="list"
-                              btnText="Add List"
-                              placeholder="Enter list title..."
-                              width="230px"
-                              marginLeft="1"
-                            />
-                          )}
-                        </div>
-                        {provided.placeholder}
+                        {addListFlag && (
+                          <InputCard
+                            value={listTitle}
+                            changedHandler={handleChange}
+                            itemAdded={submitHandler}
+                            closeHandler={closeButtonHandler}
+                            keyDownHandler={handleKeyDown}
+                            type="list"
+                            btnText="Add List"
+                            placeholder="Enter list title..."
+                            width="230px"
+                            marginLeft="1"
+                          />
+                        )}
                       </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-              </>
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </TabPanel>
             <TabPanel value={tabValue} index={2}>
               <Box
