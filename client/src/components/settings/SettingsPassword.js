@@ -31,7 +31,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 const SettingsPassword = (props) => {
-  const { user } = useSelector((state) => state.user)
+  const { user, updateStatus, updateError } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   console.log('user', user)
@@ -40,11 +40,22 @@ const SettingsPassword = (props) => {
     confirm: '',
   })
   const [edit, setEdit] = useState(false)
+  const [submit, setSubmit] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
     setImageUrl(user.avatar)
   }, [user])
+
+  useEffect(() => {
+
+    if (submit) {
+      setOpen(true)
+      setSubmit(false)
+    }
+    // if (updateStatus) setOpen(true)
+    // else if (updateError) setOpen(true)
+  }, [updateStatus])
 
   // const handleChange = (event) => {
   //   setValues({
@@ -95,7 +106,7 @@ const SettingsPassword = (props) => {
             const postUserReq = {
               username: user.username,
               newPassword: e.newPassword,
-              newPasswordCheck: e.newPassword,
+              newPasswordCheck: e.newPasswordCheck,
               role: user.role,
               name: e.name,
               position: e.position,
@@ -241,10 +252,10 @@ const SettingsPassword = (props) => {
                 >
                   <Alert
                     onClose={handleClose}
-                    severity="success"
+                    severity={updateError ? "error" : "success"}
                     sx={{ width: '100%' }}
                   >
-                    Success update profile picture!
+                    {updateError ? `${updateError}` : `Success update profile picture!`}
                   </Alert>
                 </Snackbar>
               </Box>
@@ -273,15 +284,12 @@ const SettingsPassword = (props) => {
           const postUserReq = {
             username: user.username,
             newPassword: e.newPassword,
-            newPasswordCheck: e.newPassword,
+            newPasswordCheck: e.newPasswordCheck,
             role: e.role,
           }
           console.log('postBoardReq submit: ', postUserReq)
-          dispatch(updateUser(postUserReq)).then(() => {
-            console.log('done create project')
-            setOpen(true)
-            // navigate('/app/projects')
-          })
+          dispatch(updateUser(postUserReq))
+          setSubmit(true)
           // navigate(`/app/projects`, { replace: true })
           // const { username, password } = e
           // const loginReq = { username, password }
@@ -416,10 +424,10 @@ const SettingsPassword = (props) => {
                 >
                   <Alert
                     onClose={handleClose}
-                    severity="success"
+                    severity={updateError ? "error" : "success"}
                     sx={{ width: '100%' }}
                   >
-                    Success update password!
+                    {updateError ? `${updateError}` : `Success update password!`}
                   </Alert>
                 </Snackbar>
               </Box>

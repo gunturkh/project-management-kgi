@@ -229,13 +229,16 @@ const CreateProject = (props) => {
             taskPhase.forEach((task) => {
               dispatch(createNewList(task, token))
             })
-            navigate('/app/projects')
+            navigate('/app/projects', { state: { status: 'success', message: 'Project created successfully!' } })
           })
           .catch((e) => {
-            if (e.message === 'Network Error')
+            if (e.message === 'Network Error') {
               dispatch({ type: ACTIONS.ERROR_BOARD, payload: { error: e } })
+              navigate('/app/projects', { state: { status: 'error', message: 'Create project failed because network error!' } })
+            }
             else if (e.response.status === 422)
-              dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD })
+              dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD, payload: { error: e } })
+            navigate('/app/projects', { state: { status: 'error', message: `${e.message}, please make sure to fill all the fields like pic and company` } })
           })
         // dispatch(createNewBoard(postBoardReq, token)).then(() => {
         //   setBoardCreated(true)

@@ -16,9 +16,12 @@ import {
   makeStyles,
   Checkbox,
   Button,
+  Snackbar,
+  Alert as MuiAlert,
 } from '@material-ui/core'
 import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import ProjectListToolbar from '../components/project/ProjectListToolbar'
 import ProjectCard from '../components/project/ProjectCard'
 import Loading from '../components/Loading'
@@ -31,6 +34,10 @@ import { fetchAllBoards } from '../actions/actionCreators/boardActions'
 // import { fetchAllCardsV2 } from '../actions/actionCreators/cardActions'
 import { fetchAllCompaniesInfo } from '../actions/actionCreators/companyActions'
 // import { createNewActivity } from '../actions/actionCreators/activityActions'
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const CssTextField = styled(TextField)({
   '& label.Mui-focused': {
@@ -904,19 +911,22 @@ const ProjectFilters = (props) => {
   )
 }
 
-const ProjectList = () => {
-  const { boards, loading } = useSelector((state) => state.boards)
+const ProjectList = (props) => {
+  const { boards, loading, error } = useSelector((state) => state.boards)
   const { token, isValid, user } = useSelector((state) => state.user)
   const { companies } = useSelector((state) => state.company)
   const [search, setSearch] = useState('')
   const [foundBoards, setFoundBoards] = useState(boards)
+  const [openAlert, setOpenAlert] = useState(false)
   const [boardsWithFilter, setBoardsWithFilter] = useState([])
   const [filterCardState, setFilterCardState] = useState({})
   const [page, setPage] = React.useState(1)
+  const { state } = useLocation();
   const handleChange = (event, value) => {
     setPage(value)
   }
   const dispatch = useDispatch()
+  console.log('project dashboard state: ', state)
   useEffect(() => {
     // if (isValid) {
     dispatch(fetchAllBoards(token))
@@ -924,9 +934,13 @@ const ProjectList = () => {
     // }
   }, [token, isValid, dispatch])
 
-  // useEffect(() => {
-  //   dispatch(fetchAllCardsV2(token))
-  // }, [])
+  useEffect(() => {
+    state && setOpenAlert(true)
+  }, [state])
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false)
+  }
 
   let userPartOfCompany = []
   let companyFromUser = ''
@@ -1120,6 +1134,19 @@ const ProjectList = () => {
             >
               {/* <Pagination color="primary" count={3} size="small" /> */}
             </Box>
+            <Snackbar
+              open={openAlert}
+              autoHideDuration={6000}
+              onClose={handleCloseAlert}
+            >
+              <Alert
+                onClose={handleCloseAlert}
+                severity={state?.status === 'error' ? "error" : "success"}
+                sx={{ width: '100%' }}
+              >
+                {state?.status === 'error' ? `${state.message}` : `Project created successfully!`}
+              </Alert>
+            </Snackbar>
           </Container>
         )}
       </Box>

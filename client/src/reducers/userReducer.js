@@ -21,6 +21,8 @@ const initialState = {
   userRequest: true,
   tokenRequest: true,
   error: null,
+  updateError: null,
+  updateStatus: null,
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -90,6 +92,7 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         updateError: action.payload.error,
+        updateStatus: false,
       }
     case ACTIONS.LOGIN_SUCCESS:
       return {
@@ -135,6 +138,8 @@ export const userReducer = (state = initialState, action) => {
           position: action.payload.user.position,
           pinned: action.payload.user.pinned,
         },
+        updateError: null,
+        updateStatus: true,
       }
     case ACTIONS.UPDATE_NOTIFICATION_SUCCESS:
       return {
