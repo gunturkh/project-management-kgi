@@ -60,7 +60,8 @@ export const boardReducer = (state = initialState, action) => {
       boardPrev.splice(index, 1)
       return {
         ...state,
-        boards: boardPrev,
+        // boards: boardPrev,
+        boards: action.payload.board,
         loading: false,
         newBoard: undefined,
       }

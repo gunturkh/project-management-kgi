@@ -72,6 +72,7 @@ export const deleteBoardById = (id, token) => (dispatch) => {
       headers: { 'x-auth-token': token },
     })
     .then((res) => {
+      console.log("res after delete board:", res.data)
       dispatch({ type: ACTIONS.DELETE_BOARD, payload: { board: res.data } })
     })
     .catch((e) => {

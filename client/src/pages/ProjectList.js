@@ -932,7 +932,7 @@ const ProjectList = (props) => {
     dispatch(fetchAllBoards(token))
     dispatch(fetchAllCompaniesInfo(token))
     // }
-  }, [token, isValid, dispatch])
+  }, [token, isValid, dispatch, state])
 
   useEffect(() => {
     state && setOpenAlert(true)

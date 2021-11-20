@@ -141,6 +141,23 @@ const ProjectCard = ({ board, ...rest }) => {
         ? board?.pic?.some((item) => item !== user.id)
         : true
   }
+  const progressCount = (
+    (allCards
+      ?.filter((c) => c.boardId === board._id)
+      ?.map((i) => {
+        const res = allLists?.filter((l) => i.listId === l._id)[0]
+        return res?.name
+      })
+      .reduce((acc, curVal) => {
+        curVal === 'Checked' || curVal === 'Done'
+          ? (acc += 1)
+          : (acc = acc)
+        return acc
+      }, 0) /
+      allCards?.filter((c) => c.boardId === board._id)?.length
+    ) *
+    100
+  )
   return (
     <Card
       sx={{
@@ -401,26 +418,7 @@ const ProjectCard = ({ board, ...rest }) => {
         >
           {board?.status || 'No Project Status Filled'}
           {board?.status &&
-            ` 
-            ${(
-              (allCards
-                ?.filter((c) => c.boardId === board._id)
-                ?.map((i) => {
-                  const res = allLists?.filter((l) => i.listId === l._id)[0]
-                  return res?.name
-                })
-                .reduce((acc, curVal) => {
-                  curVal === 'Checked' || curVal === 'Done'
-                    ? (acc += 1)
-                    : (acc = acc)
-                  return acc
-                }, 0) /
-                allCards?.filter((c) => c.boardId === board._id).length
-              ) *
-              // allCards.length
-              100
-            ).toFixed(0)
-            }%`}
+            isNaN(progressCount) ? ` 0%` : ` ${progressCount?.toFixed(0)}%`}
         </Typography>
       </Box>
     </Card>

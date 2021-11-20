@@ -252,7 +252,8 @@ router.delete("/:id", auth, async (req, res, next) => {
     activities.forEach(async (activity) => {
       await Activity.deleteOne({ _id: activity._id });
     });
-    res.send(board);
+    const boardsList = await Board.find({});
+    res.send(boardsList);
   } catch (error) {
     next(error);
   }
