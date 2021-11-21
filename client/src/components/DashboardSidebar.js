@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import {
@@ -49,6 +49,7 @@ const DashboardSidebar = ({
   openNotification,
 }) => {
   const location = useLocation()
+  const navigate = useNavigate()
   const { user, users } = useSelector((state) => state.user)
   const picData = users.filter((d) => d._id === user.id)[0]
   const dispatch = useDispatch()
@@ -351,30 +352,40 @@ const DashboardSidebar = ({
                   margin: 1,
                   backgroundColor: notif?.read ? 'white' : '#AAC2FF',
                   minHeight: '150px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  dispatch(
+                    updateUserNotificationStatusById({
+                      userId: user.id,
+                      id: notif.id,
+                    }),
+                  )
+                  navigate(`${notif.link}`)
                 }}
               >
                 <CardContent
-                  component={RouterLink}
-                  to={notif?.link ? `${notif.link}` : ''}
+                  // component={RouterLink}
+                  // to={notif?.link ? `${notif.link}` : ''}
                   sx={{ color: 'black' }}
                 >
                   {notif?.message}
                 </CardContent>
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      dispatch(
-                        updateUserNotificationStatusById({
-                          userId: user.id,
-                          id: notif.id,
-                        }),
-                      )
-                    }}
-                  >
-                    Mark as read
-                  </Button>
-                </CardActions>
+                {/* <CardActions sx={{ justifyContent: 'flex-end' }}> */}
+                {/*   <Button */}
+                {/*     size="small" */}
+                {/*     onClick={() => { */}
+                {/*       dispatch( */}
+                {/*         updateUserNotificationStatusById({ */}
+                {/*           userId: user.id, */}
+                {/*           id: notif.id, */}
+                {/*         }), */}
+                {/*       ) */}
+                {/*     }} */}
+                {/*   > */}
+                {/*     Mark as read */}
+                {/*   </Button> */}
+                {/* </CardActions> */}
               </Card>
             ))
             .reverse()}
