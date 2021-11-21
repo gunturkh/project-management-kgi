@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import { useDispatch, useSelector } from 'react-redux'
-import { Paper, makeStyles, InputBase, IconButton } from '@material-ui/core'
+import {
+  Paper, makeStyles, InputBase, IconButton,
+  Snackbar,
+  Alert as MuiAlert,
+} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Card from './Card'
@@ -17,6 +21,10 @@ import {
 import { updateUserNotification } from '../actions/actionCreators/userActions'
 import { makeid } from '../utils/randomString'
 import moment from 'moment'
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,6 +75,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Column({ column, tasks, index }) {
   const classes = useStyles()
+  const [openAlert, setOpenAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState({ status: null, message: null })
   const { token, user, users } = useSelector((state) => state.user)
   const [taskValue, setTaskValue] = useState({
     name: '',
@@ -89,6 +99,9 @@ export default function Column({ column, tasks, index }) {
   const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
 
+  const handleCloseAlert = () => {
+    setOpenAlert(false)
+  }
   const handleChange = (e, target) => {
     console.log("listTask handleChange ", { e, target })
     const noPersistChange = ['priority', 'pic', 'list']
@@ -142,9 +155,17 @@ export default function Column({ column, tasks, index }) {
       order:
         totalTasks === 0 ? 'n' : midString(tasks[totalTasks - 1].order, ''),
     }
-    dispatch(createNewCard(postCardReq, token)).then(() =>
-      console.log('create card success'),
-    )
+    dispatch(createNewCard(postCardReq, token))
+      .then((res) => {
+        console.log('create card success', res)
+        setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
+        setOpenAlert(true)
+      })
+      .catch(e => {
+        console.log('create card failded', e)
+        setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
+        setOpenAlert(true)
+      })
     if (currBoard?.pic.length > 0) {
       await currBoard.pic.map(async (pic) => {
         const picData = await users.filter((user) => user._id === pic)[0]
@@ -266,6 +287,19 @@ export default function Column({ column, tasks, index }) {
   console.log('tasks', tasks)
   return (
     <div className={classes.wrapper}>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={6000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={alertMessage?.status === 'error' ? "error" : "success"}
+          sx={{ width: '100%' }}
+        >
+          {`${alertMessage?.message}`}
+        </Alert>
+      </Snackbar>
       {list && (
         <Draggable draggableId={column._id} index={index}>
           {(provided) => (

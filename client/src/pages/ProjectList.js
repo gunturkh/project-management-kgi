@@ -1144,7 +1144,7 @@ const ProjectList = (props) => {
                 severity={state?.status === 'error' ? "error" : "success"}
                 sx={{ width: '100%' }}
               >
-                {state?.status === 'error' ? `${state.message}` : `Project created successfully!`}
+                { `${state?.message}` }
               </Alert>
             </Snackbar>
           </Container>

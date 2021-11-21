@@ -40,6 +40,7 @@ import {
   updateUserNotification,
 } from '../../actions/actionCreators/userActions'
 import { makeid } from '../../utils/randomString'
+import * as ACTIONS from '../../actions/actions'
 
 const statusOptions = [
   {
@@ -192,15 +193,13 @@ const EditProject = (props) => {
                     console.log('picData: ', { picData })
                     const notifMessage = {
                       id: makeid(5),
-                      message: `Project ${e.projectName}, created by: ${
-                        user.name
-                      }, and you were assigned to it. Description: ${
-                        e.projectDescription
-                      }, status: ${e.status}, start date: ${moment(
-                        e.startDate,
-                      ).format('DD/MM/YYYY')}, end date:${moment(
-                        e.endDate,
-                      ).format('DD/MM/YYYY')} `,
+                      message: `Project ${e.projectName}, created by: ${user.name
+                        }, and you were assigned to it. Description: ${e.projectDescription
+                        }, status: ${e.status}, start date: ${moment(
+                          e.startDate,
+                        ).format('DD/MM/YYYY')}, end date:${moment(
+                          e.endDate,
+                        ).format('DD/MM/YYYY')} `,
                       link: `/app/projects/details/${currBoard._id}`,
                       read: false,
                     }
@@ -214,9 +213,19 @@ const EditProject = (props) => {
                     dispatch(updateUserNotification(userParams))
                   })
                 }
-                navigate('/app/projects')
+                // navigate('/app/projects')
+                navigate('/app/projects', { state: { status: 'success', message: 'Project edited successfully!' } })
               },
             )
+              .catch((e) => {
+                if (e.message === 'Network Error') {
+                  dispatch({ type: ACTIONS.ERROR_BOARD, payload: { error: e } })
+                  navigate('/app/projects', { state: { status: 'error', message: 'Edit project failed because network error!' } })
+                }
+                else if (e.response.status === 422)
+                  dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD, payload: { error: e } })
+                navigate('/app/projects', { state: { status: 'error', message: `${e.message}, please make sure to fill all the fields like pic and company` } })
+              })
             // navigate(`/app/projects`, { replace: true })
             // const { username, password } = e
             // const loginReq = { username, password }
@@ -270,7 +279,7 @@ const EditProject = (props) => {
                       <TextField
                         error={Boolean(
                           touched.projectDescription &&
-                            errors.projectDescription,
+                          errors.projectDescription,
                         )}
                         fullWidth
                         helperText="Please fill project description"

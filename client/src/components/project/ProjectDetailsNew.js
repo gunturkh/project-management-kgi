@@ -26,6 +26,8 @@ import {
   Table,
   TableCell,
   Link,
+  Snackbar,
+  Alert as MuiAlert,
 } from '@material-ui/core'
 import {
   List,
@@ -80,6 +82,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import axios from 'axios'
 import { DropzoneDialog, DropzoneArea } from 'material-ui-dropzone'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
+import * as ACTIONS from '../../actions/actions.js'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,6 +125,10 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 50,
   },
 }))
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -189,6 +196,8 @@ export default function ProjectDetailsNew() {
     pic: [],
     dueDate: '',
   })
+  const [openAlert, setOpenAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState({ status: null, message: null })
   const [editTaskValue, setEditTaskValue] = useState(taskValue)
   const [listTitle, setListTitle] = useState('')
   const [color, setColor] = useState('white')
@@ -207,6 +216,9 @@ export default function ProjectDetailsNew() {
   const [refreshList, setRefreshList] = useState(true)
   const [progressLoading, setProgressLoading] = useState(false)
 
+  const handleCloseAlert = () => {
+    setOpenAlert(false)
+  }
   // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
   //   name = currBoard.name
   // else if (name === undefined) name = ''
@@ -552,6 +564,34 @@ export default function ProjectDetailsNew() {
           ),
     }
     dispatch(createNewList(postListReq, token))
+      .then(res => {
+      console.log("createNewList success res", res)
+        setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
+        setOpenAlert(true)
+      })
+    // dispatch({ type: ACTIONS.POST_REQUEST_LIST })
+    // axios
+    //   .post('/api/lists/', postListReq, {
+    //     headers: { 'x-auth-token': token },
+    //   })
+    //   .then((res) => {
+    //     dispatch({ type: ACTIONS.ADD_LIST, payload: { list: res.data } })
+    //     setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
+    //     setOpenAlert(true)
+    //   })
+    //   .catch((e) => {
+    //     if (e.message === 'Network Error') {
+    //       dispatch({ type: ACTIONS.ERROR_LIST, payload: { error: e } })
+    //       setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
+    //       setOpenAlert(true)
+    //     }
+    //     else if (e.response.status === 422) {
+    //       dispatch({ type: ACTIONS.VALIDATION_ERROR_LIST })
+    //       setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
+    //       setOpenAlert(true)
+    //     }
+    //   })
+
     dispatch(
       createNewActivity(
         {
@@ -903,14 +943,27 @@ export default function ProjectDetailsNew() {
   //   }
   // }
 
-  console.log('initialData', initialData)
-  console.log('cards', cards)
+  console.log('openAlert', openAlert)
+  // console.log('cards', cards)
   return (
     <>
       {loading ? (
         <Loading />
       ) : (
         <Card>
+          <Snackbar
+            open={openAlert}
+            autoHideDuration={6000}
+            onClose={handleCloseAlert}
+          >
+            <Alert
+              onClose={handleCloseAlert}
+              severity={alertMessage?.status === 'error' ? "error" : "success"}
+              sx={{ width: '100%' }}
+            >
+              {`${alertMessage?.message}`}
+            </Alert>
+          </Snackbar>
           <div className={classes.root}>
             <AppBar position="static" color="transparent">
               <Tabs

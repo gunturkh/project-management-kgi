@@ -25,12 +25,19 @@ export const createNewList = (params, token) => (dispatch) => {
     })
     .then((res) => {
       dispatch({ type: ACTIONS.ADD_LIST, payload: { list: res.data } })
+      return Promise.resolve(res)
     })
     .catch((e) => {
       if (e.message === 'Network Error')
-        dispatch({ type: ACTIONS.ERROR_LIST, payload: { error: e } })
+      {
+      dispatch({ type: ACTIONS.ERROR_LIST, payload: { error: e } })
+      return Promise.reject(e)
+      }
       else if (e.response.status === 422)
-        dispatch({ type: ACTIONS.VALIDATION_ERROR_LIST })
+      {
+      dispatch({ type: ACTIONS.VALIDATION_ERROR_LIST })
+      return Promise.reject(e)
+      }
     })
   // return Promise.resolve()
 }

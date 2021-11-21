@@ -408,6 +408,28 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
     }
   }
 
+  const progressCount = (item) => {
+    const allTasks = allCards.filter((c) => c.boardId === item._id)
+      ?.map((i) => {
+        const res = allLists.filter(
+          (l) => i.listId === l._id,
+        )[0]
+        return res?.name
+      })
+      .reduce((acc, curVal) => {
+        curVal === 'Checked' ||
+          curVal === 'Done'
+          ? (acc += 1)
+          : (acc = acc)
+        return acc
+      }, 0)
+    const divider = allCards?.filter((c) => c.boardId === item._id)?.length
+    const result = allTasks / divider * 100
+    console.log("result", result)
+    console.log("result is a NaN", isNaN(result))
+    return isNaN(result) ? 0 : result;
+  }
+
   console.log('projects state: ', state)
   return (
     <div>
@@ -521,25 +543,8 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                                     })} */}
                                   <LinearProgressWithLabel
                                     variant="determinate"
-                                    value={
-                                      (
-                                        allCards.filter((c) => c.boardId === item._id)
-                                          ?.map((i) => {
-                                            const res = allLists.filter(
-                                              (l) => i.listId === l._id,
-                                            )[0]
-                                            return res?.name
-                                          })
-                                          .reduce((acc, curVal) => {
-                                            curVal === 'Checked' ||
-                                              curVal === 'Done'
-                                              ? (acc += 1)
-                                              : (acc = acc)
-                                            return acc
-                                          }, 0) /
-                                        allCards.filter((c) => c.boardId === item._id).length) *
-                                      100
-                                    }
+                                    // value={isNaN(progressCount(item)) ? ` 0%` : ` ${progressCount(item)}%`}
+                                    value={progressCount(item)}
                                   />
                                 </div>
                                 <div>
