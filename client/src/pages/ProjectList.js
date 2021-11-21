@@ -128,6 +128,8 @@ const ProjectFilters = (props) => {
     dateTo: null,
   })
 
+  const [sortBy, setSortBy] = useState('asc')
+
   const [user, setUser] = useState({
     filter: [],
     search: '',
@@ -146,10 +148,11 @@ const ProjectFilters = (props) => {
       merchantFilter: merchantFilter.merchantFilter,
       userFilter: user.filter,
       period,
+      sortBy,
     }
     console.log('data filter merchant', data)
     props.getFilterData(data)
-  }, [filterCard, merchantFilter.merchantFilter, user.filter])
+  }, [filterCard, merchantFilter.merchantFilter, user.filter, sortBy])
 
   //   Period filter callback and period filter card
   useEffect(() => {
@@ -241,7 +244,8 @@ const ProjectFilters = (props) => {
   // }, [debouncedSearch])
 
   const onChangeProductFilter = (filter, type) => {
-    if (type === 'status') {
+    if (type === 'sort') {
+      setSortBy(filter)
     }
 
     const filteredMerchant = merchantFilter.merchantName.filter(
@@ -650,22 +654,18 @@ const ProjectFilters = (props) => {
           <div style={{ padding: 16, width: 470 }}>
             <div>
               <RadioGroup
-                aria-label="Gender"
-                name="gender1"
-                value={period.type}
+                aria-label="sortby"
+                name="sortby"
+                value={sortBy}
                 onChange={(e) => {
                   onChangeProductFilter(
-                    {
-                      type: e.target.value,
-                      dateTo: period.dateTo,
-                      dateFrom: period.dateFrom,
-                    },
-                    'period',
+                    e.target.value,
+                    'sort',
                   )
                 }}
               >
                 <FormControlLabel
-                  value="All"
+                  value="asc"
                   control={
                     <Radio
                       classes={{
@@ -683,13 +683,13 @@ const ProjectFilters = (props) => {
                         fontSize: 16,
                       }}
                     >
-                      All Period
+                      Start Date (Ascending)
                     </span>
                   }
                 />
 
                 <FormControlLabel
-                  value="Date Range"
+                  value="desc"
                   control={
                     <Radio
                       classes={{
@@ -707,110 +707,12 @@ const ProjectFilters = (props) => {
                         fontSize: 16,
                       }}
                     >
-                      Date Range
+                      Start Date (Descending)
                     </span>
                   }
                 />
               </RadioGroup>
             </div>
-            <Grid
-              container
-              spacing={3}
-              style={{ marginTop: 5, marginBottom: 16 }}
-            >
-              <Grid item lg={6} xs={12}>
-                {/* <DateField
-                  label="From"
-                  value={period.dateFrom}
-                  change={(e) => {
-                    onChangeProductFilter(
-                      {
-                        type: 'Date Range',
-                        dateFrom: e,
-                        dateTo: period.dateTo,
-                      },
-                      'period',
-                    )
-                  }}
-                  disabled={period.type === 'All'}
-                  required
-                /> */}
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    views={['day', 'month', 'year']}
-                    label="From"
-                    value={period.dateFrom}
-                    onChange={(e) => {
-                      onChangeProductFilter(
-                        {
-                          type: 'Date Range',
-                          dateFrom: e,
-                          dateTo: period.dateTo,
-                        },
-                        'period',
-                      )
-                    }}
-                    disabled={period.type === 'All'}
-                    required
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        required
-                        helperText="Please fill timeline start date"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item lg={6} xs={12}>
-                {/* <DateField
-                  label="To"
-                  value={period.dateTo}
-                  change={(e) => {
-                    onChangeProductFilter(
-                      {
-                        type: 'Date Range',
-                        dateTo: e,
-                        dateFrom: period.dateFrom,
-                      },
-                      'period',
-                    )
-                  }}
-                  disabled={period.type === 'All'}
-                  required
-                /> */}
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    views={['day', 'month', 'year']}
-                    label="To"
-                    value={period.dateTo}
-                    onChange={(e) => {
-                      onChangeProductFilter(
-                        {
-                          type: 'Date Range',
-                          dateTo: e,
-                          dateFrom: period.dateFrom,
-                        },
-                        'period',
-                      )
-                    }}
-                    disabled={period.type === 'All'}
-                    required
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        required
-                        helperText="Please fill timeline start date"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
           </div>
         </DropdownPopover>
         <CssTextField
@@ -960,6 +862,7 @@ const ProjectList = (props) => {
   console.log('foundBoards:', foundBoards)
   console.groupEnd('projectList')
 
+  console.log('filterCardState:', filterCardState)
   useEffect(() => {
     const manipulatedResult = boards.filter((data) => {
       if (filterCardState?.merchantFilter?.length > 0) {
@@ -1049,6 +952,15 @@ const ProjectList = (props) => {
     console.log('getFilterData:', data)
     setFilterCardState(data)
   }
+  const sortedFoundBoards = (sortBy = 'asc') =>  {
+    console.log("foundboards inside sorted function", foundBoards, sortBy)
+    if(sortBy === 'asc'){
+      return foundBoards.sort((a, b) => moment(b.startDate).format('YYYYMMDD') - moment(a.startDate).format('YYYYMMDD'))
+    } 
+    else  {
+      return foundBoards.sort((a, b) => moment(a.startDate).format('YYYYMMDD') - moment(b.startDate).format('YYYYMMDD'))
+      }
+  }
   return (
     <>
       <Helmet>
@@ -1093,7 +1005,7 @@ const ProjectList = (props) => {
               <Grid container spacing={3}>
                 {user.role === 'ADMIN' ? (
                   foundBoards && foundBoards.length > 0 ? (
-                    paginateGood(foundBoards, 9, page - 1).map((board) => (
+                    paginateGood(sortedFoundBoards(filterCardState?.sortBy), 9, page - 1).map((board) => (
                       <Grid item key={board.id} lg={4} md={6} xs={12}>
                         <ProjectCard board={board} />
                       </Grid>
