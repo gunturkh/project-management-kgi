@@ -189,24 +189,27 @@ export const updateUserNotificationStatusById = (params) => (dispatch) => {
 
 export const deleteUserById = (data, token) => (dispatch) => {
   const { id } = data
-  axios
-    .delete(BASE_URL + id, {
-      headers: { 'x-auth-token': token },
-    })
-    .then((res) => {
-      console.log('res delete: ', res)
-      dispatch({
-        type: ACTIONS.DELETE_USER,
-        payload: {
-          users: res.data,
-          token,
-        },
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(BASE_URL + id, {
+        headers: { 'x-auth-token': token },
       })
-    })
-    .catch((e) => {
-      dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
-    })
-  return Promise.resolve()
+      .then((res) => {
+        console.log('res delete: ', res)
+        dispatch({
+          type: ACTIONS.DELETE_USER,
+          payload: {
+            users: res.data,
+            token,
+          },
+        })
+        resolve(res)
+      })
+      .catch((e) => {
+        dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
+        reject(e)
+      })
+  })
 }
 
 export const logoutUser = () => (dispatch) => {

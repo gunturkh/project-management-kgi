@@ -59,6 +59,7 @@ export const checkTokenValidity = (token) => (dispatch) => {
 
 export const addCompany = (params) => (dispatch) => {
   // dispatch({ type: ACTIONS.REGISTER_REQUEST })
+  return new Promise((resolve, reject) => {
   axios
     .post(`${BASE_URL}`, params)
     .then((res) => {
@@ -66,41 +67,47 @@ export const addCompany = (params) => (dispatch) => {
         type: ACTIONS.ADD_COMPANY,
         payload: { company: res.data },
       })
+      resolve(res)
     })
     .catch((e) => {
       dispatch({
         type: ACTIONS.ERROR_COMPANY,
         payload: { error: e.response.data.msg },
       })
+      reject(e)
     })
-  return Promise.resolve()
+    })
 }
 
 export const updateCompanyById = (id, params, token) => (dispatch) => {
   dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
-  axios
-    .patch(`${BASE_URL}/${id}`, params, {
-      headers: { 'x-auth-token': token },
-    })
-    .then((res) => {
-      console.log('res update: ', res)
-      dispatch({
-        type: ACTIONS.UPDATE_COMPANY,
-        payload: { company: res.data },
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`${BASE_URL}/${id}`, params, {
+        headers: { 'x-auth-token': token },
       })
-    })
-    .catch((e) => {
-      console.log('error update: ', e)
-      dispatch({
-        type: ACTIONS.ERROR_COMPANY,
-        payload: { error: e.response.data.msg },
+      .then((res) => {
+        console.log('res update: ', res)
+        dispatch({
+          type: ACTIONS.UPDATE_COMPANY,
+          payload: { company: res.data },
+        })
+        resolve(res)
       })
-    })
-  return Promise.resolve()
+      .catch((e) => {
+        console.log('error update: ', e)
+        dispatch({
+          type: ACTIONS.ERROR_COMPANY,
+          payload: { error: e.response.data.msg },
+        })
+        reject(e)
+      })
+  })
 }
 
 export const deleteCompanyById = (id, token) => (dispatch) => {
   dispatch({ type: ACTIONS.MAKE_REQUEST_COMPANY })
+  return new Promise((resolve, reject) => {
   axios
     .delete(BASE_URL + id, {
       headers: { 'x-auth-token': token },
@@ -114,9 +121,11 @@ export const deleteCompanyById = (id, token) => (dispatch) => {
           token,
         },
       })
+      resolve(res)
     })
     .catch((e) => {
       dispatch({ type: ACTIONS.ERROR_COMPANY, payload: { error: e.message } })
+      reject(e)
     })
-  return Promise.resolve()
+    })
 }

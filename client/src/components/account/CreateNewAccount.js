@@ -46,7 +46,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 const CreateNewAccount = (props) => {
-  const [alertOpen, setAlertOpen] = useState(false)
+  const [openAlert, setOpenAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState({ status: null, message: null })
   const { user, users, token } = useSelector((state) => state.user)
   const { company, companies, companyLoading } = useSelector(
     (state) => state.company,
@@ -87,6 +88,9 @@ const CreateNewAccount = (props) => {
     console.log('companyReq', companyReq)
   }, [users, userState])
 
+  const handleCloseAlert = () => {
+    setOpenAlert(false)
+  }
   console.log('users:', users)
   console.log('company:', company)
   console.log('companies:', companies)
@@ -94,11 +98,11 @@ const CreateNewAccount = (props) => {
   const mappedCompanies =
     companies?.length > 0
       ? companies.map((item) => {
-          return {
-            value: item._id,
-            label: item.companyName,
-          }
-        })
+        return {
+          value: item._id,
+          label: item.companyName,
+        }
+      })
       : null
   mappedCompanies.unshift({ value: '', label: '' })
 
@@ -107,7 +111,7 @@ const CreateNewAccount = (props) => {
       return
     }
 
-    setAlertOpen(false)
+    // setAlertOpen(false)
   }
 
   return (
@@ -180,14 +184,18 @@ const CreateNewAccount = (props) => {
                   dispatch(updateCompanyById(e.company, params, token)).then(
                     () => {
                       console.log('done update user')
-                      navigate('/app/account')
-                      // if (!error) {
-                      // } else {
-                      //   setAlertOpen(true)
-                      // }
+                      navigate('/app/account', { state: { status: 'success', message: 'User created successfully!' } })
                     },
-                  )
+                  ).catch(e => {
+                    // navigate('/app/account', { state: { status: 'error', message: `${e.message}, please make sure to fill all the fields like pic and company` } })
+                    console.log(e)
+                    setAlertMessage({ status: 'error', message: `Failed Created User! ${e?.response?.data?.msg}` })
+                    setOpenAlert(true)
+                  })
                 }
+              }).catch(e => {
+                setAlertMessage({ status: 'error', message: `Failed Created User! ${e?.response?.data?.msg}` })
+                setOpenAlert(true)
               })
           }
         }}
@@ -205,7 +213,7 @@ const CreateNewAccount = (props) => {
             <Card>
               <CardHeader
                 subheader="Please fill the account details "
-                title="Create Accout"
+                title="Create Account"
               />
               <Divider />
               <CardContent>
@@ -323,7 +331,7 @@ const CreateNewAccount = (props) => {
               >
                 <Button
                   as={RouterLink}
-                  color="secoondary"
+                  color="secondary"
                   variant="contained"
                   to={'/app/account'}
                   sx={{ marginRight: 2 }}
@@ -334,21 +342,19 @@ const CreateNewAccount = (props) => {
                   Create Account
                 </Button>
               </Box>
-              {/*
               <Snackbar
-              open={alertOpen}
-              autoHideDuration={6000}
-              onClose={handleClose}
+                open={openAlert}
+                autoHideDuration={6000}
+                onClose={handleCloseAlert}
               >
-              <Alert
-              onClose={handleClose}
-              severity="error"
-              sx={{ width: '100%' }}
-              >
-              {error}
-              </Alert>
+                <Alert
+                  onClose={handleCloseAlert}
+                  severity={alertMessage?.status === 'error' ? "error" : "success"}
+                  sx={{ width: '100%' }}
+                >
+                  {`${alertMessage?.message}`}
+                </Alert>
               </Snackbar>
-              */}
             </Card>
           </form>
         )}

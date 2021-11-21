@@ -108,7 +108,7 @@ const CreateCompany = (props) => {
         console.log('postCompanyReq submit: ', postCompanyReq)
         dispatch(addCompany(postCompanyReq)).then(() => {
           if (!error) {
-            navigate('/app/company')
+            navigate('/app/company', { state: { status: 'success', message: 'Company created successfully!' } })
           } else {
             setAlertOpen(true)
           }

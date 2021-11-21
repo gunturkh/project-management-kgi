@@ -240,9 +240,6 @@ const CreateProject = (props) => {
               dispatch({ type: ACTIONS.VALIDATION_ERROR_BOARD, payload: { error: e } })
             navigate('/app/projects', { state: { status: 'error', message: `${e.message}, please make sure to fill all the fields like pic and company` } })
           })
-        // dispatch(createNewBoard(postBoardReq, token)).then(() => {
-        //   setBoardCreated(true)
-        // })
       }}
     >
       {({

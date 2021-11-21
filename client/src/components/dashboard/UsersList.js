@@ -230,9 +230,9 @@ const Timeline = (props) => {
                                   ).then(() => {
                                     setOpenModal(false)
                                     handleClose()
-                                    navigate('/app/account', {
-                                      replace: 'true',
-                                    })
+                                    navigate('/app/account', { state: { status: 'success', message: 'User deleted successfully!' } })
+                                  }).catch(e => {
+                                    navigate('/app/account', { state: { status: 'error', message: 'Failed to Delete User!' } })
                                   })
                                 }}
                               >

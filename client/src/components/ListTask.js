@@ -207,12 +207,14 @@ export default function Column({ column, tasks, index }) {
       modifyBy: '',
     })
     setAddCardFlag(false)
+    setEditable(false)
   }
   const handleAddition = () => {
     setAddCardFlag(true)
   }
   const closeButtonHandler = () => {
     setAddCardFlag(false)
+    setEditable(false)
     setTaskValue({
       title: '',
       description: '',
@@ -313,7 +315,7 @@ export default function Column({ column, tasks, index }) {
                 className={classes.root}
                 style={{
                   backgroundColor: `${borderColor(listTitle)}`,
-                  padding: '5px',
+                  padding: '15px',
                 }}
                 {...provided.dragHandleProps}
               >
@@ -321,18 +323,20 @@ export default function Column({ column, tasks, index }) {
                   className={classes.title}
                   onClick={() => setEditable(true)}
                 >
-                  {!editable && (
-                    <div style={{ position: 'relative' }}>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontFamily: 'sans-serif',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {column.name}
-                      </div>
-                      {showAdd && (
+                  <div style={{ position: 'relative' }}>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontFamily: 'sans-serif',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {column.name}
+                    </div>
+                    {
+                      showAdd &&
+                      !editable &&
+                      (
                         <IconButton
                           size="small"
                           style={{
@@ -342,57 +346,35 @@ export default function Column({ column, tasks, index }) {
                             backgroundColor: '#EBECF0',
                             zIndex: 100,
                           }}
-                          onClick={() => {
-                            handleAddition()
-                            // setList(false)
-                            // dispatch(deleteListById(column._id))
-                            // const text = `${user.username} deleted list ${column.name}`
-                            // dispatch(
-                            //   createNewActivity(
-                            //     { text, boardId: column.boardId },
-                            //     token,
-                            //   ),
-                            // )
-                          }}
+                          onClick={() => { handleAddition() }}
                         >
                           <AddIcon
                             fontSize="small"
                             style={{ backgroundColor: '#EBECF0' }}
                           />
                         </IconButton>
-                      )}
-                    </div>
-                  )}
-                  {editable && (
-                    <div className={classes.editable}>
-                      <InputBase
-                        onChange={changedHandler}
-                        multiline
-                        fullWidth
-                        value={listTitle}
-                        style={{ fontWeight: 'bold' }}
-                        // autoFocus
-                        onFocus={(e) => {
-                          const val = e.target.value
-                          e.target.value = ''
-                          e.target.value = val
-                        }}
-                        onBlur={updateListTitle}
-                      />
-                      {/* <InputCard
-                              value={taskValue}
-                              changedHandler={handleChange}
-                              // itemAdded={submitHandler}
-                              itemAdded={submitHandlerUpdate}
-                              closeHandler={closeButtonHandler}
-                              keyDownHandler={handleKeyDown}
-                              type="card"
-                              btnText="Edit Card"
-                              placeholder="Enter a title for this card..."
-                              width="230px"
-                            /> */}
-                    </div>
-                  )}
+                      )
+                    }
+
+                  </div>
+                  {/* {editable && ( */}
+                  {/*   <div className={classes.editable}> */}
+                  {/*     <InputBase */}
+                  {/*       onChange={changedHandler} */}
+                  {/*       multiline */}
+                  {/*       fullWidth */}
+                  {/*       value={listTitle} */}
+                  {/*       style={{ fontWeight: 'bold' }} */}
+                  {/*       // autoFocus */}
+                  {/*       onFocus={(e) => { */}
+                  {/*         const val = e.target.value */}
+                  {/*         e.target.value = '' */}
+                  {/*         e.target.value = val */}
+                  {/*       }} */}
+                  {/*       onBlur={updateListTitle} */}
+                  {/*     /> */}
+                  {/*   </div> */}
+                  {/* )} */}
                 </div>
                 <Droppable droppableId={column._id} type="card">
                   {
@@ -405,14 +387,6 @@ export default function Column({ column, tasks, index }) {
                       >
                         <div className={classes.scroll}>
                           {/* eslint-disable-next-line no-shadow */}
-                          {tasks.map((task, index) => (
-                            <Card
-                              key={task._id}
-                              task={task}
-                              index={index}
-                              closeHandler={closeButtonHandler}
-                            />
-                          ))}
                           {addCardFlag && (
                             <InputCard
                               value={taskValue}
@@ -427,6 +401,14 @@ export default function Column({ column, tasks, index }) {
                             />
                           )}
                           {provided.placeholder}
+                          {tasks.map((task, index) => (
+                            <Card
+                              key={task._id}
+                              task={task}
+                              index={index}
+                              closeHandler={closeButtonHandler}
+                            />
+                          ))}
                         </div>
                         {/* {!addCardFlag && ( */}
                         {/*   <AddItem */}

@@ -198,7 +198,7 @@ const CompanyList = (props) => {
           <Modal
             open={openViewModal}
             onClose={handleViewClose}
-            // key={`view-modal-${item._id}`}
+          // key={`view-modal-${item._id}`}
           >
             <div style={modalStyle} className={classes.paper}>
               <h2 style={{ padding: 5, textAlign: 'center', marginBottom: 15 }}>
@@ -212,23 +212,23 @@ const CompanyList = (props) => {
               </p>
               {viewModalContent?.team?.length > 0
                 ? viewModalContent?.team?.map((t) => {
-                    return (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          background: '#bcbcbc',
-                          border: '1px solid darkblue',
-                          padding: 3,
-                          marginBottom: 5,
-                          borderRadius: 5,
-                        }}
-                      >
-                        {t}
-                      </Box>
-                    )
-                  })
+                  return (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        background: '#bcbcbc',
+                        border: '1px solid darkblue',
+                        padding: 3,
+                        marginBottom: 5,
+                        borderRadius: 5,
+                      }}
+                    >
+                      {t}
+                    </Box>
+                  )
+                })
                 : null}
             </div>
           </Modal>
@@ -253,11 +253,10 @@ const CompanyList = (props) => {
                     dispatch(deleteCompanyById(deleteId, token))
                       .then(() => {
                         setOpenModal(false)
+                        navigate('/app/company', { state: { status: 'success', message: 'Company deleted successfully!' } })
                       })
-                      .then(() => {
-                        navigate('/app/company', {
-                          replace: 'true',
-                        })
+                      .catch((e) => {
+                        navigate('/app/company', { state: { status: 'error', message: 'Failed to delete company!' } })
                       })
                   }
                 >

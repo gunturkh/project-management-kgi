@@ -30,6 +30,8 @@ import {
   Dialog,
   DialogContent,
   CircularProgress,
+  Snackbar,
+  Alert as MuiAlert,
 } from '@material-ui/core'
 import FullCalendar from '@fullcalendar/react'
 // import { Calendar } from '@fullcalendar/core'
@@ -40,6 +42,11 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import { User, Edit, Trash2 } from 'react-feather'
 import { makeid } from '../utils/randomString'
 import './timeline.scss'
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
+
 function CircularProgressWithLabel(props) {
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
@@ -144,6 +151,8 @@ const Timeline = (props) => {
   }
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
+  const [openAlert, setOpenAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState({ status: null, message: null })
   const [timelineDialogStatus, setTimelineDialogStatus] = useState('view')
   const [colorPickerState, setColorPickerState] = useState('cc-red')
   const [colorPickerDisplayState, setColorPickerDisplayState] = useState(
@@ -174,6 +183,10 @@ const Timeline = (props) => {
     setOpen(false)
   }
 
+  const handleCloseAlert = () => {
+    setOpenAlert(false)
+  }
+
   const handleClickColorPicker = (e) => {
     console.log('event button', e.target.value)
     console.log('event color button:', e.target.style.backgroundColor)
@@ -187,6 +200,19 @@ const Timeline = (props) => {
   return (
     <Card {...props} style={{ width: '100%' }}>
       {/* <CardHeader title={props.title || ''} /> */}
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={6000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={alertMessage?.status === 'error' ? "error" : "success"}
+          sx={{ width: '100%' }}
+        >
+          {`${alertMessage?.message}`}
+        </Alert>
+      </Snackbar>
       <Box>
         <Box
           sx={{
@@ -224,9 +250,17 @@ const Timeline = (props) => {
                   style={{ marginRight: 15 }}
                   onClick={(e) => {
                     dispatch(deleteTimelineById(timeline.id, token)).then(
-                      () => setOpenModal(false),
-                      setOpen(false),
-                    )
+                      (res) => {
+                        setOpenModal(false)
+                        setOpen(false)
+                        setAlertMessage({ status: 'success', message: 'List Deleted Successfully!' })
+                        setOpenAlert(true)
+                      }
+                    ).catch(e => {
+
+                      setAlertMessage({ status: 'error', message: 'List Failed To Delete!' })
+                      setOpenAlert(true)
+                    })
                   }}
                 >
                   Yes
@@ -466,9 +500,15 @@ const Timeline = (props) => {
                       .then(() => {
                         console.log('done create timeline')
                         setOpen(false)
+                        setAlertMessage({ status: 'success', message: 'List Created Successfully!' })
+                        setOpenAlert(true)
                         // navigate('/app/projects')
                       })
-                      .catch((error) => window.alert(error))
+                      .catch((error) => {
+                        setAlertMessage({ status: 'error', message: 'List Failed To Create!' })
+                        setOpenAlert(true)
+
+                      })
                     if (currBoard?.pic.length > 0) {
                       await currBoard.pic.map(async (pic) => {
                         const picData = await users.filter(
@@ -740,9 +780,15 @@ const Timeline = (props) => {
                       .then(() => {
                         console.log('done edit timeline')
                         setOpen(false)
+                        setAlertMessage({ status: 'success', message: 'List Edited Successfully!' })
+                        setOpenAlert(true)
                         // navigate('/app/projects')
                       })
-                      .catch((error) => window.alert(error))
+                      .catch((error) => {
+
+                        setAlertMessage({ status: 'error', message: 'List Failed To Edit!' })
+                        setOpenAlert(true)
+                      })
                     // navigate(`/app/projects`, { replace: true })
                     // const { username, password } = e
                     // const loginReq = { username, password }
