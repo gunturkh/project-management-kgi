@@ -1045,6 +1045,7 @@ export default function ProjectDetailsNew() {
                     </Grid>
                   </Grid>
                   <DataGrid
+                    sortingOrder={['desc', 'asc']}
                     rows={dataGridRow}
                     columns={dataGridColumn}
                     // pageSize={5}
