@@ -44,6 +44,7 @@ const SettingsPassword = (props) => {
   const [edit, setEdit] = useState(false)
   const [submit, setSubmit] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [disableSubmit, setDisableSubmit] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
 
   useEffect(() => {
@@ -152,12 +153,33 @@ const SettingsPassword = (props) => {
                     name="avatar"
                     type="file"
                     onChange={(event) => {
-                      setFieldValue('avatar', event.currentTarget.files[0])
+                      // console.log("event", event)
+                      // console.log("event.target", event.target.files[0])
+                      let file = event.target.files[0]
+                      let reader = new FileReader()
+                      // console.log("file", file)
+
+                      console.log("file size", event.currentTarget.files[0].size)
+                      const filesize = file.size
+                      if (filesize <= 2000000) {
+                        setDisableSubmit(false)
+                        setFieldValue('avatar', file)
+                      }
+                      else {
+                        setDisableSubmit(true)
+                        setFieldValue('avatar', file)
+                        alert("Max file size allowed is 2MB!!!")
+                      }
+                      // reader.onload = (e) => {
+                      //   const filesize = file.size
+                      //   if (filesize <= 2000000) setFieldValue('avatar', file)
+                      //   else alert("Max file size allowed is 2MB!!!")
+                      // }
                     }}
                   />
                 )}
                 {edit ? (
-                  <Thumb file={values.avatar} />
+                  <Thumb file={values?.avatar} />
                 ) : (
                   <img width="250px" src={imageUrl} alt="Avatar" />
                 )}
@@ -214,6 +236,7 @@ const SettingsPassword = (props) => {
                       color="primary"
                       variant="contained"
                       type="submit"
+                      disabled={disableSubmit}
                     >
                       Submit
                     </LoadingButton>
