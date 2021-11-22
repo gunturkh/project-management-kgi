@@ -18,6 +18,7 @@ import LoadingButton from '@material-ui/lab/LoadingButton'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import {
+  fetchUserInfo,
   updateUser,
   uploadAvatarUser,
 } from '../../actions/actionCreators/userActions'
@@ -31,24 +32,32 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 const SettingsPassword = (props) => {
-  const { user, updateStatus, updateError } = useSelector((state) => state.user)
+  const { user, updateStatus, updateError, token } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   console.log('user', user)
-  const [values, setValues] = useState({
-    password: '',
-    confirm: '',
-  })
+  // const [values, setValues] = useState({
+  //   password: '',
+  //   confirm: '',
+  // })
   const [edit, setEdit] = useState(false)
   const [submit, setSubmit] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
+
+  useEffect(() => {
+    dispatch(fetchUserInfo(token)).then((res) => {
+      console.log("fetcUserInfo res", res)
+    }).catch((e) => {
+      console.error(e)
+    });
+  }, [])
+
   useEffect(() => {
     setImageUrl(user.avatar)
   }, [user])
 
   useEffect(() => {
-
     if (submit) {
       setOpen(true)
       setSubmit(false)
@@ -85,8 +94,8 @@ const SettingsPassword = (props) => {
           formData.append('upload_preset', preset)
           try {
             const res = await axios.post(CLOUDINARY_BASE_URL, formData)
-            const imageUrl = res.data.secure_url
-            setImageUrl(imageUrl)
+            const resUrl = res.data.secure_url
+            setImageUrl(resUrl)
             // setLoading(false);
             const postUserReq = {
               username: user.username,
@@ -95,7 +104,7 @@ const SettingsPassword = (props) => {
               role: user.role,
               name: e.name,
               position: e.position,
-              avatar: imageUrl,
+              avatar: resUrl,
             }
             dispatch(updateUser(postUserReq)).then(() => {
               setLoading(false)

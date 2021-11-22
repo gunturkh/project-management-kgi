@@ -43,9 +43,17 @@ export const userReducer = (state = initialState, action) => {
     case ACTIONS.GET_USER:
       return {
         ...state,
+        id: action.payload.user.user.id,
         user: action.payload.user,
+        username: action.payload.user.user.username,
         token: action.payload.token,
         userRequest: false,
+        role: action.payload.user.user.role,
+        avatar: action.payload.user.user.avatar,
+        name: action.payload.user.user.name,
+        position: action.payload.user.user.position,
+        notification: action.payload.user.user.notification,
+        pinned: action.payload.user.user.pinned,
       }
     case ACTIONS.GET_USERS:
       return {

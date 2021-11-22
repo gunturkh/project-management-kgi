@@ -24,19 +24,23 @@ export const fetchAllUsersInfo = (token) => (dispatch) => {
 
 export const fetchUserInfo = (token) => (dispatch) => {
   dispatch({ type: ACTIONS.USER_REQUEST })
-  axios
-    .get(BASE_URL, {
-      headers: { 'x-auth-token': token },
-    })
-    .then((res) => {
-      dispatch({
-        type: ACTIONS.GET_USER,
-        payload: { user: res.data, token },
+  return new Promise((resolve, reject) => {
+    axios
+      .get(BASE_URL, {
+        headers: { 'x-auth-token': token },
       })
-    })
-    .catch((e) => {
-      dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
-    })
+      .then((res) => {
+        dispatch({
+          type: ACTIONS.GET_USER,
+          payload: { user: res.data, token },
+        })
+        resolve(res)
+      })
+      .catch((e) => {
+        dispatch({ type: ACTIONS.ERROR_USER, payload: { error: e.message } })
+        reject(e)
+      })
+  })
 }
 
 export const checkTokenValidity = (token) => (dispatch) => {
@@ -61,19 +65,21 @@ export const checkTokenValidity = (token) => (dispatch) => {
 
 export const loginUser = (params) => (dispatch) => {
   dispatch({ type: ACTIONS.LOGIN_REQUEST })
-  axios
-    .post(`${BASE_URL}login`, params)
-    .then((res) => {
-      console.log('res:', res)
-      dispatch({ type: ACTIONS.LOGIN_SUCCESS, payload: { user: res.data } })
-    })
-    .catch((e) => {
-      dispatch({
-        type: ACTIONS.LOGIN_FAILED,
-        payload: { error: e.response.data.msg },
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${BASE_URL}login`, params)
+      .then((res) => {
+        dispatch({ type: ACTIONS.LOGIN_SUCCESS, payload: { user: res.data } })
+        resolve(res)
       })
-    })
-  return Promise.resolve()
+      .catch((e) => {
+        dispatch({
+          type: ACTIONS.LOGIN_FAILED,
+          payload: { error: e.response.data.msg },
+        })
+        reject(e)
+      })
+  })
 }
 
 export const registerUser = (params) => (dispatch) => {
@@ -105,44 +111,47 @@ export const uploadAvatarUser = (params) => (dispatch) => {
   //     'content-type': 'multipart/form-data',
   //   },
   // }
-  axios
-    // .post(`${BASE_URL}upload`, formData, config)
-    .post(`${CLOUDINARY_BASE_URL}/image/upload`, formData)
-    .then((res) => {
-      dispatch({
-        type: ACTIONS.REGISTER_SUCCESS,
-        payload: { user: res.data },
+  return new Promise((resolve, reject) => {
+    axios
+      // .post(`${BASE_URL}upload`, formData, config)
+      .post(`${CLOUDINARY_BASE_URL}/image/upload`, formData)
+      .then((res) => {
+        dispatch({
+          type: ACTIONS.REGISTER_SUCCESS,
+          payload: { user: res.data },
+        })
+        resolve(res)
       })
-    })
-    .catch((e) => {
-      console.log('error upload', e)
-      // dispatch({
-      //   type: ACTIONS.REGISTER_FAILED,
-      //   payload: { error: e.response.data.msg },
-      // })
-    })
-  return Promise.resolve()
+      .catch((e) => {
+        dispatch({
+          type: ACTIONS.REGISTER_FAILED,
+          payload: { error: e.response.data.msg },
+        })
+        reject(e)
+      })
+  })
 }
 
 export const updateUser = (params) => (dispatch) => {
   // dispatch({ type: ACTIONS.UPDATE_REQUEST })
-  axios
-    .patch(`${BASE_URL}update`, params)
-    .then((res) => {
-      console.log('res update: ', res)
-      dispatch({
-        type: ACTIONS.UPDATE_SUCCESS,
-        payload: { user: res.data },
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`${BASE_URL}update`, params)
+      .then((res) => {
+        dispatch({
+          type: ACTIONS.UPDATE_SUCCESS,
+          payload: { user: res.data },
+        })
+        resolve(res)
       })
-    })
-    .catch((e) => {
-      console.log('error update: ', e)
-      dispatch({
-        type: ACTIONS.UPDATE_FAILED,
-        payload: { error: e.response.data.msg },
+      .catch((e) => {
+        dispatch({
+          type: ACTIONS.UPDATE_FAILED,
+          payload: { error: e.response.data.msg },
+        })
+        reject(e)
       })
-    })
-  return Promise.resolve()
+  })
 }
 
 export const updateUserNotification = (params) => (dispatch) => {
@@ -150,18 +159,16 @@ export const updateUserNotification = (params) => (dispatch) => {
   axios
     .patch(`${BASE_URL}update-notification`, params)
     .then((res) => {
-      console.log('res update: ', res)
       dispatch({
         type: ACTIONS.UPDATE_NOTIFICATION_SUCCESS,
         payload: { users: res.data },
       })
     })
     .catch((e) => {
-      console.log('error update: ', e)
-      // dispatch({
-      //   type: ACTIONS.UPDATE_FAILED,
-      //   payload: { error: e.response.data.msg },
-      // })
+      dispatch({
+        type: ACTIONS.UPDATE_FAILED,
+        payload: { error: e.response.data.msg },
+      })
     })
   return Promise.resolve()
 }
@@ -171,18 +178,16 @@ export const updateUserNotificationStatusById = (params) => (dispatch) => {
   axios
     .patch(`${BASE_URL}update-notification-status`, params)
     .then((res) => {
-      console.log('res update: ', res)
       dispatch({
         type: ACTIONS.UPDATE_NOTIFICATION_SUCCESS,
         payload: { users: res.data },
       })
     })
     .catch((e) => {
-      console.log('error update: ', e)
-      // dispatch({
-      //   type: ACTIONS.UPDATE_FAILED,
-      //   payload: { error: e.response.data.msg },
-      // })
+      dispatch({
+        type: ACTIONS.UPDATE_FAILED,
+        payload: { error: e.response.data.msg },
+      })
     })
   return Promise.resolve()
 }
@@ -195,7 +200,6 @@ export const deleteUserById = (data, token) => (dispatch) => {
         headers: { 'x-auth-token': token },
       })
       .then((res) => {
-        console.log('res delete: ', res)
         dispatch({
           type: ACTIONS.DELETE_USER,
           payload: {

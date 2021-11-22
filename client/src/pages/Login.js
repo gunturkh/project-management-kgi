@@ -72,8 +72,6 @@ const Login = () => {
     }
   }, [alertOpen === true])
 
-  console.log('successLogin:', successLogin)
-  console.log('loginError:', loginError)
   return (
     <>
       <Helmet>
