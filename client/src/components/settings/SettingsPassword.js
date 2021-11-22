@@ -36,7 +36,6 @@ const SettingsPassword = (props) => {
   const { user, updateStatus, updateError, token } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  console.log('user', user)
   // const [values, setValues] = useState({
   //   password: '',
   //   confirm: '',
@@ -49,7 +48,6 @@ const SettingsPassword = (props) => {
 
   useEffect(() => {
     dispatch(fetchUserInfo(token)).then((res) => {
-      console.log("fetcUserInfo res", res)
     }).catch((e) => {
       console.error(e)
     });
@@ -94,10 +92,8 @@ const SettingsPassword = (props) => {
           const formData = new FormData()
           formData.append('file', e.avatar)
           formData.append('upload_preset', preset)
-          console.log("form data", formData)
           try {
             const res = await axios.post(cloudinaryUrl, formData)
-            console.log("res from cloudinary", res)
             const resUrl = res.data.secure_url
             setImageUrl(resUrl)
             // setLoading(false);
@@ -111,7 +107,6 @@ const SettingsPassword = (props) => {
               avatar: resUrl,
             }
             dispatch(updateUser(postUserReq)).then((res) => {
-              console.log('updateUser', res)
               setLoading(false)
               setEdit(false)
             })
@@ -153,13 +148,9 @@ const SettingsPassword = (props) => {
                     name="avatar"
                     type="file"
                     onChange={(event) => {
-                      // console.log("event", event)
-                      // console.log("event.target", event.target.files[0])
                       let file = event.target.files[0]
                       let reader = new FileReader()
-                      // console.log("file", file)
 
-                      console.log("file size", event.currentTarget.files[0].size)
                       const filesize = file.size
                       if (filesize <= 2000000) {
                         setDisableSubmit(false)
