@@ -848,9 +848,15 @@ const ProjectList = (props) => {
   let companyFromUser = ''
   userPartOfCompany = _.filter(companies, { companyTeam: [user.id] })
   companyFromUser = userPartOfCompany[0]?._id
-  const mappedBoardsForUser = boards.filter(
+  const mappedBoardsForUser = foundBoards.filter(
     (board) => board.company === companyFromUser,
   )
+  const mappedBoardsForClient = foundBoards.filter(
+    (board) => board.pic.includes(user.id)
+  )
+  // const mappedBoardsForClient = _.filter(boards, { pic: [companyFromUser]})
+  //   (board) => board.pic.includes(companyFromUser) 
+  // )
 
   console.group('projectList')
   console.log('user:', user)
@@ -859,6 +865,7 @@ const ProjectList = (props) => {
   console.log('userPartOfCompany', userPartOfCompany)
   console.log('companyFromUser', companyFromUser)
   console.log('mappedBoardsForUser', mappedBoardsForUser)
+  console.log('mappedBoardsForClient', mappedBoardsForClient)
   console.log('foundBoards:', foundBoards)
   console.groupEnd('projectList')
 
@@ -952,15 +959,48 @@ const ProjectList = (props) => {
     console.log('getFilterData:', data)
     setFilterCardState(data)
   }
-  const sortedFoundBoards = (sortBy = 'asc') =>  {
-    console.log("foundboards inside sorted function", foundBoards, sortBy)
+  const sortedFoundBoards = (boardsFromRole, sortBy = 'asc') =>  {
+    console.log("foundboards inside sorted function", boardsFromRole, sortBy)
     if(sortBy === 'asc'){
-      return foundBoards.sort((a, b) => moment(b.startDate).format('YYYYMMDD') - moment(a.startDate).format('YYYYMMDD'))
+      return boardsFromRole.sort((a, b) => moment(b.startDate).format('YYYYMMDD') - moment(a.startDate).format('YYYYMMDD'))
     } 
     else  {
-      return foundBoards.sort((a, b) => moment(a.startDate).format('YYYYMMDD') - moment(b.startDate).format('YYYYMMDD'))
+      return boardsFromRole.sort((a, b) => moment(a.startDate).format('YYYYMMDD') - moment(b.startDate).format('YYYYMMDD'))
       }
   }
+
+  const filterBoardsBasedByRole = (role) => {
+  switch(role){
+      case 'ADMIN':
+        return foundBoards && foundBoards.length > 0 && (
+          paginateGood(sortedFoundBoards(foundBoards, filterCardState?.sortBy), 9, page - 1).map((board) => (
+            <Grid item key={board.id} lg={4} md={6} xs={12}>
+              <ProjectCard board={board} />
+            </Grid>
+          )));
+      case 'USER':
+        return mappedBoardsForUser && mappedBoardsForUser.length > 0 && (
+          paginateGood(sortedFoundBoards(mappedBoardsForUser, filterCardState?.sortBy), 9, page - 1).map((board) => (
+          <Grid item key={board.id} lg={4} md={6} xs={12}>
+            <ProjectCard board={board} />
+          </Grid>
+        )));
+      case 'CLIENT':
+        return mappedBoardsForClient && mappedBoardsForClient.length > 0 && (
+          paginateGood(sortedFoundBoards(mappedBoardsForClient, filterCardState?.sortBy), 9, page - 1).map((board) => (
+          <Grid item key={board.id} lg={4} md={6} xs={12}>
+            <ProjectCard board={board} />
+          </Grid>
+        )));
+      default:
+        return (
+          <Grid item lg={4} md={6} xs={12}>
+            <p>No boards found</p>
+          </Grid>
+        )
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -1003,25 +1043,26 @@ const ProjectList = (props) => {
             </Box>
             <Box sx={{ pt: 3 }}>
               <Grid container spacing={3}>
-                {user.role === 'ADMIN' ? (
-                  foundBoards && foundBoards.length > 0 ? (
-                    paginateGood(sortedFoundBoards(filterCardState?.sortBy), 9, page - 1).map((board) => (
-                      <Grid item key={board.id} lg={4} md={6} xs={12}>
-                        <ProjectCard board={board} />
-                      </Grid>
-                    ))
-                  ) : (
-                    <Grid item lg={4} md={6} xs={12}>
-                      <p>No boards found</p>
-                    </Grid>
-                  )
-                ) : (
-                  mappedBoardsForUser.map((board) => (
-                    <Grid item key={board.id} lg={4} md={6} xs={12}>
-                      <ProjectCard board={board} />
-                    </Grid>
-                  ))
-                )}
+              {filterBoardsBasedByRole(user.role)}
+                {/* {user.role === 'ADMIN' ? ( */}
+                {/*   foundBoards && foundBoards.length > 0 ? ( */}
+                {/*     paginateGood(sortedFoundBoards(filterCardState?.sortBy), 9, page - 1).map((board) => ( */}
+                {/*       <Grid item key={board.id} lg={4} md={6} xs={12}> */}
+                {/*         <ProjectCard board={board} /> */}
+                {/*       </Grid> */}
+                {/*     )) */}
+                {/*   ) : ( */}
+                {/*     <Grid item lg={4} md={6} xs={12}> */}
+                {/*       <p>No boards found</p> */}
+                {/*     </Grid> */}
+                {/*   ) */}
+                {/* ) : ( */}
+                {/*   mappedBoardsForUser.map((board) => ( */}
+                {/*     <Grid item key={board.id} lg={4} md={6} xs={12}> */}
+                {/*       <ProjectCard board={board} /> */}
+                {/*     </Grid> */}
+                {/*   )) */}
+                {/* )} */}
               </Grid>
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Pagination
