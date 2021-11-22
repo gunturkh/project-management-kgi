@@ -24,8 +24,9 @@ import {
 } from '../../actions/actionCreators/userActions'
 import Thumb from '../Thumb'
 
-const CLOUDINARY_BASE_URL = process.env.REACT_APP_CLOUDINARY_BASE_URL
-const preset = process.env.REACT_APP_PRESET
+// const CLOUDINARY_BASE_URL = process.env.REACT_APP_CLOUDINARY_BASE_URL
+const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dzl9cgxtk/image/upload'
+const preset = 'avatarkgi'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -94,7 +95,7 @@ const SettingsPassword = (props) => {
           formData.append('upload_preset', preset)
           console.log("form data", formData)
           try {
-            const res = await axios.post(CLOUDINARY_BASE_URL, formData)
+            const res = await axios.post(cloudinaryUrl, formData)
             console.log("res from cloudinary", res)
             const resUrl = res.data.secure_url
             setImageUrl(resUrl)
