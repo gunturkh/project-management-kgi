@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as ACTIONS from '../actions'
 
 const BASE_URL = '/api/user/'
-const CLOUDINARY_BASE_URL = 'https://api.cloudinary.com/v1_1/dzl9cgxtk'
+const CLOUDINARY_BASE_URL = 'https://api.cloudinary.com/v1_1/dzl9cgxtk/image/upload'
 const preset = 'avatarkgi'
 
 export const fetchAllUsersInfo = (token) => (dispatch) => {
@@ -114,7 +114,7 @@ export const uploadAvatarUser = (params) => (dispatch) => {
   return new Promise((resolve, reject) => {
     axios
       // .post(`${BASE_URL}upload`, formData, config)
-      .post(`${CLOUDINARY_BASE_URL}/image/upload`, formData)
+      .post(`${CLOUDINARY_BASE_URL}`, formData)
       .then((res) => {
         dispatch({
           type: ACTIONS.REGISTER_SUCCESS,

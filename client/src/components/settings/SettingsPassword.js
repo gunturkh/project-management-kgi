@@ -92,8 +92,10 @@ const SettingsPassword = (props) => {
           const formData = new FormData()
           formData.append('file', e.avatar)
           formData.append('upload_preset', preset)
+          console.log("form data", formData)
           try {
             const res = await axios.post(CLOUDINARY_BASE_URL, formData)
+            console.log("res from cloudinary", res)
             const resUrl = res.data.secure_url
             setImageUrl(resUrl)
             // setLoading(false);
@@ -106,11 +108,13 @@ const SettingsPassword = (props) => {
               position: e.position,
               avatar: resUrl,
             }
-            dispatch(updateUser(postUserReq)).then(() => {
+            dispatch(updateUser(postUserReq)).then((res) => {
+              console.log('updateUser', res)
               setLoading(false)
               setEdit(false)
             })
           } catch (err) {
+            console.error(err)
           }
         }}
       >
