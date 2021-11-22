@@ -53,16 +53,8 @@ const SettingsPassword = (props) => {
       setOpen(true)
       setSubmit(false)
     }
-    // if (updateStatus) setOpen(true)
-    // else if (updateError) setOpen(true)
   }, [updateStatus])
 
-  // const handleChange = (event) => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value,
-  //   })
-  // }
   const [open, setOpen] = React.useState(false)
 
   const handleClick = () => {
@@ -77,7 +69,6 @@ const SettingsPassword = (props) => {
     setOpen(false)
   }
 
-  console.log('user:', user)
   return (
     <>
       <Formik
@@ -88,17 +79,11 @@ const SettingsPassword = (props) => {
           position: user.position,
         }}
         onSubmit={async (e) => {
-          // e.preventDefault()
           setLoading(true)
-          console.log('avatar submit: ', e)
-          console.log('url: ', CLOUDINARY_BASE_URL)
-          console.log('user submit: ', user)
           const formData = new FormData()
           formData.append('file', e.avatar)
           formData.append('upload_preset', preset)
           try {
-            // setLoading(true);
-            console.log('upload avatar progressing...')
             const res = await axios.post(CLOUDINARY_BASE_URL, formData)
             const imageUrl = res.data.secure_url
             setImageUrl(imageUrl)
@@ -113,28 +98,11 @@ const SettingsPassword = (props) => {
               avatar: imageUrl,
             }
             dispatch(updateUser(postUserReq)).then(() => {
-              console.log('upload avatar done!', user)
               setLoading(false)
               setEdit(false)
             })
-            // setImage(image.data);
           } catch (err) {
-            console.error(err)
           }
-          // dispatch(uploadAvatarUser(e.avatar)).then(() => {
-          //   dispatch(updateUser(postUserReq)).then(() => {
-          //     console.log('done update user')
-          //     // setOpen(true)
-          //     // navigate('/app/projects')
-          //   })
-          // })
-          // navigate(`/app/projects`, { replace: true })
-          // const { username, password } = e
-          // const loginReq = { username, password }
-          // dispatch(loginUser(loginReq))
-          // setUsername('')
-          // setPassword('')
-          // navigate('/', { replace: true })
         }}
       >
         {({
@@ -177,7 +145,7 @@ const SettingsPassword = (props) => {
                 {edit ? (
                   <Thumb file={values.avatar} />
                 ) : (
-                  <img width="250px" src={imageUrl} />
+                  <img width="250px" src={imageUrl} alt="Avatar" />
                 )}
                 <TextField
                   fullWidth
@@ -279,24 +247,14 @@ const SettingsPassword = (props) => {
             .required('Password is required'),
         })}
         onSubmit={(e) => {
-          // e.preventDefault()
-          console.log('form submit: ', e)
           const postUserReq = {
             username: user.username,
             newPassword: e.newPassword,
             newPasswordCheck: e.newPasswordCheck,
             role: e.role,
           }
-          console.log('postBoardReq submit: ', postUserReq)
           dispatch(updateUser(postUserReq))
           setSubmit(true)
-          // navigate(`/app/projects`, { replace: true })
-          // const { username, password } = e
-          // const loginReq = { username, password }
-          // dispatch(loginUser(loginReq))
-          // setUsername('')
-          // setPassword('')
-          // navigate('/', { replace: true })
         }}
       >
         {({
@@ -306,7 +264,6 @@ const SettingsPassword = (props) => {
           handleSubmit,
           touched,
           values,
-          setFieldValue,
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -316,63 +273,6 @@ const SettingsPassword = (props) => {
           >
             <Card>
               <CardContent>
-                {/*
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  p: 2,
-                }}
-              >
-                <Button color="primary" variant="contained" component="label">
-                  Upload Profile Picture
-                  <input id="file" name="file" type="file" hidden />
-                </Button>
-              <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-              >
-                <Alert
-                  onClose={handleClose}
-                  severity="success"
-                  sx={{ width: '100%' }}
-                >
-                  Success update password!
-                </Alert>
-              </Snackbar>
-              </Box>
-              */}
-                {/*
-              <TextField
-                fullWidth
-                error={Boolean(touched.newPassword && errors.newPassword)}
-                label="New Password"
-                margin="normal"
-                name="newPassword"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                type="password"
-                required
-                value={values.newPassword}
-                variant="outlined"
-              />
-              <TextField
-                fullWidth
-                error={Boolean(
-                  touched.newPasswordCheck && errors.newPasswordCheck,
-                )}
-                label="Confirm New Password"
-                margin="normal"
-                name="newPasswordCheck"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                type="password"
-                required
-                value={values.newPasswordCheck}
-                variant="outlined"
-              />
-              */}
               </CardContent>
               <CardHeader subheader="Update password" title="Password" />
               <Divider />
