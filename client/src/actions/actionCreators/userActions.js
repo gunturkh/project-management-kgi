@@ -111,10 +111,15 @@ export const uploadAvatarUser = (params) => (dispatch) => {
   //     'content-type': 'multipart/form-data',
   //   },
   // }
+  const options = {
+    method: 'POST',
+    body: formData,
+  }
   return new Promise((resolve, reject) => {
-    axios
-      // .post(`${BASE_URL}upload`, formData, config)
-      .post(`${CLOUDINARY_BASE_URL}`, formData)
+    // axios
+    // .post(`${CLOUDINARY_BASE_URL}`, formData)
+    // .post(`${BASE_URL}upload`, formData, config)
+    fetch(`${CLOUDINARY_BASE_URL}`, options)
       .then((res) => {
         dispatch({
           type: ACTIONS.REGISTER_SUCCESS,
