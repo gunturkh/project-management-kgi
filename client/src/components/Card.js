@@ -4,6 +4,8 @@ import {
   Paper, makeStyles, InputBase, IconButton,
   Snackbar,
   Alert as MuiAlert,
+  Modal,
+  Box,
 } from '@material-ui/core'
 import InputCard from './InputCard'
 
@@ -24,6 +26,18 @@ import axios from 'axios'
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  // p: 4,
+};
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -46,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Card({ task, index }) {
-  console.log('Card task:', task)
   const [openAlert, setOpenAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState({ status: null, message: null })
   const { token, user, users } = useSelector((state) => state.user)
@@ -82,21 +95,14 @@ export default function Card({ task, index }) {
   mappedPic = task?.pic?.map((pic) => {
     return users.find((user) => user._id === pic || user._id === pic.value)?.username
   })
-  console.log("mappedPic", mappedPic)
-  console.log('task list', task?.list)
   if (typeof task.list === 'array') {
     mappedList = task?.list?.map((list) => {
-      console.log('list', list)
-      console.log('timelines', timelines)
       return timelines.find((t) => t._id === list)
     })
   }
   if (typeof task.list === 'string')
     mappedList = timelines.find((t) => t._id === task.list)
-  console.log('mappedList', mappedList)
   const handleChange = (e, target) => {
-    console.log('handleChange card:', { e, target })
-    console.log("card handleChange ", { e, target })
     const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setEditTaskValue((prevState) => {
@@ -107,7 +113,6 @@ export default function Card({ task, index }) {
         return { ...prevState, startDate: e }
       })
     } else if (target?.name === 'pic') {
-      console.log("pic on change", e)
       setEditTaskValue((prevState) => {
         return {
           ...prevState,
@@ -119,10 +124,6 @@ export default function Card({ task, index }) {
     else {
       if (noPersistChange.includes(e.target.name)) e.persist = () => { }
       else e.persist()
-      console.log('setState card: ', {
-        name: e.target.name,
-        value: e.target.value,
-      })
       setEditTaskValue((prevState) => {
         return {
           ...prevState,
@@ -133,129 +134,21 @@ export default function Card({ task, index }) {
     }
   }
 
-  useEffect(() => {
-    console.log('cards changed:', cards)
-    console.log('lists changed:', lists)
-
-    // axios
-    //   .get(`/api/boards/${currBoard._id}/projectCards`, {
-    //     headers: { 'x-auth-token': token },
-    //   })
-    //   .then((res) => {
-    //     console.log('projectCards', res.data)
-    //   })
-    // const timelinesParamArr = []
-    // const filteredLists = []
-    // const filteredTimelines = []
-
-    // const onlyUnique = (value, index, self) => {
-    //   return self.indexOf(value) === index
-    // }
-    // cards.forEach((card) => {
-    //   const [filteredTimeline] = timelines.filter((timeline) => {
-    //     if (card?.list?.length > 0) {
-    //       return timeline._id === card.list[0]
-    //     } else return
-    //   })
-    //   const [filteredList] = lists.filter((list) => card.listId === list._id)
-    //   const params = { card, list: filteredList, timeline: filteredTimeline }
-    //   filteredLists.push(filteredList)
-    //   filteredTimelines.push(filteredTimeline)
-    //   timelinesParamArr.push(params)
-    // })
-    // const uniqueTimelines =
-    //   filteredTimelines.length > 0 ? filteredTimelines.filter(onlyUnique) : null
-
-    // const listsFromUniqueTimeline = uniqueTimelines
-    //   ? uniqueTimelines.map((i) => {
-    //       const [params] = lists.filter((list) => {
-    //         return list._id === i.listId
-    //       })
-    //       return params?.name
-    //     })
-    //   : null
-
-    //   const progress = listsFromTimelineId
-    //     ? (listsFromTimelineId.reduce((acc, curVal) => {
-    //         curVal === 'Checked' || curVal === 'Done' ? (acc += 1) : (acc = acc)
-    //         return acc
-    //       }, 0) /
-    //         listsFromTimelineId.length) *
-    //       100
-    //     : 0
-    // if (timelinesParamArr.length > 0) {
-    //   timelinesParamArr.forEach((item) => {
-    //   })
-    // }
-    // console.log('timelinesParamArr', timelinesParamArr)
-    // console.log('uniqueTimelines', uniqueTimelines)
-    // console.log('listsFromUniqueTimeline', listsFromUniqueTimeline)
-    // if (submit) {
-    //   console.log('submit?', submit)
-    //   const getTimeline =
-    //     timelines.length > 0
-    //       ? timelines.filter((t) => t._id === editTaskValue.list)
-    //       : null
-
-    //   const getCardsWithTimelineId =
-    //     cards.length > 0
-    //       ? cards.filter((c) => {
-    //           return c.list[0] === editTaskValue.list
-    //         })
-    //       : null
-
-    //   const listsFromTimelineId = getCardsWithTimelineId
-    //     ? getCardsWithTimelineId.map((i) => {
-    //         const [params] = lists.filter((list) => {
-    //           return list._id === i.listId
-    //         })
-    //         return params.name
-    //       })
-    //     : null
-
-    //   const progress = listsFromTimelineId
-    //     ? (listsFromTimelineId.reduce((acc, curVal) => {
-    //         curVal === 'Checked' || curVal === 'Done' ? (acc += 1) : (acc = acc)
-    //         return acc
-    //       }, 0) /
-    //         listsFromTimelineId.length) *
-    //       100
-    //     : 0
-
-    //   console.log('progress', progress)
-
-    //   const timelineParams = getTimeline.length ? getTimeline[0] : null
-
-    //   console.log('cards', cards)
-    //   getTimeline && console.log('getTimeline: ', getTimeline)
-    //   timelineParams && console.log('timelineParams: ', timelineParams)
-    //   getCardsWithTimelineId &&
-    //     console.log('getCardsWithTimelineId: ', getCardsWithTimelineId)
-    //   console.log('lenlistsFromTimelineIdth : ', listsFromTimelineId)
-    //   console.log('length timeline: ', listsFromTimelineId.length)
-    //   // setSubmit(false)
-    // }
-  }, [cards, lists])
-
   const submitHandlerUpdate = async () => {
     setEditable(false)
-    // setSubmit(true)
     setEditTaskValue(editTaskValue)
     dispatch(updateCardById(task._id, editTaskValue))
       .then((res) => {
-        console.log('edit card success', res)
         setAlertMessage({ status: 'success', message: 'Task Edit Successfully!' })
         setOpenAlert(true)
       })
       .catch(e => {
-        console.log('create card failed', e)
         setAlertMessage({ status: 'error', message: 'Failed Edit Task!' })
         setOpenAlert(true)
       })
     if (currBoard?.pic.length > 0) {
       await currBoard.pic.map(async (pic) => {
         const picData = await users.filter((user) => user._id === pic)[0]
-        console.log('picData: ', { picData })
         const notifMessage = {
           id: makeid(5),
           message: `Task ${editTaskValue.name}, edited by: ${user.name
@@ -325,9 +218,7 @@ export default function Card({ task, index }) {
     }
     return color
   }
-  console.log('submit status? ', submit)
-  console.log('openAlert card status? ', openAlert)
-  console.log('openAlert message status? ', alertMessage)
+
   return (
     <>
       <Snackbar
@@ -357,46 +248,27 @@ export default function Card({ task, index }) {
                 onMouseLeave={() => setShowDelete(false)}
               >
                 {editable ? (
-                  // <InputBase
-                  //   onChange={(e) => {
-                  //     e.preventDefault()
-                  //     setTitle(e.target.value)
-                  //   }}
-                  //   multiline
-                  //   fullWidth
-                  //   value={title}
-                  //   style={{ minHeight: '7px' }}
-                  //   autoFocus
-                  //   onFocus={(e) => {
-                  //     const val = e.target.value
-                  //     e.target.value = ''
-                  //     e.target.value = val
-                  //   }}
-                  //   onBlur={() => {
-                  //     setEditable(false)
-                  //     const text = title.trim().replace(/\s+/g, ' ')
-                  //     if (text === '') {
-                  //       setTitle(task.name)
-                  //       return
-                  //     }
-                  //     setTitle(text)
-                  //     dispatch(updateCardById(task._id, { name: text }))
-                  //     // eslint-disable-next-line no-param-reassign
-                  //     task.name = text
-                  //   }}
-                  // />
-                  <InputCard
-                    value={editTaskValue}
-                    changedHandler={handleChange}
-                    itemAdded={submitHandlerUpdate}
-                    closeHandler={closeButtonHandler}
-                    keyDownHandler={handleKeyDown}
-                    type="list"
-                    btnText="Edit List"
-                    placeholder="Enter list title..."
-                    // width="230px"
-                    marginLeft="1"
-                  />
+                  <Modal
+                    open={editable}
+                    onClose={closeButtonHandler}
+                    aria-labelledby="modal-card-title"
+                    aria-describedby="modal-card-description"
+                  >
+                    <Box sx={modalStyle}>
+                      <InputCard
+                        value={editTaskValue}
+                        changedHandler={handleChange}
+                        itemAdded={submitHandlerUpdate}
+                        closeHandler={closeButtonHandler}
+                        keyDownHandler={handleKeyDown}
+                        type="list"
+                        btnText="Edit List"
+                        placeholder="Enter list title..."
+                        // width="230px"
+                        marginLeft="1"
+                      />
+                    </Box>
+                  </Modal>
                 ) : (
                   <div style={{ position: 'relative' }}>
                     {showDelete && (
@@ -425,13 +297,11 @@ export default function Card({ task, index }) {
                           onClick={() => {
                             setCard(false)
                             dispatch(deleteCardById(task._id)).then((res) => {
-                              console.log('delete card success', res)
                               alert('delete card success')
                               setAlertMessage({ status: 'success', message: 'Task Delete Successfully!' })
                               setOpenAlert(true)
                             })
                               .catch(e => {
-                                console.log('delete card failded', e)
                                 setAlertMessage({ status: 'error', message: 'Failed Delete Task!' })
                                 setOpenAlert(true)
                               })
@@ -441,7 +311,6 @@ export default function Card({ task, index }) {
                                 const picData = await users.filter(
                                   (user) => user._id === pic,
                                 )[0]
-                                console.log('picData: ', { picData })
                                 const notifMessage = {
                                   id: makeid(5),
                                   message: `Task ${task.name} on project ${currBoard.projectName}, deleted by: ${user.name}`,

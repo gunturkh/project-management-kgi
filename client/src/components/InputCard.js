@@ -11,6 +11,7 @@ import {
   Input,
   MenuItem,
   TextField,
+  Box
 } from '@material-ui/core'
 import Select from 'react-select';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
@@ -38,12 +39,9 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     margin: theme.spacing(0.2, 1, 0.09, 1),
-    // width: props => props.type === 'board' ? '120px' : '230px',
+    minWidth: '300px',
     wordWrap: 'break-word',
-    padding: (props) =>
-      props.type === 'list'
-        ? theme.spacing(0.5, 1.5, 0.5, 1.5)
-        : theme.spacing(1, 1, 3.5, 2),
+    padding: '30px',
     boxShadow: (props) =>
       props.type === 'list'
         ? 'inset 0 0 0 2px #0079bf'
@@ -67,17 +65,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   listBackground: {
-    // backgroundColor: '#EBECF0',
-    backgroundColor: 'transparent',
+    backgroundColor: '#EBECF0',
     marginLeft: (props) =>
       props.marginLeft ? theme.spacing(1) : theme.spacing(0),
-    paddingTop: (props) =>
-      props.type === 'list' ? theme.spacing(1) : 'inherit',
     borderRadius: theme.spacing(0.5),
+    padding: '10px',
   },
-  width: (props) => ({
-    width: props.width,
-  }),
 }))
 
 export default function InputItem({
@@ -176,26 +169,15 @@ export default function InputItem({
           </SelectUI>
         </FormControl>
         <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
-          {/* <InputLabel */}
-          {/*   id="demo-mutiple-pic-label" */}
-          {/*   style={{ marginLeft: '-15px' }} */}
-          {/* > */}
-          {/*   Assigned to */}
-          {/* </InputLabel> */}
-          <div style={{ marginLeft: '-15px' }}>
-
+          <div style={{ paddingBottom: '5px' }}>
             Assigned to
           </div>
           <Select
             isMulti
             value={pic}
             onChange={changedHandler}
-            // onChange={(e) => console.log("react select on change", e)}
             name="pic"
-            // input={<Input label="PIC" />}
             variant="standard"
-            // MenuProps={MenuProps}
-            // style={{ maxWidth: '100%' }}
             required
             options={users.map((user) => {
               return {
@@ -276,17 +258,24 @@ export default function InputItem({
           </SelectUI>
         </FormControl>
       </Paper>
-      <Button
-        ref={divRef}
-        className={classes.btn}
-        variant="contained"
-        onClick={itemAdded}
-      >
-        {btnText}
-      </Button>
-      <IconButton className={classes.icon} onClick={closeHandler}>
-        <CloseIcon />
-      </IconButton>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          padding: '10px 0px'
+        }}>
+        <Button
+          ref={divRef}
+          className={classes.btn}
+          variant="contained"
+          onClick={itemAdded}
+        >
+          {btnText}
+        </Button>
+        <IconButton className={classes.icon} onClick={closeHandler}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
     </div>
   )
 }

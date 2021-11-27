@@ -219,26 +219,9 @@ export default function ProjectDetailsNew() {
   const handleCloseAlert = () => {
     setOpenAlert(false)
   }
-  // if (!loading && name !== currBoard.name && currBoard.name !== undefined)
-  //   name = currBoard.name
-  // else if (name === undefined) name = ''
-  // let fetchList;
-  // useEffect(() => {
-  //   axios.get('/files').then((res) => {
-  //     setListFile(res.data)
-  //     console.log('GET files response:', listFile)
-  //     // setRefreshList(true)
-  //     setRefreshList(false)
-  //   })
-  // }, [refreshList])
 
   useEffect(() => {
-    console.log('initialData', initialData)
-    console.log('isValid', isValid)
-    console.log('error', error)
-    // if (isValid && !error) {
     if (id.length === 24) {
-      console.log('id:', id)
       dispatch(fetchListsFromBoard(id, token))
       dispatch(fetchBoardById(id, token))
       dispatch(fetchsCardsFromBoard(id, token))
@@ -247,7 +230,6 @@ export default function ProjectDetailsNew() {
       dispatch(fetchAllCompaniesInfo(token))
       dispatch(fetchAllUsersInfo(token))
     }
-    // }
   }, [dispatch, id, isValid, token, error])
 
   mappedPic = currBoard?.pic?.map((pic) => {
@@ -257,12 +239,8 @@ export default function ProjectDetailsNew() {
     ?.companyName
   useEffect(() => {
     if (!_.isEmpty(currBoard)) {
-      // setColor(currBoard.image.color)
-      // setUrl(currBoard.image.full)
-      // setBoardTitle(currBoard.name)
       setColor('white')
       setUrl('')
-      // setBoardTitle('test')
       document.title = `${'Project'} | Project Management KGI`
     }
   }, [currBoard])
@@ -299,7 +277,6 @@ export default function ProjectDetailsNew() {
           headers: { 'x-auth-token': token },
         })
         .then((res) => {
-          console.log('projectCards', res.data)
           res.data.timelineWithList.forEach((t) => {
             dispatch(
               updateTimelineByBoardId(`${currBoard._id}/${t.timeline}`, {
@@ -320,7 +297,6 @@ export default function ProjectDetailsNew() {
           timelines?.map((time) => {
             let localStart = moment(time.start).local().format('YYYY-MM-DD')
             let localEnd = moment(time.end).local().format('YYYY-MM-DD')
-            console.log({ localStart, localEnd })
             const start = localStart.split('T')[0]
             const end = localEnd.split('T')[0]
 
@@ -334,17 +310,12 @@ export default function ProjectDetailsNew() {
 
         if (result?.length > 0) {
           resolve(result)
-          console.log('timelines time', timelines)
           setManipulatedTimelines(result)
         } else resolve([])
       } catch (error) {
         reject([])
       }
     })
-    // }
-    // console.log('timelines', timelines)
-    // const result = await manipulatedTimelines(timelines)
-    // console.log('manipulatedTimelines', result)
   }, [timelines])
 
   const onDragEnd = async (result) => {
@@ -478,7 +449,6 @@ export default function ProjectDetailsNew() {
     if (currBoard?.pic.length > 0) {
       await currBoard.pic.map(async (pic) => {
         const picData = await users.filter((user) => user._id === pic)[0]
-        console.log('picData: ', { picData })
         const notifMessage = {
           id: makeid(5),
           message: text,
@@ -525,11 +495,6 @@ export default function ProjectDetailsNew() {
   }
 
   if (id.length < 24) return <h1>Invalid URL</h1>
-  // const handleChange = (e) => {
-  //   e.preventDefault()
-  //   console.log("handleChange from PDN")
-  //   // setListTitle(e.target.value)
-  // }
 
   const handleChange = (e) => {
     const noPersistChange = ['priority', 'pic']
@@ -565,32 +530,9 @@ export default function ProjectDetailsNew() {
     }
     dispatch(createNewList(postListReq, token))
       .then(res => {
-      console.log("createNewList success res", res)
         setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
         setOpenAlert(true)
       })
-    // dispatch({ type: ACTIONS.POST_REQUEST_LIST })
-    // axios
-    //   .post('/api/lists/', postListReq, {
-    //     headers: { 'x-auth-token': token },
-    //   })
-    //   .then((res) => {
-    //     dispatch({ type: ACTIONS.ADD_LIST, payload: { list: res.data } })
-    //     setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
-    //     setOpenAlert(true)
-    //   })
-    //   .catch((e) => {
-    //     if (e.message === 'Network Error') {
-    //       dispatch({ type: ACTIONS.ERROR_LIST, payload: { error: e } })
-    //       setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
-    //       setOpenAlert(true)
-    //     }
-    //     else if (e.response.status === 422) {
-    //       dispatch({ type: ACTIONS.VALIDATION_ERROR_LIST })
-    //       setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
-    //       setOpenAlert(true)
-    //     }
-    //   })
 
     dispatch(
       createNewActivity(
@@ -609,19 +551,6 @@ export default function ProjectDetailsNew() {
       dueDate: '',
     })
   }
-
-  // const submitHandlerUpdate = () => {
-  //   setEditable(false)
-  //   // if (text === '') {
-  //   //   setListTitle(column.name)
-  //   //   setEditable(false)
-  //   //   return
-  //   // }
-  //   setEditTaskValue(editTaskValue)
-  //   dispatch(updateBoardById(id, editTaskValue))
-  //   // eslint-disable-next-line no-param-reassign
-  //   currBoard.name = editTaskValue.title
-  // }
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -644,7 +573,6 @@ export default function ProjectDetailsNew() {
 
   const handleListItemClick = (event, index) => {
     setSelectedFolderIndex(index)
-    console.log('selected file: ', index)
   }
 
   const handleCellClick = (param, event) => {
@@ -686,7 +614,6 @@ export default function ProjectDetailsNew() {
       flex: 1,
       renderCell: (params) => {
         const filename = params.row.fileName.replace(/\.[^/.]+$/, '')
-        // console.log('file Name: ', name)
         return (
           <a
             href={params.row.webViewLink}
@@ -732,7 +659,6 @@ export default function ProjectDetailsNew() {
           }
 
           const handleDownload = (event, params) => {
-            console.log('CellValues Clicked: ', params)
           }
 
           const handleDeleteFile = (params) => {
@@ -742,7 +668,6 @@ export default function ProjectDetailsNew() {
               .map((item) => {
                 return { ...item }
               })
-            console.log('filteredFiles: ', filteredFiles)
             const param = {
               userId: currBoard.userId,
               projectName: currBoard.projectName,
@@ -826,7 +751,6 @@ export default function ProjectDetailsNew() {
   const dataFileRow = currBoard?.files
     ?.filter((w) => w.folder.includes(selectedFolderIndex))
     .map((item, index) => {
-      console.log('filtered File:', item)
       const type = item.mimeType?.split('/') || ''
       const date = moment(item.modifiedTime).format('DD MMMM YYYY hh:mm:ss')
       return {
@@ -843,7 +767,6 @@ export default function ProjectDetailsNew() {
 
   const handleOpenModal = () => {
     setOpenUploadModal(true)
-    console.log('LIST FILE array:', listFile)
   }
 
   const handleCloseModal = () => {
@@ -857,8 +780,6 @@ export default function ProjectDetailsNew() {
     for (let i = 0; i < addFile.length; i++) {
       formData.append('files', addFile[i])
     }
-    console.log('SUBMIT files', addFile)
-    console.log('formData', formData.getAll('files'))
     try {
       if (!progressLoading) {
         setProgressLoading(true)
@@ -867,13 +788,9 @@ export default function ProjectDetailsNew() {
           setRefreshList(true)
           setOpenUploadModal(false)
           setProgressLoading(false)
-          console.log('data res: ', data)
-          console.log('currBoard: ', currBoard)
-          console.log('chooseFolder: ', chooseFolder)
           const uploadedFiles = data.data.map((d) => {
             return { ...d, folder: chooseFolder, boardId: currBoard._id }
           })
-          console.log('uploadedFiles: ', uploadedFiles)
           const params = {
             userId: currBoard.userId,
             projectName: currBoard.projectName,
@@ -889,62 +806,14 @@ export default function ProjectDetailsNew() {
         })
       }
     } catch (err) {
-      console.log('ERROR: ', err)
+      console.error('ERROR: ', err)
     }
-
-    // fileUpload()
-    // setOpenUploadModal(false)
   }
 
   const handleChooseFolder = (e) => {
     setChooseFolder(e.target.value)
-    console.log('Choosen Folder: ', e.target.value)
   }
 
-  // let filteredValue = listFile.filter((w) => w.name.includes('others'))
-
-  // const handleAddition = () => {
-  //   setAddListFlag(true)
-  //   addFlag.current = false
-  // }
-  // const setBackground = (background) => {
-  //   if (background.thumb) {
-  //     setUrl(background.full)
-  //     setColor('white')
-  //     dispatch(
-  //       updateBoardById(
-  //         currBoard._id,
-  //         {
-  //           image: {
-  //             full: background.full,
-  //             thumb: background.thumb,
-  //             color: 'white',
-  //           },
-  //         },
-  //         token,
-  //       ),
-  //     )
-  //   } else {
-  //     setColor(background)
-  //     setUrl('')
-  //     dispatch(
-  //       updateBoardById(
-  //         currBoard._id,
-  //         {
-  //           image: {
-  //             full: '',
-  //             thumb: '',
-  //             color: background,
-  //           },
-  //         },
-  //         token,
-  //       ),
-  //     )
-  //   }
-  // }
-
-  console.log('openAlert', openAlert)
-  // console.log('cards', cards)
   return (
     <>
       {loading ? (
@@ -981,8 +850,6 @@ export default function ProjectDetailsNew() {
             <TabPanel value={tabValue} index={0}
               style={{ height: '100vh' }}
             >
-              {/* TODO: Change TabPanel[0] content into task list with sorting feature*/}
-
               <CardContent
                 style={{ display: 'flex', justifyContent: 'center' }}
               >
@@ -1020,10 +887,6 @@ export default function ProjectDetailsNew() {
                     </Typography>
                     <Grid
                       item
-                      // md={6}
-                      // xs={12}
-                      // md={6}
-                      // xs={12}
                       sx={{
                         alignItems: 'center',
                         display: 'flex',
@@ -1036,8 +899,6 @@ export default function ProjectDetailsNew() {
                       <Typography
                         align="center"
                         color="textSecondary"
-                        // display="inline"
-                        // sx={{ pl: 1 }}
                         variant="body2"
                       >
                         {mappedPic?.join(', ') || ''}
@@ -1048,9 +909,6 @@ export default function ProjectDetailsNew() {
                     sortingOrder={['desc', 'asc']}
                     rows={dataGridRow}
                     columns={dataGridColumn}
-                    // pageSize={5}
-                    // rowsPerPageOptions={[5]}
-                    // checkboxSelection
                     disableSelectionOnClick
                   />
                 </div>
@@ -1086,17 +944,6 @@ export default function ProjectDetailsNew() {
                           )
                         })}
                       <div className={classes.wrapper}>
-                        {/* {addFlag.current && (
-                        <AddItem
-                          handleClick={handleAddition}
-                          btnText="Add another list"
-                          type="list"
-                          icon={<AddIcon />}
-                          width="256px"
-                          color="white"
-                          noshadow
-                        />
-                      )} */}
                         {addListFlag && (
                           <InputCard
                             value={listTitle}
@@ -1133,12 +980,10 @@ export default function ProjectDetailsNew() {
               </Box>
             </TabPanel>
             <TabPanel value={tabValue} index={3}>
-              {/* TODO: Create File management with upload and see all list item*/}
               <Box sx={{ flexGrow: 1, padding: 0 }}>
                 <Grid
                   container
                   spacing={0.5}
-                  // flexDirection={'column'}
                   rowSpacing={0.5}
                 >
                   <Grid item xs={3} md={3}>

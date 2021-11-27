@@ -2,21 +2,20 @@ import React, { useState } from 'react'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  Paper, makeStyles, InputBase, IconButton,
+  Paper, makeStyles, IconButton,
   Snackbar,
   Alert as MuiAlert,
+  Box,
+  Modal
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import DeleteIcon from '@material-ui/icons/Delete'
 import Card from './Card'
 import InputCard from './InputCard'
 import { createNewCard } from '../actions/actionCreators/cardActions'
 import midString from '../ordering/ordering'
 import { createNewActivity } from '../actions/actionCreators/activityActions'
-import AddItem from './AddItem'
 import {
   updateListById,
-  deleteListById,
 } from '../actions/actionCreators/listActions'
 import { updateUserNotification } from '../actions/actionCreators/userActions'
 import { makeid } from '../utils/randomString'
@@ -25,6 +24,16 @@ import moment from 'moment'
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +44,6 @@ const useStyles = makeStyles((theme) => ({
   },
   scroll: {
     maxHeight: 'fill-content',
-    // overflow: 'auto',
-    // overflowX: 'hidden',
-    // overflowY: 'auto',
     margin: 0,
     paddingBottom: '20px',
     listStyle: 'none',
@@ -83,8 +89,8 @@ export default function Column({ column, tasks, index }) {
     description: '',
     priority: [],
     pic: [],
-    startDate: '',
-    dueDate: '',
+    startDate: null,
+    dueDate: null,
     list: null,
     modifyBy: user.username,
     modifyDate: '',
@@ -94,7 +100,6 @@ export default function Column({ column, tasks, index }) {
   const [addCardFlag, setAddCardFlag] = useState(false)
   const [editable, setEditable] = useState(false)
   const [list, setList] = useState(true)
-  const [showDelete, setShowDelete] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const { currBoard } = useSelector((state) => state.boards)
   const dispatch = useDispatch()
@@ -103,7 +108,6 @@ export default function Column({ column, tasks, index }) {
     setOpenAlert(false)
   }
   const handleChange = (e, target) => {
-    console.log("listTask handleChange ", { e, target })
     const noPersistChange = ['priority', 'pic', 'list']
     if (target === 'dueDate') {
       setTaskValue((prevState) => {
@@ -114,7 +118,6 @@ export default function Column({ column, tasks, index }) {
         return { ...prevState, startDate: e }
       })
     } else if (target?.name === 'pic') {
-      console.log("pic on change", e)
       setTaskValue((prevState) => {
         return {
           ...prevState,
@@ -139,7 +142,6 @@ export default function Column({ column, tasks, index }) {
 
   const submitHandler = async () => {
     if (taskValue.length === 0) return
-    // const text = taskValue.trim().replace(/\s+/g, ' ')
 
     setTaskValue(taskValue)
     const totalTasks = tasks.length
@@ -157,19 +159,16 @@ export default function Column({ column, tasks, index }) {
     }
     dispatch(createNewCard(postCardReq, token))
       .then((res) => {
-        console.log('create card success', res)
         setAlertMessage({ status: 'success', message: 'Task Created Successfully!' })
         setOpenAlert(true)
       })
       .catch(e => {
-        console.log('create card failded', e)
         setAlertMessage({ status: 'error', message: 'Failed Created Task!' })
         setOpenAlert(true)
       })
     if (currBoard?.pic.length > 0) {
       await currBoard.pic.map(async (pic) => {
         const picData = await users.filter((user) => user._id === pic)[0]
-        console.log('picData: ', { picData })
         const notifMessage = {
           id: makeid(5),
           message: `Task ${taskValue.name}, created by: ${user.name
@@ -254,11 +253,6 @@ export default function Column({ column, tasks, index }) {
   }
 
   const submitHandlerUpdate = () => {
-    // if (text === '') {
-    //   setListTitle(column.name)
-    //   setEditable(false)
-    //   return
-    // }
     setTaskValue(editTaskValue)
     dispatch(updateListById(column._id, editTaskValue))
     // eslint-disable-next-line no-param-reassign
@@ -286,7 +280,6 @@ export default function Column({ column, tasks, index }) {
     }
   }
 
-  console.log('tasks', tasks)
   return (
     <div className={classes.wrapper}>
       <Snackbar
@@ -387,18 +380,27 @@ export default function Column({ column, tasks, index }) {
                       >
                         <div className={classes.scroll}>
                           {/* eslint-disable-next-line no-shadow */}
-                          {addCardFlag && (
-                            <InputCard
-                              value={taskValue}
-                              changedHandler={handleChange}
-                              itemAdded={submitHandler}
-                              closeHandler={closeButtonHandler}
-                              keyDownHandler={handleKeyDown}
-                              type="card"
-                              btnText="Add Card"
-                              placeholder="Enter a title for this card..."
-                              width="230px"
-                            />
+                          {(
+                            <Modal
+                              open={addCardFlag}
+                              onClose={closeButtonHandler}
+                              aria-labelledby="modal-card-title"
+                              aria-describedby="modal-card-description"
+                            >
+                              <Box sx={modalStyle}>
+                                <InputCard
+                                  value={taskValue}
+                                  changedHandler={handleChange}
+                                  itemAdded={submitHandler}
+                                  closeHandler={closeButtonHandler}
+                                  keyDownHandler={handleKeyDown}
+                                  type="card"
+                                  btnText="Add Card"
+                                  placeholder="Enter a title for this card..."
+                                  width="100%"
+                                />
+                              </Box>
+                            </Modal>
                           )}
                           {provided.placeholder}
                           {tasks.map((task, index) => (

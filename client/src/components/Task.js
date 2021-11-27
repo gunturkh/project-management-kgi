@@ -3,7 +3,7 @@ import { Redirect, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import _ from 'lodash'
-import { makeStyles, InputBase } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import moment from 'moment'
 import {
@@ -16,7 +16,6 @@ import {
 import List from './List'
 import midString from '../ordering/ordering'
 import { updateCardById } from '../../actions/actionCreators/cardActions'
-// import { fetchBoardById } from '../../actions/actionCreators/boardActions'
 import {
   createNewList,
   updateListById,
@@ -306,11 +305,6 @@ export default function Task() {
   }
 
   if (id.length < 24) return <h1>Invalid URL</h1>
-  // const handleChange = (e) => {
-  //   e.preventDefault()
-  //   console.log("handleChange from Task")
-  //   // setListTitle(e.target.value)
-  // }
   const handleChange = (e) => {
     const noPersistChange = ['priority', 'pic']
     if (noPersistChange.includes(e.target.name)) e.persist = () => { }
@@ -460,35 +454,6 @@ export default function Task() {
           <Header loggedIn />
           {editable ? (
             <div className={classes.editable}>
-              {/* <InputBase
-                onChange={(e) => {
-                  e.preventDefault()
-                  setBoardTitle(e.target.value)
-                }}
-                fullWidth
-                value={boardTitle}
-                style={{
-                  fontWeight: 'bold',
-                  fontFamily: 'sans-serif',
-                  fontSize: '20px',
-                }}
-                autoFocus
-                onFocus={(e) => {
-                  const val = e.target.value
-                  e.target.value = ''
-                  e.target.value = val
-                }}
-                onBlur={() => {
-                  setEditable(false)
-                  const text = boardTitle.trim().replace(/\s+/g, ' ')
-                  if (text === '') {
-                    setBoardTitle(currBoard.name)
-                    return
-                  }
-                  dispatch(updateBoardById(id, { name: text }, token))
-                  currBoard.name = boardTitle
-                }}
-              /> */}
               <InputCard
                 value={editTaskValue}
                 changedHandler={handleChange}
