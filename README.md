@@ -1,2 +1,2 @@
 # Project Management Website
-Built with React, Express, and MongoDB
+Built with React, Express, and MongoDB.
