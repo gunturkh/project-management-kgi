@@ -386,7 +386,7 @@ export default function Card({ task, index }) {
     >
     Start Date: {moment(task?.startDate).format('DD/MM/YYYY')}
     </div> */}
-                    <div
+                    {/* <div
                       style={{
                         textAlign: 'left',
                         fontWeight: 600,
@@ -395,7 +395,7 @@ export default function Card({ task, index }) {
                       }}
                     >
                       End Date: {moment(task?.dueDate).format('DD/MM/YYYY')}
-                    </div>
+                    </div> */}
                     <div
                       style={{ textAlign: 'left', padding: 5, fontWeight: 600 }}
                     >

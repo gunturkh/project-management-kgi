@@ -40,29 +40,33 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 const CssTextField = styled(TextField)({
+  '& .MuiInputBase-root': {
+    marginTop: 0,
+  },
   '& label.Mui-focused': {
-    color: '#56DCD6',
+    color: '#2064A4',
   },
   '& .MuiInputBase-input': {
     padding: '8px',
   },
   '& .MuiInputLabel-root': {
-    color: '#56DCD6',
-    marginTop: '-6px'
+    // color: '#2064A4',
+    color: 'inherit',
+    marginTop: '-11px'
   },
   '& .MuiInput-underline:after': {
-    borderBottomColor: '#56DCD6',
+    borderBottomColor: '#2064A4',
   },
 
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: '#56DCD6',
+      borderColor: '#2064A4',
     },
     '&:hover fieldset': {
-      borderColor: '#56DCD6',
+      borderColor: '#2064A4',
     },
     '&.Mui-focused fieldset': {
-      borderColor: '#56DCD6',
+      borderColor: '#2064A4',
     },
   },
 });
@@ -382,8 +386,8 @@ const ProjectFilters = (props) => {
               aria-labelledby="dropdownMenuButton"
               x-placement="bottom-start"
             >
-              <DropdownPopover title="Filter" pl={roleAdmin ? 24 : 0} pr={24}>
-                <div style={{ padding: 16, width: 470 }}>
+              {/* <DropdownPopover title="Filter" pl={roleAdmin ? 24 : 0} pr={24}> */}
+                <div style={{ padding: 16, width: 200 }}>
                   <div>
                     <FormGroup
                       aria-label="status"
@@ -413,6 +417,7 @@ const ProjectFilters = (props) => {
                               // />
                               <Checkbox
                                 // checked={status[filter.label]}
+                                size="small"
                                 color="primary"
                                 checked={merchantFilter.merchantName.includes(
                                   filter.label,
@@ -427,9 +432,9 @@ const ProjectFilters = (props) => {
                             label={
                               <span
                                 style={{
-                                  fontFamily: 'Open Sans',
-                                  fontWeight: 700,
-                                  fontSize: 16,
+                                  // fontFamily: 'Open Sans',
+                                  fontWeight: 400,
+                                  fontSize: 12,
                                 }}
                               >
                                 {filter.label}
@@ -441,7 +446,7 @@ const ProjectFilters = (props) => {
                     </FormGroup>
                   </div>
                 </div>
-              </DropdownPopover>
+              {/* </DropdownPopover> */}
 
               {/* {props.data ? (
                 <React.Fragment>
@@ -483,10 +488,12 @@ const ProjectFilters = (props) => {
           </div>
         </React.Fragment>
 
-        <DropdownPopover title="Period" pl={roleAdmin ? 24 : 0} pr={24}>
-          <div style={{ padding: 16, width: 470 }}>
-            <div>
+        {/* <DropdownPopover title="Period" pl={roleAdmin ? 24 : 0} pr={24}> */}
+          <div style={{ padding: 16, width: 400 }}>
+            {/* <Box>
+              
               <RadioGroup
+                sx={{ display: 'flex', flexDirection: "row" }}
                 aria-label="Gender"
                 name="gender1"
                 value={period.type}
@@ -548,12 +555,12 @@ const ProjectFilters = (props) => {
                     </span>
                   }
                 />
-              </RadioGroup>
-            </div>
+              </RadioGroup> 
+            </Box>*/}
             <Grid
               container
               spacing={3}
-              style={{ marginTop: 5, marginBottom: 16 }}
+              style={{ paddingTop: 4, marginBottom: 16 }}
             >
               <Grid item lg={6} xs={12}>
                 {/* <DateField
@@ -574,7 +581,7 @@ const ProjectFilters = (props) => {
                 /> */}
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    views={['day', 'month', 'year']}
+                    views={['month']}
                     label="From"
                     value={period.dateFrom}
                     onChange={(e) => {
@@ -587,14 +594,15 @@ const ProjectFilters = (props) => {
                         'period',
                       )
                     }}
-                    disabled={period.type === 'All'}
+                    // disabled={period.type === 'All'}
                     required
                     renderInput={(params) => (
                       <TextField
                         {...params}
+                        size="small"
                         fullWidth
                         required
-                        helperText="Please fill timeline start date"
+                        // helperText="Please fill timeline start date"
                         variant="outlined"
                       />
                     )}
@@ -620,7 +628,7 @@ const ProjectFilters = (props) => {
                 /> */}
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    views={['day', 'month', 'year']}
+                    views={[ 'month']}
                     label="To"
                     value={period.dateTo}
                     onChange={(e) => {
@@ -633,14 +641,15 @@ const ProjectFilters = (props) => {
                         'period',
                       )
                     }}
-                    disabled={period.type === 'All'}
+                    // disabled={period.type === 'All'}
                     required
                     renderInput={(params) => (
                       <TextField
                         {...params}
+                        size="small"
                         fullWidth
                         required
-                        helperText="Please fill timeline start date"
+                        // helperText="Please fill timeline start date"
                         variant="outlined"
                       />
                     )}
@@ -649,10 +658,12 @@ const ProjectFilters = (props) => {
               </Grid>
             </Grid>
           </div>
-        </DropdownPopover>
-        <DropdownPopover title="Sort By" pl={roleAdmin ? 24 : 0} pr={24}>
-          <div style={{ padding: 16, width: 470 }}>
-            <div>
+        {/* </DropdownPopover> */}
+        {/* <DropdownPopover title="Sort By" pl={roleAdmin ? 24 : 0} pr={24}> */}
+          <div style={{ padding: 16, width: 250 }}>
+            <Box 
+                sx={{ display: 'flex', flexDirection: 'row'}}
+            >
               <RadioGroup
                 aria-label="sortby"
                 name="sortby"
@@ -678,9 +689,9 @@ const ProjectFilters = (props) => {
                   label={
                     <span
                       style={{
-                        fontFamily: 'Open Sans',
-                        fontWeight: 700,
-                        fontSize: 16,
+                        // fontFamily: 'Open Sans',
+                        fontWeight: 400,
+                        fontSize: 12,
                       }}
                     >
                       Start Date (Ascending)
@@ -702,9 +713,9 @@ const ProjectFilters = (props) => {
                   label={
                     <span
                       style={{
-                        fontFamily: 'Open Sans',
-                        fontWeight: 700,
-                        fontSize: 16,
+                        // fontFamily: 'Open Sans',
+                        fontWeight: 400,
+                        fontSize: 12,
                       }}
                     >
                       Start Date (Descending)
@@ -712,18 +723,18 @@ const ProjectFilters = (props) => {
                   }
                 />
               </RadioGroup>
-            </div>
+            </Box>
           </div>
-        </DropdownPopover>
+        {/* </DropdownPopover> */}
         <CssTextField
           id="search-projects"
           value={props.search}
           onChange={props.onChange}
-          variant="outlined"
-          label="SEARCH"
-          sx={{ width: '100px' }}
+          variant="standard"
+          label="Search"
+          sx={{ width: '100px', marginTop: 2 }}
         // sx={{
-        //   display: 'flex', color: 'black', border: '1px solid #56DCD6',
+        //   display: 'flex', color: 'black', border: '1px solid #2064A4',
         //   paddingLeft: 0,
         //   paddingRight: 0,
         //   borderRight: props?.borderRight ? 'solid 1px rgb(227, 118, 118)' : 0,
@@ -785,11 +796,12 @@ const ProjectFilters = (props) => {
       </Box>
 
       {filterCard.length ? (
-        <Box sx={{ textAlign: 'left', paddingTop: 16 }}>
+        <Box sx={{ textAlign: 'left', paddingTop: 2 }}>
           <Box sx={{ float: 'unset' }}>
             <Box>
               <span>{props.totalData}</span> Project(s) Found
             </Box>
+            <Box sx={{ display: 'flex'}}>
             {filterCard.map((filter) => {
               return (
                 <Box key={`${filter.label}-${filter.type}`}>
@@ -806,6 +818,7 @@ const ProjectFilters = (props) => {
                 </Box>
               )
             })}
+          </Box>
           </Box>
         </Box>
       ) : null}

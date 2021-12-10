@@ -190,7 +190,7 @@ export default function InputItem({
           >
           </Select>
         </FormControl>
-        <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
+        {/* <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               views={['day', 'month', 'year']}
@@ -227,7 +227,7 @@ export default function InputItem({
               )}
             />
           </LocalizationProvider>
-        </FormControl>
+        </FormControl> */}
         <FormControl style={{ width: '100%', marginBottom: '2rem' }}>
           <InputLabel
             id="demo-mutiple-pic-label"

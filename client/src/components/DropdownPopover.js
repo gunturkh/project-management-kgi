@@ -41,7 +41,7 @@ const DropdownPopover = (props) => {
         component={Button}
         type="button"
         className="d-flex dropdown-popover-button"
-        sx={{ display: 'flex', color: 'black', border: '1px solid #56DCD6' }}
+        sx={{ display: 'flex', color: 'black', border: '1px solid #2064A4' }}
         onClick={handleClick}
       >
         {props.title}

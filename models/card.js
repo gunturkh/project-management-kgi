@@ -34,7 +34,7 @@ const cardSchema = new Schema(
     },
     dueDate: {
       type: Date,
-      required: true,
+      // required: true,
     },
     list: {
       // type: Array,
