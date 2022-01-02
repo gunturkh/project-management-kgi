@@ -314,7 +314,7 @@ export default function Column({ column, tasks, index }) {
               >
                 <div
                   className={classes.title}
-                  onClick={() => setEditable(true)}
+                // onClick={() => setEditable(true)}
                 >
                   <div style={{ position: 'relative' }}>
                     <div

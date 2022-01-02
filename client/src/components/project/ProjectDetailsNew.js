@@ -1098,13 +1098,17 @@ export default function ProjectDetailsNew() {
                     </List>
                   </Grid>
                   <Grid item xs={9} md={9}>
-                    <Button
-                      onClick={handleOpenModal}
-                      color="primary"
-                      variant="contained"
-                    >
-                      Attach File
-                    </Button>
+                    {user?.role === 'ADMIN' || user?.role === 'MEMBER' &&
+                      (
+                        <Button
+                          onClick={handleOpenModal}
+                          color="primary"
+                          variant="contained"
+                        >
+                          Attach File
+                        </Button>
+                      )
+                    }
                     <Dialog
                       open={openUploadModal}
                       onClose={handleCloseModal}

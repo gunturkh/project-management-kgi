@@ -19,7 +19,7 @@ const router = Router()
 router.post('/', auth, async (req, res, next) => {
     try {
         const boardId = req.body.boardId
-        const board = await Board.findOne({ _id: boardId, userId: req.user })
+        const board = await Board.findOne({ _id: boardId })
         if (!board)
             return res.status(404).send()
         const activity = new Activity(req.body)

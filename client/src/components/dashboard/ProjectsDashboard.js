@@ -102,7 +102,7 @@ const getItemStyle = (isDragging, draggableStyle, color) => ({
   margin: `0 0 ${grid}px 0`,
 
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : color,
+  background: isDragging ? 'lightgreen' : 'white',
   borderRadius: '15px',
   border: '3px black solid',
 
@@ -247,19 +247,19 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
     let color
     switch (status) {
       case 'Kick Off':
-        color = '#BFBFBF'
+        color = '#D8341E'
         break
       case 'In Progress':
-        color = '#FFC635'
+        color = '#FFB302'
         break
       case 'Installation & Commissioning':
-        color = '#4675CA'
+        color = '#3965A3'
         break
       case 'Validation':
-        color = '#00AF50'
+        color = '#64A338'
         break
       case 'Closed':
-        color = '#757070'
+        color = '#5F5F5F'
         break
 
       default:

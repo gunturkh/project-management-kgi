@@ -387,65 +387,65 @@ const ProjectFilters = (props) => {
               x-placement="bottom-start"
             >
               {/* <DropdownPopover title="Filter" pl={roleAdmin ? 24 : 0} pr={24}> */}
-                <div style={{ padding: 16, width: 200 }}>
-                  <div>
-                    <FormGroup
-                      aria-label="status"
-                      name="status"
-                      value={period.type}
-                      onChange={(e) => {
-                        onChangeProductFilter(
-                          {
-                            type: e.target.value,
-                            dateTo: period.dateTo,
-                            dateFrom: period.dateFrom,
-                          },
-                          'period',
-                        )
-                      }}
-                    >
-                      {props.data.map((filter, i) => {
-                        return (
-                          <FormControlLabel
-                            value={filter.label}
-                            control={
-                              // <Radio
-                              // classes={{
-                              //   root: classes.radio,
-                              //   checked: classes.checked,
-                              // }}
-                              // />
-                              <Checkbox
-                                // checked={status[filter.label]}
-                                size="small"
-                                color="primary"
-                                checked={merchantFilter.merchantName.includes(
-                                  filter.label,
-                                )}
-                                // onChange={handleChange}
-                                onChange={() => {
-                                  onChangeProductFilter(filter, 'merchant')
-                                }}
-                                name={filter.label}
-                              />
-                            }
-                            label={
-                              <span
-                                style={{
-                                  // fontFamily: 'Open Sans',
-                                  fontWeight: 400,
-                                  fontSize: 12,
-                                }}
-                              >
-                                {filter.label}
-                              </span>
-                            }
-                          />
-                        )
-                      })}
-                    </FormGroup>
-                  </div>
+              <div style={{ padding: 16, width: 200 }}>
+                <div>
+                  <FormGroup
+                    aria-label="status"
+                    name="status"
+                    value={period.type}
+                    onChange={(e) => {
+                      onChangeProductFilter(
+                        {
+                          type: e.target.value,
+                          dateTo: period.dateTo,
+                          dateFrom: period.dateFrom,
+                        },
+                        'period',
+                      )
+                    }}
+                  >
+                    {props.data.map((filter, i) => {
+                      return (
+                        <FormControlLabel
+                          value={filter.label}
+                          control={
+                            // <Radio
+                            // classes={{
+                            //   root: classes.radio,
+                            //   checked: classes.checked,
+                            // }}
+                            // />
+                            <Checkbox
+                              // checked={status[filter.label]}
+                              size="small"
+                              color="primary"
+                              checked={merchantFilter.merchantName.includes(
+                                filter.label,
+                              )}
+                              // onChange={handleChange}
+                              onChange={() => {
+                                onChangeProductFilter(filter, 'merchant')
+                              }}
+                              name={filter.label}
+                            />
+                          }
+                          label={
+                            <span
+                              style={{
+                                // fontFamily: 'Open Sans',
+                                fontWeight: 400,
+                                fontSize: 12,
+                              }}
+                            >
+                              {filter.label}
+                            </span>
+                          }
+                        />
+                      )
+                    })}
+                  </FormGroup>
                 </div>
+              </div>
               {/* </DropdownPopover> */}
 
               {/* {props.data ? (
@@ -489,8 +489,8 @@ const ProjectFilters = (props) => {
         </React.Fragment>
 
         {/* <DropdownPopover title="Period" pl={roleAdmin ? 24 : 0} pr={24}> */}
-          <div style={{ padding: 16, width: 400 }}>
-            {/* <Box>
+        <div style={{ padding: 16, width: 400 }}>
+          {/* <Box>
               
               <RadioGroup
                 sx={{ display: 'flex', flexDirection: "row" }}
@@ -557,13 +557,13 @@ const ProjectFilters = (props) => {
                 />
               </RadioGroup> 
             </Box>*/}
-            <Grid
-              container
-              spacing={3}
-              style={{ paddingTop: 4, marginBottom: 16 }}
-            >
-              <Grid item lg={6} xs={12}>
-                {/* <DateField
+          <Grid
+            container
+            spacing={3}
+            style={{ paddingTop: 4, marginBottom: 16 }}
+          >
+            <Grid item lg={6} xs={12}>
+              {/* <DateField
                   label="From"
                   value={period.dateFrom}
                   change={(e) => {
@@ -579,38 +579,38 @@ const ProjectFilters = (props) => {
                   disabled={period.type === 'All'}
                   required
                 /> */}
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    views={['month']}
-                    label="From"
-                    value={period.dateFrom}
-                    onChange={(e) => {
-                      onChangeProductFilter(
-                        {
-                          type: 'Date Range',
-                          dateFrom: e,
-                          dateTo: period.dateTo,
-                        },
-                        'period',
-                      )
-                    }}
-                    // disabled={period.type === 'All'}
-                    required
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        size="small"
-                        fullWidth
-                        required
-                        // helperText="Please fill timeline start date"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-              <Grid item lg={6} xs={12}>
-                {/* <DateField
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  views={['month']}
+                  label="From"
+                  value={period.dateFrom}
+                  onChange={(e) => {
+                    onChangeProductFilter(
+                      {
+                        type: 'Date Range',
+                        dateFrom: e,
+                        dateTo: period.dateTo,
+                      },
+                      'period',
+                    )
+                  }}
+                  // disabled={period.type === 'All'}
+                  required
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      fullWidth
+                      required
+                      // helperText="Please fill timeline start date"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item lg={6} xs={12}>
+              {/* <DateField
                   label="To"
                   value={period.dateTo}
                   change={(e) => {
@@ -626,105 +626,105 @@ const ProjectFilters = (props) => {
                   disabled={period.type === 'All'}
                   required
                 /> */}
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    views={[ 'month']}
-                    label="To"
-                    value={period.dateTo}
-                    onChange={(e) => {
-                      onChangeProductFilter(
-                        {
-                          type: 'Date Range',
-                          dateTo: e,
-                          dateFrom: period.dateFrom,
-                        },
-                        'period',
-                      )
-                    }}
-                    // disabled={period.type === 'All'}
-                    required
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        size="small"
-                        fullWidth
-                        required
-                        // helperText="Please fill timeline start date"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  views={['month']}
+                  label="To"
+                  value={period.dateTo}
+                  onChange={(e) => {
+                    onChangeProductFilter(
+                      {
+                        type: 'Date Range',
+                        dateTo: e,
+                        dateFrom: period.dateFrom,
+                      },
+                      'period',
+                    )
+                  }}
+                  // disabled={period.type === 'All'}
+                  required
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      fullWidth
+                      required
+                      // helperText="Please fill timeline start date"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             </Grid>
-          </div>
+          </Grid>
+        </div>
         {/* </DropdownPopover> */}
         {/* <DropdownPopover title="Sort By" pl={roleAdmin ? 24 : 0} pr={24}> */}
-          <div style={{ padding: 16, width: 250 }}>
-            <Box 
-                sx={{ display: 'flex', flexDirection: 'row'}}
+        <div style={{ padding: 16, width: 250 }}>
+          <Box
+            sx={{ display: 'flex', flexDirection: 'row' }}
+          >
+            <RadioGroup
+              aria-label="sortby"
+              name="sortby"
+              value={sortBy}
+              onChange={(e) => {
+                onChangeProductFilter(
+                  e.target.value,
+                  'sort',
+                )
+              }}
             >
-              <RadioGroup
-                aria-label="sortby"
-                name="sortby"
-                value={sortBy}
-                onChange={(e) => {
-                  onChangeProductFilter(
-                    e.target.value,
-                    'sort',
-                  )
-                }}
-              >
-                <FormControlLabel
-                  value="asc"
-                  control={
-                    <Radio
-                      classes={{
-                        root: classes.radio,
-                        checked: classes.checked,
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label={
-                    <span
-                      style={{
-                        // fontFamily: 'Open Sans',
-                        fontWeight: 400,
-                        fontSize: 12,
-                      }}
-                    >
-                      Start Date (Ascending)
-                    </span>
-                  }
-                />
+              <FormControlLabel
+                value="asc"
+                control={
+                  <Radio
+                    classes={{
+                      root: classes.radio,
+                      checked: classes.checked,
+                    }}
+                    color="primary"
+                  />
+                }
+                label={
+                  <span
+                    style={{
+                      // fontFamily: 'Open Sans',
+                      fontWeight: 400,
+                      fontSize: 12,
+                    }}
+                  >
+                    Start Date (Ascending)
+                  </span>
+                }
+              />
 
-                <FormControlLabel
-                  value="desc"
-                  control={
-                    <Radio
-                      classes={{
-                        root: classes.radio,
-                        checked: classes.checked,
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label={
-                    <span
-                      style={{
-                        // fontFamily: 'Open Sans',
-                        fontWeight: 400,
-                        fontSize: 12,
-                      }}
-                    >
-                      Start Date (Descending)
-                    </span>
-                  }
-                />
-              </RadioGroup>
-            </Box>
-          </div>
+              <FormControlLabel
+                value="desc"
+                control={
+                  <Radio
+                    classes={{
+                      root: classes.radio,
+                      checked: classes.checked,
+                    }}
+                    color="primary"
+                  />
+                }
+                label={
+                  <span
+                    style={{
+                      // fontFamily: 'Open Sans',
+                      fontWeight: 400,
+                      fontSize: 12,
+                    }}
+                  >
+                    Start Date (Descending)
+                  </span>
+                }
+              />
+            </RadioGroup>
+          </Box>
+        </div>
         {/* </DropdownPopover> */}
         <CssTextField
           id="search-projects"
@@ -801,24 +801,24 @@ const ProjectFilters = (props) => {
             <Box>
               <span>{props.totalData}</span> Project(s) Found
             </Box>
-            <Box sx={{ display: 'flex'}}>
-            {filterCard.map((filter) => {
-              return (
-                <Box key={`${filter.label}-${filter.type}`}>
-                  {filter.label}
-                  <span>
-                    <Button
-                      onClick={() => {
-                        removeFilterCard(filter)
-                      }}
-                    >
-                      X
-                    </Button>
-                  </span>
-                </Box>
-              )
-            })}
-          </Box>
+            <Box sx={{ display: 'flex' }}>
+              {filterCard.map((filter) => {
+                return (
+                  <Box key={`${filter.label}-${filter.type}`}>
+                    {filter.label}
+                    <span>
+                      <Button
+                        onClick={() => {
+                          removeFilterCard(filter)
+                        }}
+                      >
+                        X
+                      </Button>
+                    </span>
+                  </Box>
+                )
+              })}
+            </Box>
           </Box>
         </Box>
       ) : null}
@@ -972,18 +972,19 @@ const ProjectList = (props) => {
     console.log('getFilterData:', data)
     setFilterCardState(data)
   }
-  const sortedFoundBoards = (boardsFromRole, sortBy = 'asc') =>  {
+  const sortedFoundBoards = (boardsFromRole, sortBy = 'asc') => {
     console.log("foundboards inside sorted function", boardsFromRole, sortBy)
-    if(sortBy === 'asc'){
+    if (sortBy === 'asc') {
       return boardsFromRole.sort((a, b) => moment(b.startDate).format('YYYYMMDD') - moment(a.startDate).format('YYYYMMDD'))
-    } 
-    else  {
+    }
+    else {
       return boardsFromRole.sort((a, b) => moment(a.startDate).format('YYYYMMDD') - moment(b.startDate).format('YYYYMMDD'))
-      }
+    }
   }
 
   const filterBoardsBasedByRole = (role) => {
-  switch(role){
+    console.log("user role ", role)
+    switch (role) {
       case 'ADMIN':
         return foundBoards && foundBoards.length > 0 && (
           paginateGood(sortedFoundBoards(foundBoards, filterCardState?.sortBy), 9, page - 1).map((board) => (
@@ -991,20 +992,27 @@ const ProjectList = (props) => {
               <ProjectCard board={board} />
             </Grid>
           )));
-      case 'USER':
-        return mappedBoardsForUser && mappedBoardsForUser.length > 0 && (
-          paginateGood(sortedFoundBoards(mappedBoardsForUser, filterCardState?.sortBy), 9, page - 1).map((board) => (
-          <Grid item key={board.id} lg={4} md={6} xs={12}>
-            <ProjectCard board={board} />
-          </Grid>
-        )));
+      case 'MEMBER':
+        return foundBoards && foundBoards.length > 0 && (
+          paginateGood(sortedFoundBoards(foundBoards, filterCardState?.sortBy), 9, page - 1).map((board) => (
+            <Grid item key={board.id} lg={4} md={6} xs={12}>
+              <ProjectCard board={board} />
+            </Grid>
+          )));
+      // case 'USER':
+      //   return mappedBoardsForUser && mappedBoardsForUser.length > 0 && (
+      //     paginateGood(sortedFoundBoards(mappedBoardsForUser, filterCardState?.sortBy), 9, page - 1).map((board) => (
+      //       <Grid item key={board.id} lg={4} md={6} xs={12}>
+      //         <ProjectCard board={board} />
+      //       </Grid>
+      //     )));
       case 'CLIENT':
         return mappedBoardsForClient && mappedBoardsForClient.length > 0 && (
           paginateGood(sortedFoundBoards(mappedBoardsForClient, filterCardState?.sortBy), 9, page - 1).map((board) => (
-          <Grid item key={board.id} lg={4} md={6} xs={12}>
-            <ProjectCard board={board} />
-          </Grid>
-        )));
+            <Grid item key={board.id} lg={4} md={6} xs={12}>
+              <ProjectCard board={board} />
+            </Grid>
+          )));
       default:
         return (
           <Grid item lg={4} md={6} xs={12}>
@@ -1056,7 +1064,7 @@ const ProjectList = (props) => {
             </Box>
             <Box sx={{ pt: 3 }}>
               <Grid container spacing={3}>
-              {filterBoardsBasedByRole(user.role)}
+                {filterBoardsBasedByRole(user.role)}
                 {/* {user.role === 'ADMIN' ? ( */}
                 {/*   foundBoards && foundBoards.length > 0 ? ( */}
                 {/*     paginateGood(sortedFoundBoards(filterCardState?.sortBy), 9, page - 1).map((board) => ( */}
@@ -1110,7 +1118,7 @@ const ProjectList = (props) => {
                 severity={state?.status === 'error' ? "error" : "success"}
                 sx={{ width: '100%' }}
               >
-                { `${state?.message}` }
+                {`${state?.message}`}
               </Alert>
             </Snackbar>
           </Container>

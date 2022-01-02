@@ -221,7 +221,7 @@ const Timeline = (props) => {
             p: 2,
           }}
         >
-          {user.role === 'ADMIN' && (
+          {user.role === 'ADMIN' || user.role === 'MEMBER' && (
             <Button
               color="primary"
               variant="contained"
