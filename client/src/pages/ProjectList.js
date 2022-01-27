@@ -19,7 +19,7 @@ import {
   Snackbar,
   Alert as MuiAlert,
 } from '@material-ui/core'
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles'
 import { useSelector, useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import ProjectListToolbar from '../components/project/ProjectListToolbar'
@@ -34,6 +34,7 @@ import { fetchAllBoards } from '../actions/actionCreators/boardActions'
 // import { fetchAllCardsV2 } from '../actions/actionCreators/cardActions'
 import { fetchAllCompaniesInfo } from '../actions/actionCreators/companyActions'
 // import { createNewActivity } from '../actions/actionCreators/activityActions'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -52,7 +53,7 @@ const CssTextField = styled(TextField)({
   '& .MuiInputLabel-root': {
     // color: '#2064A4',
     color: 'inherit',
-    marginTop: '-11px'
+    marginTop: '-11px',
   },
   '& .MuiInput-underline:after': {
     borderBottomColor: '#2064A4',
@@ -69,7 +70,7 @@ const CssTextField = styled(TextField)({
       borderColor: '#2064A4',
     },
   },
-});
+})
 const statusOptions = [
   {
     label: 'Kick Off',
@@ -354,22 +355,21 @@ const ProjectFilters = (props) => {
       })
     }
   }
-
   //   console.log('product filter period', period);
 
-  console.log('props', props)
-  console.log('status state', status)
+  // console.log('props', props)
+  // console.log('status state', status)
   return (
-    <Box sx={{ marginBottom: 3 }}>
+    <Box sx={{ marginBottom: 3, maxWidth: 300 }}>
       {/* <Box style={{ color: '#A2A2A2' }}>FILTER</Box> */}
       {/* TODO: See if using DropdownPopover component has better UX */}
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', padding: 5 }}>
         <React.Fragment>
           <div
             className="dropdown filter pr-4"
-          // style={{
-          //   borderRight: '1px solid rgb(227, 118, 118)',
-          // }}
+            // style={{
+            //   borderRight: '1px solid rgb(227, 118, 118)',
+            // }}
           >
             {/* <button
               className="btn btn-secondary dropdown-toggle btn-dashboard"
@@ -489,7 +489,7 @@ const ProjectFilters = (props) => {
         </React.Fragment>
 
         {/* <DropdownPopover title="Period" pl={roleAdmin ? 24 : 0} pr={24}> */}
-        <div style={{ padding: 16, width: 400 }}>
+        <div style={{ padding: 16 }}>
           {/* <Box>
               
               <RadioGroup
@@ -562,7 +562,7 @@ const ProjectFilters = (props) => {
             spacing={3}
             style={{ paddingTop: 4, marginBottom: 16 }}
           >
-            <Grid item lg={6} xs={12}>
+            <Grid item xs={12}>
               {/* <DateField
                   label="From"
                   value={period.dateFrom}
@@ -609,7 +609,7 @@ const ProjectFilters = (props) => {
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item lg={6} xs={12}>
+            <Grid item xs={12}>
               {/* <DateField
                   label="To"
                   value={period.dateTo}
@@ -661,18 +661,13 @@ const ProjectFilters = (props) => {
         {/* </DropdownPopover> */}
         {/* <DropdownPopover title="Sort By" pl={roleAdmin ? 24 : 0} pr={24}> */}
         <div style={{ padding: 16, width: 250 }}>
-          <Box
-            sx={{ display: 'flex', flexDirection: 'row' }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <RadioGroup
               aria-label="sortby"
               name="sortby"
               value={sortBy}
               onChange={(e) => {
-                onChangeProductFilter(
-                  e.target.value,
-                  'sort',
-                )
+                onChangeProductFilter(e.target.value, 'sort')
               }}
             >
               <FormControlLabel
@@ -733,13 +728,13 @@ const ProjectFilters = (props) => {
           variant="standard"
           label="Search"
           sx={{ width: '100px', marginTop: 2 }}
-        // sx={{
-        //   display: 'flex', color: 'black', border: '1px solid #2064A4',
-        //   paddingLeft: 0,
-        //   paddingRight: 0,
-        //   borderRight: props?.borderRight ? 'solid 1px rgb(227, 118, 118)' : 0,
-        //   borderLeft: props?.borderLeft ? 'solid 1px rgb(227, 118, 118)' : 0,
-        // }}
+          // sx={{
+          //   display: 'flex', color: 'black', border: '1px solid #2064A4',
+          //   paddingLeft: 0,
+          //   paddingRight: 0,
+          //   borderRight: props?.borderRight ? 'solid 1px rgb(227, 118, 118)' : 0,
+          //   borderLeft: props?.borderLeft ? 'solid 1px rgb(227, 118, 118)' : 0,
+          // }}
         />
 
         {/* <DropdownPopover title="User" pl={24} borderLeft>
@@ -836,7 +831,7 @@ const ProjectList = (props) => {
   const [boardsWithFilter, setBoardsWithFilter] = useState([])
   const [filterCardState, setFilterCardState] = useState({})
   const [page, setPage] = React.useState(1)
-  const { state } = useLocation();
+  const { state } = useLocation()
   const handleChange = (event, value) => {
     setPage(value)
   }
@@ -864,11 +859,11 @@ const ProjectList = (props) => {
   const mappedBoardsForUser = foundBoards.filter(
     (board) => board.company === companyFromUser,
   )
-  const mappedBoardsForClient = foundBoards.filter(
-    (board) => board.pic.includes(user.id)
+  const mappedBoardsForClient = foundBoards.filter((board) =>
+    board.pic.includes(user.id),
   )
   // const mappedBoardsForClient = _.filter(boards, { pic: [companyFromUser]})
-  //   (board) => board.pic.includes(companyFromUser) 
+  //   (board) => board.pic.includes(companyFromUser)
   // )
 
   console.group('projectList')
@@ -937,17 +932,17 @@ const ProjectList = (props) => {
     if (keyword !== '') {
       const results = boardsWithFilter.length
         ? boardsWithFilter.filter((board) => {
-          return board.projectName
-            .toLowerCase()
-            .startsWith(keyword.toLowerCase())
-          // Use the toLowerCase() method to make it case-insensitive
-        })
+            return board.projectName
+              .toLowerCase()
+              .startsWith(keyword.toLowerCase())
+            // Use the toLowerCase() method to make it case-insensitive
+          })
         : boards.filter((board) => {
-          return board.projectName
-            .toLowerCase()
-            .startsWith(keyword.toLowerCase())
-          // Use the toLowerCase() method to make it case-insensitive
-        })
+            return board.projectName
+              .toLowerCase()
+              .startsWith(keyword.toLowerCase())
+            // Use the toLowerCase() method to make it case-insensitive
+          })
       setFoundBoards(results)
     } else {
       boardsWithFilter.length
@@ -973,32 +968,53 @@ const ProjectList = (props) => {
     setFilterCardState(data)
   }
   const sortedFoundBoards = (boardsFromRole, sortBy = 'asc') => {
-    console.log("foundboards inside sorted function", boardsFromRole, sortBy)
+    console.log('foundboards inside sorted function', boardsFromRole, sortBy)
     if (sortBy === 'asc') {
-      return boardsFromRole.sort((a, b) => moment(b.startDate).format('YYYYMMDD') - moment(a.startDate).format('YYYYMMDD'))
-    }
-    else {
-      return boardsFromRole.sort((a, b) => moment(a.startDate).format('YYYYMMDD') - moment(b.startDate).format('YYYYMMDD'))
+      return boardsFromRole.sort(
+        (a, b) =>
+          moment(b.startDate).format('YYYYMMDD') -
+          moment(a.startDate).format('YYYYMMDD'),
+      )
+    } else {
+      return boardsFromRole.sort(
+        (a, b) =>
+          moment(a.startDate).format('YYYYMMDD') -
+          moment(b.startDate).format('YYYYMMDD'),
+      )
     }
   }
 
   const filterBoardsBasedByRole = (role) => {
-    console.log("user role ", role)
+    console.log('user role ', role)
     switch (role) {
       case 'ADMIN':
-        return foundBoards && foundBoards.length > 0 && (
-          paginateGood(sortedFoundBoards(foundBoards, filterCardState?.sortBy), 9, page - 1).map((board) => (
+        return (
+          foundBoards &&
+          foundBoards.length > 0 &&
+          paginateGood(
+            sortedFoundBoards(foundBoards, filterCardState?.sortBy),
+            9,
+            page - 1,
+          ).map((board) => (
             <Grid item key={board.id} lg={4} md={6} xs={12}>
               <ProjectCard board={board} />
             </Grid>
-          )));
+          ))
+        )
       case 'MEMBER':
-        return foundBoards && foundBoards.length > 0 && (
-          paginateGood(sortedFoundBoards(foundBoards, filterCardState?.sortBy), 9, page - 1).map((board) => (
+        return (
+          foundBoards &&
+          foundBoards.length > 0 &&
+          paginateGood(
+            sortedFoundBoards(foundBoards, filterCardState?.sortBy),
+            9,
+            page - 1,
+          ).map((board) => (
             <Grid item key={board.id} lg={4} md={6} xs={12}>
               <ProjectCard board={board} />
             </Grid>
-          )));
+          ))
+        )
       // case 'USER':
       //   return mappedBoardsForUser && mappedBoardsForUser.length > 0 && (
       //     paginateGood(sortedFoundBoards(mappedBoardsForUser, filterCardState?.sortBy), 9, page - 1).map((board) => (
@@ -1007,12 +1023,19 @@ const ProjectList = (props) => {
       //       </Grid>
       //     )));
       case 'CLIENT':
-        return mappedBoardsForClient && mappedBoardsForClient.length > 0 && (
-          paginateGood(sortedFoundBoards(mappedBoardsForClient, filterCardState?.sortBy), 9, page - 1).map((board) => (
+        return (
+          mappedBoardsForClient &&
+          mappedBoardsForClient.length > 0 &&
+          paginateGood(
+            sortedFoundBoards(mappedBoardsForClient, filterCardState?.sortBy),
+            9,
+            page - 1,
+          ).map((board) => (
             <Grid item key={board.id} lg={4} md={6} xs={12}>
               <ProjectCard board={board} />
             </Grid>
-          )));
+          ))
+        )
       default:
         return (
           <Grid item lg={4} md={6} xs={12}>
@@ -1022,6 +1045,9 @@ const ProjectList = (props) => {
     }
   }
 
+  const theme = useTheme()
+  const changeFlow = useMediaQuery(theme.breakpoints.up('sm'))
+  console.log('changeFlow', changeFlow)
   return (
     <>
       <Helmet>
@@ -1037,91 +1063,68 @@ const ProjectList = (props) => {
         {loading ? (
           <Loading />
         ) : (
-          <Container maxWidth={false}>
-            {user.role === 'ADMIN' && <ProjectListToolbar />}
-            <Box
+          <Box
+            sx={{ display: 'flex', flexFlow: changeFlow ? 'row' : 'row wrap' }}
+          >
+            {/* <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
                 marginTop: 5,
                 width: '100%',
               }}
-            >
-              <ProjectFilters
-                data={statusOptions}
-                getFilterData={(data) => getFilterData(data)}
-                search={search}
-                onChange={filter}
-              />
-              {/* <TextField */}
-              {/*   id="search-projects" */}
-              {/*   value={search} */}
-              {/*   onChange={filter} */}
-              {/*   label="Search" */}
-              {/*   variant="outlined" */}
-              {/*   sx={{ marginLeft: 'auto' }} */}
-              {/* /> */}
-            </Box>
-            <Box sx={{ pt: 3 }}>
-              <Grid container spacing={3}>
-                {filterBoardsBasedByRole(user.role)}
-                {/* {user.role === 'ADMIN' ? ( */}
-                {/*   foundBoards && foundBoards.length > 0 ? ( */}
-                {/*     paginateGood(sortedFoundBoards(filterCardState?.sortBy), 9, page - 1).map((board) => ( */}
-                {/*       <Grid item key={board.id} lg={4} md={6} xs={12}> */}
-                {/*         <ProjectCard board={board} /> */}
-                {/*       </Grid> */}
-                {/*     )) */}
-                {/*   ) : ( */}
-                {/*     <Grid item lg={4} md={6} xs={12}> */}
-                {/*       <p>No boards found</p> */}
-                {/*     </Grid> */}
-                {/*   ) */}
-                {/* ) : ( */}
-                {/*   mappedBoardsForUser.map((board) => ( */}
-                {/*     <Grid item key={board.id} lg={4} md={6} xs={12}> */}
-                {/*       <ProjectCard board={board} /> */}
-                {/*     </Grid> */}
-                {/*   )) */}
-                {/* )} */}
-              </Grid>
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <Pagination
-                  count={
-                    user.role === 'ADMIN'
-                      ? Math.ceil(foundBoards.length / 9)
-                      : Math.ceil(mappedBoardsForUser.length / 9)
-                  }
-                  color="primary"
-                  page={page}
-                  onChange={handleChange}
-                  sx={{ marginTop: 10 }}
-                />
+            > */}
+            <ProjectFilters
+              data={statusOptions}
+              getFilterData={(data) => getFilterData(data)}
+              search={search}
+              onChange={filter}
+            />
+            {/* </Box> */}
+            <Container maxWidth={false}>
+              {user.role === 'ADMIN' && <ProjectListToolbar />}
+              <Box sx={{ pt: 3 }}>
+                <Grid container spacing={3}>
+                  {filterBoardsBasedByRole(user.role)}
+                </Grid>
+                <Box display="flex" justifyContent="center" alignItems="center">
+                  <Pagination
+                    count={
+                      user.role === 'ADMIN'
+                        ? Math.ceil(foundBoards.length / 9)
+                        : Math.ceil(mappedBoardsForUser.length / 9)
+                    }
+                    color="primary"
+                    page={page}
+                    onChange={handleChange}
+                    sx={{ marginTop: 10 }}
+                  />
+                </Box>
               </Box>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                pt: 3,
-              }}
-            >
-              {/* <Pagination color="primary" count={3} size="small" /> */}
-            </Box>
-            <Snackbar
-              open={openAlert}
-              autoHideDuration={6000}
-              onClose={handleCloseAlert}
-            >
-              <Alert
-                onClose={handleCloseAlert}
-                severity={state?.status === 'error' ? "error" : "success"}
-                sx={{ width: '100%' }}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  pt: 3,
+                }}
               >
-                {`${state?.message}`}
-              </Alert>
-            </Snackbar>
-          </Container>
+                {/* <Pagination color="primary" count={3} size="small" /> */}
+              </Box>
+              <Snackbar
+                open={openAlert}
+                autoHideDuration={6000}
+                onClose={handleCloseAlert}
+              >
+                <Alert
+                  onClose={handleCloseAlert}
+                  severity={state?.status === 'error' ? 'error' : 'success'}
+                  sx={{ width: '100%' }}
+                >
+                  {`${state?.message}`}
+                </Alert>
+              </Snackbar>
+            </Container>
+          </Box>
         )}
       </Box>
     </>
