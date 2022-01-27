@@ -38,23 +38,23 @@ const projectStatusColor = (status) => {
   let backgroundColor
   switch (status) {
     case 'Kick Off':
-      backgroundColor = 'white'
-      color = 'black'
+      backgroundColor = '#D8341E'
+      color = 'white'
       break
     case 'In Progress':
-      backgroundColor = 'green'
+      backgroundColor = '#FFB302'
       color = 'white'
       break
     case 'Installation & Commissioning':
-      backgroundColor = 'cyan'
+      backgroundColor = '#3965A3'
       color = 'black'
       break
     case 'Validation':
-      backgroundColor = 'blue'
+      backgroundColor = '#64A338'
       color = 'white'
       break
     case 'Closed':
-      backgroundColor = 'gray'
+      backgroundColor = '#5F5F5F'
       color = 'white'
       break
 
@@ -141,7 +141,7 @@ const ProjectCard = ({ board, ...rest }) => {
         ? board?.pic?.some((item) => item !== user.id)
         : true
   }
-  const progressCount = (
+  const progressCount =
     (allCards
       ?.filter((c) => c.boardId === board._id)
       ?.map((i) => {
@@ -149,15 +149,11 @@ const ProjectCard = ({ board, ...rest }) => {
         return res?.name
       })
       .reduce((acc, curVal) => {
-        curVal === 'Checked' || curVal === 'Done'
-          ? (acc += 1)
-          : (acc = acc)
+        curVal === 'Checked' || curVal === 'Done' ? (acc += 1) : (acc = acc)
         return acc
       }, 0) /
-      allCards?.filter((c) => c.boardId === board._id)?.length
-    ) *
+      allCards?.filter((c) => c.boardId === board._id)?.length) *
     100
-  )
   return (
     <Card
       sx={{
@@ -248,7 +244,7 @@ const ProjectCard = ({ board, ...rest }) => {
                 }
                 const postUserReq = {
                   ...user,
-                  pinned: [...user.pinned, pin],
+                  pinned: user?.pinned ? [...user?.pinned, pin] : [pin],
                 }
                 dispatch(updateUser(postUserReq))
               }}
@@ -336,8 +332,8 @@ const ProjectCard = ({ board, ...rest }) => {
             >
               {board?.startDate && board?.endDate
                 ? `${moment(board.startDate).format('DD MMMM YYYY')} - ${moment(
-                  board.endDate,
-                ).format('DD MMMM YYYY')}`
+                    board.endDate,
+                  ).format('DD MMMM YYYY')}`
                 : 'No Start Date - End Date Filled'}
             </Typography>
           </Grid>
@@ -417,8 +413,9 @@ const ProjectCard = ({ board, ...rest }) => {
           }}
         >
           {board?.status || 'No Project Status Filled'}
-          {board?.status &&
-            isNaN(progressCount) ? ` 0%` : ` ${progressCount?.toFixed(0)}%`}
+          {board?.status && isNaN(progressCount)
+            ? ` 0%`
+            : ` ${progressCount?.toFixed(0)}%`}
         </Typography>
       </Box>
     </Card>
