@@ -104,7 +104,7 @@ const getItemStyle = (isDragging, draggableStyle, color) => ({
   // change background colour if dragging
   background: isDragging ? 'lightgreen' : 'white',
   borderRadius: '15px',
-  border: '3px black solid',
+  // border: '3px black solid',
 
   // styles we need to apply on draggables
   ...draggableStyle,
@@ -476,6 +476,7 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                         margin: '10px',
                         textAlign: 'center',
                         fontWeight: 700,
+                        color: 'white'
                       }}
                     >
                       Status Project: {el?.title}
@@ -487,6 +488,7 @@ function ProjectDragDropArea({ setOpenModal, setDeleteItem }) {
                         width: '100%',
                         padding: '0px 20px',
                         fontWeight: 700,
+                        color: 'white'
                       }}
                     >
                       <div>No</div>
